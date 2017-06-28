@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
   <head>
+    <%# Estas dos meta tags deben ser las primeras para bootstrap %>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title><%= @titulo %></title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
   </head>
 
   <body>
-    <h1><%= @titulo %></h1>
+    <div class="container-fluid">
+      <h1><%= @titulo %></h1>
 
-    <div id="main">
+      <%# `content` es la vista pasada al layout por `render 'vista'` %>
       <%= content %>
     </div>
   </body>

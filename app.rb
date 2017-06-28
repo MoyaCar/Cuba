@@ -4,6 +4,10 @@ require 'erb'
 
 Cuba.plugin Cuba::Render
 
+# Servir archivos estáticos desde este directorio
+Cuba.use Rack::Static, root: 'public',
+  urls: ['/js', '/css', '/fonts']
+
 Cuba.define do
   on get do
     on root do
