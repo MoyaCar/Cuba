@@ -17,13 +17,29 @@ Cuba.define do
       # Pasar a la vista la ruta actual para decidir cuestiones estéticas
       @ruta = '/'
 
-      @bienvenida = 'Un texto explicativo'
+      @explicacion = 'Un texto explicativo'
 
       render 'inicio', titulo: 'El título de la página'
     end
 
-    on '/dni' do
-      render 'dni', titulo: 'Ingrese DNI'
+    on 'dni' do
+      @ruta = '/dni'
+      @explicacion = 'Alguna explicación'
+
+      render 'dni', titulo: 'Ingrese su DNI'
+    end
+  end
+
+  on post do
+    on 'dni' do
+      on param('numero') do |numero|
+        @mensaje = "gracias #{numero}"
+
+        render 'inicio',
+          titulo: 'Otro título de la página',
+          mensaje: "gracias #{numero}",
+          tipo: 'alert-info'
+      end
     end
   end
 end

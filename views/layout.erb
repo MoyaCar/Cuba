@@ -8,7 +8,12 @@
     <title><%= titulo %></title>
 
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/softkeys.css" rel="stylesheet">
     <link href="/css/sed.css" rel="stylesheet">
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/softkeys.js"></script>
+    <script src="/js/teclado.js"></script>
   </head>
 
   <body>
@@ -16,7 +21,7 @@
       <nav>
         <ul class="nav nav-pills pull-right">
           <li role="presentation" class="<%= clase_para_nav '/' %>">
-            <a href="#">Inicio</a>
+            <a href="/">Inicio</a>
           </li>
         </ul>
       </nav>
@@ -27,6 +32,13 @@
     </div>
 
     <div class="container-fluid">
+      <%# Mensajes de información al usuario sobre las acciones realizadas %>
+      <% if defined?(mensaje) && defined?(tipo) %>
+        <div class="alert <%= tipo %>" role="alert">
+          <%= mensaje %>
+        </div>
+      <% end %>
+
       <%# Bloque de contenido %>
       <div class="jumbotron">
         <h1><%= titulo %></h1>
