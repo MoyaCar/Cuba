@@ -79,7 +79,9 @@ Cuba.define do
               motor.posicionar!
 
               nivel, angulo = motor.posicion
-              respuesta = 'ok' # Arduino.new(nivel).activar
+
+              # Se bloquea esperando la respuesta del arduino
+              respuesta = Arduino.new(nivel).activar
 
               # Si se recibió el sobre
               if respuesta == 'ok'

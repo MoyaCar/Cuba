@@ -1,8 +1,29 @@
 require 'rubyserial'
 
 class Arduino
-  def initialize(puerto)
-    @s = Serial.new puerto
+  # Mapeo de nivel a puerto (o sea a arduino)
+  PUERTOS = {
+    0 => '/dev/ttyUSB0'
+  }
+
+  def initialize(nivel)
+    @s = Serial.new PUERTOS[nivel]
+  rescue RubySerial::Exception
+    # Mock de RubySerial por si no hay raspberry conectada
+    Struct.new('SerialMock', :puerto ) do
+      def write(status)
+        puts "#{status} enviado a #{puerto}"
+      end
+
+      def gets
+        sleep 5
+        puts 'ok'
+
+        'ok'
+      end
+    end
+
+    @s = Struct::SerialMock.new PUERTOS[nivel] || '/dev/null'
   end
 
   def activar
@@ -10,5 +31,3 @@ class Arduino
     @s.gets
   end
 end
-
-Arduinos = [Arduino.new('/dev/ttyUSB0')]
