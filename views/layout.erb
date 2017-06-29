@@ -5,17 +5,39 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><%= @titulo %></title>
+    <title><%= titulo %></title>
 
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/sed.css" rel="stylesheet">
   </head>
 
   <body>
-    <div class="container-fluid">
-      <h1><%= @titulo %></h1>
+    <div class="header clearfix">
+      <nav>
+        <ul class="nav nav-pills pull-right">
+          <li role="presentation" class="<%= clase_para_nav '/' %>">
+            <a href="#">Inicio</a>
+          </li>
+        </ul>
+      </nav>
 
-      <%# `content` es la vista pasada al layout por `render 'vista'` %>
-      <%= content %>
+      <div class="logo">
+        <img alt="BBVA Francés" src="/img/logo.png" />
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <%# Bloque de contenido %>
+      <div class="jumbotron">
+        <h1><%= titulo %></h1>
+
+        <%# `content` es la vista pasada al layout por `render 'vista'` %>
+        <%= content %>
+      </div>
+
+      <footer class="footer navbar-fixed-bottom">
+        <p class="pull-right">&copy; 2017, BBVA Francés</p>
+      </footer>
     </div>
   </body>
 </html>
