@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 
 # Framework
 gem 'cuba'
+gem 'cuba-flash'
 
 # Template engine
 gem 'tilt'

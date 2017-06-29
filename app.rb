@@ -1,5 +1,6 @@
 require 'cuba'
 require 'cuba/render'
+require 'cuba/flash'
 require 'erb'
 require 'active_record'
 require 'sqlite3'
@@ -10,6 +11,12 @@ ActiveRecord::Base.establish_connection(configuration['db'])
 
 require_relative 'plugins/view_helpers'
 
+# Rack Middlewares
+# Crear sesión para los flashes informativos
+Cuba.use Rack::Session::Cookie, secret: ENV['SED_SESSION_KEY']
+Cuba.use Cuba::Flash
+
+# Cuba plugins
 Cuba.plugin Cuba::Render
 Cuba.plugin ViewHelpers
 
@@ -23,18 +30,10 @@ Cuba.use Rack::Static, root: 'public',
 Cuba.define do
   on get do
     on root do
-      # Pasar a la vista la ruta actual para decidir cuestiones estéticas
-      @ruta = '/'
-
-      @explicacion = 'Un texto explicativo'
-
       render 'inicio', titulo: 'El título de la página'
     end
 
     on 'dni' do
-      @ruta = '/dni'
-      @explicacion = 'Alguna explicación'
-
       render 'dni', titulo: 'Ingrese su DNI'
     end
   end
@@ -45,17 +44,14 @@ Cuba.define do
         sobre = Sobre.where(dni: numero).take
 
         if sobre.present?
-          mensaje = "gracias #{numero}"
-          tipo_mensaje = 'alert-info'
+          flash[:mensaje] = "gracias #{numero}"
+          flash[:tipo] = 'alert-info'
         else
-          mensaje = "error de identificación"
-          tipo_mensaje = 'alert-danger'
+          flash[:mensaje] = 'error de identificación'
+          flash[:tipo] = 'alert-danger'
         end
 
-        render 'inicio',
-          titulo: 'Otro título de la página',
-          mensaje: mensaje,
-          tipo: tipo_mensaje
+        res.redirect '/'
       end
     end
   end
