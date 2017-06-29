@@ -11,10 +11,14 @@
 Cuba.define do
   on get do
     on root do
+      LEDs.off
+
       render 'inicio', titulo: 'El título de la página'
     end
 
     on 'dni' do
+      LEDs.on
+
       render 'dni', titulo: 'Ingrese su DNI'
     end
 

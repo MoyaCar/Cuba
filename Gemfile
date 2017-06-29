@@ -13,5 +13,8 @@ gem 'activerecord'
 gem 'sqlite3'
 gem 'rake'
 
+# Raspberry
+gem 'rubyserial'
+
 # Development
 gem 'pry', require: false
