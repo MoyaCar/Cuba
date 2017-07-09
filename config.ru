@@ -1,7 +1,7 @@
 # Archivo de inicio para Rack
 
 # Cargar la aplicación completa
-require './app.rb'
+require './boot.rb'
 
 # Arrancar la aplicación
 run Cuba

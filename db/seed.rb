@@ -1,3 +1,3 @@
-require_relative '../app'
+require_relative '../boot'
 
 Sobre.create dni: 30242324, angulo: 2, nivel: 3
