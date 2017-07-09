@@ -12,3 +12,6 @@ gem 'tilt'
 gem 'activerecord'
 gem 'sqlite3'
 gem 'rake'
+
+# Development
+gem 'pry', require: false

@@ -5,13 +5,13 @@
 # Uso
 
 El comando `rackup` levanta el servidor en `http://localhost:9292`. En `/`
-tenemos la bienvenida, que explica el funcionamiento de la terminal. La
-siguiente pantalla (`/dni`) pide un DNI y código de acceso. En esta etapa esos
-datos están precargados en la base de datos. Luego de autenticar al usuario con
-el código de acceso, dirigimos a la interfaz de carga de sobre (`/carga`) o de
-extracción de sobre (`/extraccion`) según el usuario sea o no administrador del
-sistema. Si el usuario no existe o el código es incorrecto, volvemos al inicio
-informando del error.
+tenemos la bienvenida, que explica el funcionamiento de la terminal. Las
+siguientes pantallas (`/dni`, `/codigo`) piden un DNI y código de acceso. En
+esta etapa esos datos están precargados en la base de datos. Luego de
+autenticar al usuario con el código de acceso, dirigimos a la interfaz de carga
+de sobre (`/carga`) o de extracción de sobre (`/extraccion`) según el usuario
+sea o no administrador del sistema. Si el usuario no existe o el código es
+incorrecto, volvemos al inicio informando del error.
 
 En la pantalla de carga `/carga` le indicamos al administrador cómo presentar
 el sobre al lector de código de barras. El código leído deberá ser un DNI
