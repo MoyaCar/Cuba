@@ -1,3 +1,4 @@
-# Un sobre con su dni, su posición y si fue entregado o no
+# Un sobre con su usuario, su posición y si fue entregado o no
 class Sobre < ActiveRecord::Base
+  belongs_to :usuario
 end
