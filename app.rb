@@ -59,30 +59,28 @@ Cuba.define do
 
     on 'carga' do
       on param('dni') do |dni|
-        usuario = Usuario.where(dni: dni).take
+        usuario = Usuario.normal.where(dni: dni).take
 
         if usuario.present?
           if usuario.sobre.present?
             flash[:mensaje] = 'Ya hay un sobre cargado para este DNI.'
             flash[:tipo] = 'alert-danger'
           else
-            if Motor.hay_ubicaciones_libres?
-              motor = Motor.new
-
-              # TODO try-catch?
-              motor.posicionar!
-
+            if (motor = Motor.new).ubicaciones_libres.any?
               nivel, angulo = motor.posicion
 
+              # Se bloquea esperando la respuesta del motor?
+              motor.posicionar!
+
               # Se bloquea esperando la respuesta del arduino
-              respuesta = Arduino.new(nivel).activar
+              respuesta = Arduino.new(nivel).activar!
 
               # Si se recibió el sobre
               if respuesta == 'ok'
                 flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
                 flash[:tipo] = 'alert-success'
 
-                usuario.sobre.create nivel: nivel, angulo: angulo
+                usuario.create_sobre nivel: nivel, angulo: angulo
               else
                 flash[:mensaje] = 'El sobre no ha sido guardado.'
                 flash[:tipo] = 'alert-info'

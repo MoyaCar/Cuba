@@ -2,6 +2,9 @@
 class Usuario < ActiveRecord::Base
   has_one :sobre
 
+  # Para la carga de sobres no buscamos admins
+  scope :normal, ->{ where admin: false }
+
   validates :dni,
     numericality: { only_integer: true },
     uniqueness: true
