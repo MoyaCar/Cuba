@@ -11,14 +11,10 @@
 Cuba.define do
   on get do
     on root do
-      LEDs.off
-
       render 'inicio', titulo: 'El título de la página'
     end
 
     on 'dni' do
-      LEDs.on
-
       render 'dni', titulo: 'Ingrese su DNI'
     end
 
@@ -69,8 +65,6 @@ Cuba.define do
           if usuario.sobre.present?
             flash[:mensaje] = 'Ya hay un sobre cargado para este DNI.'
             flash[:tipo] = 'alert-danger'
-
-            res.redirect '/carga'
           else
             if Motor.hay_ubicaciones_libres?
               motor = Motor.new
@@ -87,6 +81,8 @@ Cuba.define do
               if respuesta == 'ok'
                 flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
                 flash[:tipo] = 'alert-success'
+
+                usuario.sobre.create nivel: nivel, angulo: angulo
               else
                 flash[:mensaje] = 'El sobre no ha sido guardado.'
                 flash[:tipo] = 'alert-info'
@@ -94,16 +90,15 @@ Cuba.define do
             else
               flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
               flash[:tipo] = 'alert-danger'
-
-              res.redirect '/carga'
             end
           end
         else
           flash[:mensaje] = 'No hay un usuario cargado para este DNI.'
           flash[:tipo] = 'alert-danger'
-
-          res.redirect '/carga'
         end
+
+        # Siempre volvemos al inicio del administrador
+        res.redirect '/carga'
       end
     end
   end
