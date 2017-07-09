@@ -20,6 +20,12 @@
     <div class="header clearfix">
       <nav>
         <ul class="nav nav-pills pull-right">
+          <% unless inicio? %>
+            <li role="presentation" class="inactive">
+              <a onclick="history.back(-1)" href="#">Volver</a>
+            </li>
+          <% end %>
+
           <li role="presentation" class="<%= clase_para_nav '/' %>">
             <a href="/">Inicio</a>
           </li>

@@ -21,8 +21,9 @@ Cuba.plugin Cuba::Render
 Cuba.plugin ViewHelpers
 
 require_relative 'plugins/view_helpers'
-require_relative 'models/sobre'
+require_relative 'models/motor'
 require_relative 'models/usuario'
+require_relative 'models/sobre'
 
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: 'public',
