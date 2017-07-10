@@ -27,7 +27,8 @@ volvemos al inicio.
 En la pantalla de extracción `/extraccion`, verificamos que exista un sobre
 para el usuario. En caso contrario, informamos y volvemos al inicio. Si hay un
 sobre, ponemos al motor en su ubicación y luego indicamos al arduino que lo
-extraiga. Si se extrajo el sobre (el arduino devuelve código de *ok*), marcamos
-al sobre como entregado, liberamos la posición, y vamos al inicio informando que
-todo fue correcto. Si no se extrajo el sobre (el arduino devuelve código de
-*error*), indicamos al arduino que lo guarde, volvemos al inicio e informamos.
+extraiga. Si se extrajo el sobre (el arduino devuelve código de *ok*),
+eliminamos el sobre de la base de datos, liberando la posición, y vamos al
+inicio informando que todo fue correcto. Si no se extrajo el sobre (el arduino
+devuelve código de *error*), indicamos al arduino que lo guarde, volvemos al
+inicio e informamos.

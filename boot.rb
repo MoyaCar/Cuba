@@ -23,10 +23,9 @@ Cuba.plugin ViewHelpers
 require_relative 'plugins/view_helpers'
 
 require_relative 'models/motor'
+require_relative 'models/arduino'
 require_relative 'models/usuario'
 require_relative 'models/sobre'
-
-require_relative 'services/arduino'
 
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: 'public',

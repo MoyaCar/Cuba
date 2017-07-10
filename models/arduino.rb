@@ -28,8 +28,13 @@ class Arduino
     @s = Struct::SerialMock.new((PUERTOS[nivel] || '/dev/null'), opciones_mock[:fallar])
   end
 
-  def activar!
-    @s.write 'activar'
+  def cargar!
+    @s.write 'cargar'
+    @s.gets
+  end
+
+  def extraer!
+    @s.write 'extraer'
     @s.gets
   end
 end
