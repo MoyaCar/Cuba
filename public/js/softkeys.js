@@ -64,7 +64,7 @@
                                 break;
 
                             case 'delete' :
-                                character = '<span>delete</span>';
+                                character = '<span>Borrar</span>';
                                 type = 'delete';
                                 break;
 

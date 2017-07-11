@@ -1,3 +1,4 @@
+// https://github.com/cozyt/softkey/blob/79c80ff2b602d3759e3b789ab636cff2f4104088/index.html
 $(document).ready(function(){
   $('.teclado').softkeys({
     target : $('.teclado').data('target'),
@@ -9,7 +10,7 @@ $(document).ready(function(){
       ], [
         '1', '2', '3'
       ], [
-        '0'
+        '0', 'delete'
       ]
     ]
   })
