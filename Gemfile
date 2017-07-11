@@ -14,7 +14,7 @@ gem 'sqlite3'
 gem 'rake'
 
 # Raspberry
-gem 'rubyserial'
+gem 'i2c-devices'
 
 # Server
 gem 'puma'

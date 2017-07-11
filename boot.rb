@@ -5,6 +5,8 @@ require 'erb'
 require 'active_record'
 require 'sqlite3'
 require 'yaml'
+require 'i2c'
+require 'i2c/driver/i2c-dev'
 
 configuration = YAML::load(IO.read('db/config.yml'))
 ActiveRecord::Base.establish_connection(configuration['db'])

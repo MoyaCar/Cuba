@@ -38,7 +38,7 @@ Cuba.define do
       if usuario.sobre.present?
         render 'extraccion', titulo: 'Retire el sobre'
       else
-        flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema'
+        flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema.'
         flash[:tipo] = 'alert-danger'
 
         res.redirect '/'
@@ -101,15 +101,20 @@ Cuba.define do
               # Se bloquea esperando la respuesta del arduino
               respuesta = Arduino.new(nivel).cargar!
 
+              case respuesta
               # Si se recibió el sobre
-              if respuesta == 'ok'
+              when :carga_ok
                 flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
                 flash[:tipo] = 'alert-success'
 
                 usuario.create_sobre nivel: nivel, angulo: angulo
-              else
+              # Si no se recibió un sobre
+              when :carga_error
                 flash[:mensaje] = 'El sobre no ha sido guardado.'
                 flash[:tipo] = 'alert-info'
+              else
+                flash[:mensaje] = 'Ocurrió un error.'
+                flash[:tipo] = 'alert-danger'
               end
             else
               flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
@@ -141,18 +146,24 @@ Cuba.define do
         arduino = Arduino.new(sobre.nivel)
         respuesta = arduino.extraer!
 
+        case respuesta
         # Si se extrajo el sobre
-        if respuesta == 'ok'
+        when :extraccion_ok
           flash[:mensaje] = 'Gracias por utilizar la terminal.'
           flash[:tipo] = 'alert-success'
 
           sobre.destroy
-        else
-          # FIXME Habría que revisar de nuevo esta respuesta?
-          arduino.cargar!
-
+        # Si no se extrajo el sobre y el arduino lo guarda automáticamente
+        when :extraccion_error
           flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
           flash[:tipo] = 'alert-info'
+        # Si el arduino no encontró el sobre
+        when :no_hay_carta
+          flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
+          flash[:tipo] = 'alert-danger'
+        else
+          flash[:mensaje] = 'Ocurrió un error.'
+          flash[:tipo] = 'alert-danger'
         end
       else
         flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema'
