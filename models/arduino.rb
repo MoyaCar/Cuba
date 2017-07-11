@@ -56,6 +56,8 @@ class Arduino
     @estado = dispositivo.i2cget(0, 1).bytes.first
 
     RESPUESTAS[estado]
+  rescue Errno::EREMOTEIO
+    :error_de_bus
   end
 
   def cargar!
