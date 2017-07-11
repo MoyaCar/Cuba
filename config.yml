@@ -1,0 +1,10 @@
+db:
+  adapter: sqlite3
+  database: db/data.sqlite3
+  pool: 3
+  timeout: 5000
+
+log:
+  # DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
+  development: DEBUG
+  production: ERROR

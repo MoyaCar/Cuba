@@ -8,8 +8,16 @@ require 'yaml'
 require 'i2c'
 require 'i2c/driver/i2c-dev'
 
-configuration = YAML::load(IO.read('db/config.yml'))
+# Configuración de la aplicación
+configuration = YAML::load(IO.read('config.yml'))
+
 ActiveRecord::Base.establish_connection(configuration['db'])
+
+# Logger accesible globalmente, nivel de logueo según environment
+log_level = "Logger::#{configuration['log'][ENV['RACK_ENV']]}"
+$log = Logger.new STDOUT
+$log.info "Configurando Logger.level en #{log_level}"
+$log.level = Object.const_get log_level
 
 require_relative 'plugins/view_helpers'
 

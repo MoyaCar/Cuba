@@ -24,6 +24,8 @@ class Motor
       @libres = ubicaciones.reject { |_, v| v.empty? }
     end
 
+    $log.debug { "#{@libres.values.flatten.size} ubicaciones libres" }
+
     @libres
   end
 
@@ -45,8 +47,9 @@ class Motor
 
   # FIXME Implementar
   def posicionar!
+    $log.info "Ubicando motor en posición #{posicion}"
+
     # Interactúa con el hardware del motor, bloquea hasta que termina el movimiento
-    puts "ubicando motor en posición #{posicion}"
     sleep 5
   end
 end

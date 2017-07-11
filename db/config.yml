@@ -1,5 +1,0 @@
-db:
-  adapter: sqlite3
-  database: db/data.sqlite3
-  pool: 3
-  timeout: 5000
