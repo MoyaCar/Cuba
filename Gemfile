@@ -16,5 +16,8 @@ gem 'rake'
 # Raspberry
 gem 'rubyserial'
 
+# Server
+gem 'puma'
+
 # Development
 gem 'pry', require: false
