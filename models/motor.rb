@@ -18,10 +18,10 @@ class Motor
       ubicaciones = {}
 
       NIVELES.each do |nivel|
-        ubicaciones[nivel] << ANGULOS.to_a - Sobre.where(nivel: nivel).pluck(:angulo)
+        ubicaciones[nivel] = ANGULOS.to_a - Sobre.where(nivel: nivel).pluck(:angulo)
       end
 
-      @libres = niveles.reject { |_, v| v.empty? }
+      @libres = ubicaciones.reject { |_, v| v.empty? }
     end
 
     @libres
@@ -34,8 +34,8 @@ class Motor
 
     # Usamos la primer posición disponible
     if nivel.nil? && angulo.nil? && ubicaciones_libres.any?
-      @nivel = libres.first.key
-      @angulo = libres.first.values.first
+      @nivel = @libres.first.first # key
+      @angulo = @libres.first.last.first # values.first
     end
   end
 
