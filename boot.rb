@@ -14,7 +14,7 @@ configuration = YAML::load(IO.read('config.yml'))
 ActiveRecord::Base.establish_connection(configuration['db'])
 
 # Logger accesible globalmente, nivel de logueo según environment
-log_level = "Logger::#{configuration['log'][ENV['RACK_ENV']]}"
+log_level = "Logger::#{configuration['log'][ENV['RACK_ENV']] || 'DEBUG'}"
 $log = Logger.new STDOUT
 $log.info "Configurando Logger.level en #{log_level}"
 $log.level = Object.const_get log_level
