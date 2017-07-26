@@ -27,9 +27,10 @@
             <% end %>
           </div>
 
-          <% if admin %>
-            <div class="btn-group">
-              <a class="btn btn-default" data-target='#' href="/">Inicio</a>
+          <div class="btn-group">
+            <a class="<%= clase_para_nav '/' %>" data-target='#' href="/">Inicio</a>
+
+            <% if admin %>
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
@@ -37,14 +38,10 @@
               <ul class="dropdown-menu">
                 <li><a data-target='#' href="#">Auditoría</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a class="<%= clase_para_nav '/panel' %>" data-target='#' href="/panel">Panel</a></li>
+                <li><a data-target='#' href="/panel">Panel</a></li>
               </ul>
-            </div>
-          <% else %>
-            <div class="btn-group">
-              <a class="<%= clase_para_nav '/' %>" data-target='#' href="/">Inicio</a>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         </ul>
       </nav>
 

@@ -34,3 +34,8 @@
   /* Mantener el margen en los pull-right */
   margin-right: 15px;
 }
+
+.dropdown-menu {
+  /* Hacer que el dropdown aparezca bien a la izquierda */
+  left: -90%;
+}
