@@ -16,28 +16,28 @@ Cuba.define do
       # Limpiamos la sesión
       session.delete(:usuario_actual_id)
 
-      render 'inicio', titulo: 'El título de la página'
+      render 'inicio', titulo: 'El título de la página', admin: false
     end
 
     on 'dni' do
-      render 'dni', titulo: 'Ingrese su DNI'
+      render 'dni', titulo: 'Ingrese su DNI', admin: false
     end
 
     on 'codigo' do
-      render 'codigo', titulo: 'Ingrese su Código de Acceso'
+      render 'codigo', titulo: 'Ingrese su Código de Acceso', admin: false
     end
 
     on 'carga' do
       # Limpiamos la sesión
       session.delete(:dni)
 
-      render 'carga', titulo: 'Acerque el sobre al lector'
+      render 'carga', titulo: 'Acerque el sobre al lector', admin: true
     end
 
     on 'confirmar' do
       usuario = Usuario.normal.where(dni: session[:dni]).take
 
-      render 'confirmar', titulo: 'Confirme los datos', usuario: usuario
+      render 'confirmar', titulo: 'Confirme los datos', usuario: usuario, admin: true
     end
 
     # Verificamos que exista un sobre para este usuario o redirigimos
@@ -45,7 +45,7 @@ Cuba.define do
       usuario = Usuario.find session[:usuario_actual_id]
 
       if usuario.sobre.present?
-        render 'extraccion', titulo: 'Retire el sobre'
+        render 'extraccion', titulo: 'Retire el sobre', admin: false
       else
         flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema.'
         flash[:tipo] = 'alert-danger'

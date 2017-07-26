@@ -12,6 +12,7 @@
     <link href="/css/sed.css" rel="stylesheet">
 
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script src="/js/softkeys.js"></script>
     <script src="/js/teclado.js"></script>
   </head>
@@ -20,15 +21,30 @@
     <div class="header clearfix">
       <nav>
         <ul class="nav nav-pills pull-right">
-          <% unless inicio? %>
-            <li role="presentation" class="inactive">
-              <a onclick="history.back(-1)" href="#">Volver</a>
-            </li>
-          <% end %>
+          <div class="btn-group">
+            <% unless inicio? %>
+              <a onclick="history.back(-1)" class="btn btn-default" data-target='#' href="#">Volver</a>
+            <% end %>
+          </div>
 
-          <li role="presentation" class="<%= clase_para_nav '/' %>">
-            <a href="/">Inicio</a>
-          </li>
+          <% if admin %>
+            <div class="btn-group">
+              <a class="btn btn-default" data-target='#' href="/">Inicio</a>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a data-target='#' href="#">Auditoría</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a class="<%= clase_para_nav '/panel' %>" data-target='#' href="/panel">Panel</a></li>
+              </ul>
+            </div>
+          <% else %>
+            <div class="btn-group">
+              <a class="<%= clase_para_nav '/' %>" data-target='#' href="/">Inicio</a>
+            </div>
+          <% end %>
         </ul>
       </nav>
 

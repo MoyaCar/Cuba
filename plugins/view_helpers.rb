@@ -1,7 +1,7 @@
 # Utilidades para las vistas
 module ViewHelpers
   def clase_para_nav(path)
-    env['REQUEST_PATH'] == path ? 'active' : 'inactive'
+    "btn #{env['REQUEST_PATH'] == path ? 'btn-primary' : 'btn-default'}"
   end
 
   def inicio?

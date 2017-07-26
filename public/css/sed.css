@@ -1,11 +1,11 @@
 .header {
   margin-bottom: 20px;
   border-bottom: 1px solid #e5e5e5;
+  padding-right: 15px;
 }
 
-.header .nav-pills {
-  padding-top: 35px;
-  padding-right: 15px;
+.header .btn-group {
+  padding-top: 42px;
 }
 
 .header .logo {
