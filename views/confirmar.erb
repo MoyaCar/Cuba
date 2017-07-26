@@ -1,0 +1,25 @@
+<table class="table table-striped table-condensed text-left">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>DNI</th>
+      <th>Código de acceso</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td><%= usuario.nombre %></td>
+      <td><%= usuario.dni %></td>
+      <td><%= usuario.codigo %></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="lead">Explicación sobre cómo cargar el sobre</p>
+
+<form action='/confirmar' method='post' class="row form">
+  <div class="col-sm-offset-4 col-sm-4 form-group">
+    <button type="submit" class="btn btn-lg btn-success">Confirmar</button>
+  </div>
+</form>

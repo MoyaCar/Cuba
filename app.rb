@@ -28,7 +28,16 @@ Cuba.define do
     end
 
     on 'carga' do
+      # Limpiamos la sesión
+      session.delete(:dni)
+
       render 'carga', titulo: 'Acerque el sobre al lector'
+    end
+
+    on 'confirmar' do
+      usuario = Usuario.normal.where(dni: session[:dni]).take
+
+      render 'confirmar', titulo: 'Confirme los datos', usuario: usuario
     end
 
     # Verificamos que exista un sobre para este usuario o redirigimos
@@ -87,35 +96,20 @@ Cuba.define do
       on param('dni') do |dni|
         usuario = Usuario.normal.where(dni: dni).take
 
+        # Cuando hubo algún error volvemos al inicio del administrador
+        siguiente = '/carga'
+
         if usuario.present?
           if usuario.sobre.present?
             flash[:mensaje] = 'Ya hay un sobre cargado para este DNI.'
             flash[:tipo] = 'alert-danger'
           else
             if (motor = Motor.new).ubicaciones_libres.any?
-              nivel, angulo = motor.posicion
+              # Guardamos el DNI para el próximo request
+              session[:dni] = dni
 
-              # Se bloquea esperando la respuesta del motor?
-              motor.posicionar!
-
-              # Se bloquea esperando la respuesta del arduino
-              respuesta = Arduino.new(nivel).cargar!
-
-              case respuesta
-              # Si se recibió el sobre
-              when :carga_ok
-                flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
-                flash[:tipo] = 'alert-success'
-
-                usuario.create_sobre nivel: nivel, angulo: angulo
-              # Si no se recibió un sobre
-              when :carga_error
-                flash[:mensaje] = 'El sobre no ha sido guardado.'
-                flash[:tipo] = 'alert-info'
-              else
-                flash[:mensaje] = 'Ocurrió un error.'
-                flash[:tipo] = 'alert-danger'
-              end
+              # Pedimos confirmar la carga
+              siguiente = '/confirmar'
             else
               flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
               flash[:tipo] = 'alert-danger'
@@ -126,9 +120,45 @@ Cuba.define do
           flash[:tipo] = 'alert-danger'
         end
 
-        # Siempre volvemos al inicio del administrador
-        res.redirect '/carga'
+        res.redirect siguiente
       end
+    end
+
+    on 'confirmar' do
+      usuario = Usuario.normal.where(dni: session[:dni]).take
+
+      if usuario.present?
+        motor = Motor.new
+        nivel, angulo = motor.posicion
+
+        # Se bloquea esperando la respuesta del motor?
+        motor.posicionar!
+
+        # Se bloquea esperando la respuesta del arduino
+        respuesta = Arduino.new(nivel).cargar!
+
+        case respuesta
+        when :carga_ok
+          # Si se recibió el sobre
+          flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
+          flash[:tipo] = 'alert-success'
+
+          usuario.create_sobre nivel: nivel, angulo: angulo
+        when :carga_error
+          # Si no se recibió un sobre
+          flash[:mensaje] = 'El sobre no ha sido guardado.'
+          flash[:tipo] = 'alert-info'
+        else
+          flash[:mensaje] = 'Ocurrió un error.'
+          flash[:tipo] = 'alert-danger'
+        end
+      else
+        flash[:mensaje] = 'No hay un usuario cargado para este DNI.'
+        flash[:tipo] = 'alert-danger'
+      end
+
+      # Siempre volvemos al inicio del administrador
+      res.redirect '/carga'
     end
 
     # Proceso de extracción de un sobre por parte de un usuario normal
