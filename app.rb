@@ -16,7 +16,7 @@ Cuba.define do
       # Limpiamos la sesión
       session.delete(:usuario_actual_id)
 
-      render 'inicio', titulo: 'El título de la página', admin: false
+      render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
     end
 
     on 'dni' do
@@ -31,13 +31,13 @@ Cuba.define do
       # Limpiamos la sesión
       session.delete(:dni)
 
-      render 'carga', titulo: 'Acerque el sobre al lector', admin: true
+      render 'carga', titulo: 'Iniciar carga de Sobres', admin: true
     end
 
     on 'confirmar' do
       usuario = Usuario.normal.where(dni: session[:dni]).take
 
-      render 'confirmar', titulo: 'Confirme los datos', usuario: usuario, admin: true
+      render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
     end
 
     # Verificamos que exista un sobre para este usuario o redirigimos
@@ -47,7 +47,7 @@ Cuba.define do
       if usuario.sobre.present?
         render 'extraccion', titulo: 'Retire el sobre', admin: false
       else
-        flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema.'
+        flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
 
         res.redirect '/'
@@ -72,7 +72,7 @@ Cuba.define do
         usuario = Usuario.where(dni: session.delete(:dni), codigo: codigo).take
 
         if usuario.present?
-          flash[:mensaje] = "Le damos la bienvenida #{usuario.nombre}."
+          flash[:mensaje] = "Bienvenido #{usuario.nombre}.#{ usuario.admin? ? ' Administrador.' : nil}"
           flash[:tipo] = 'alert-info'
 
           siguiente = usuario.admin? ? '/carga' : '/extraccion'
@@ -82,7 +82,7 @@ Cuba.define do
 
           res.redirect siguiente
         else
-          flash[:mensaje] = 'Hubo un error de identificación.'
+          flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
           flash[:tipo] = 'alert-danger'
 
           res.redirect '/'
@@ -116,7 +116,7 @@ Cuba.define do
             end
           end
         else
-          flash[:mensaje] = 'No hay un usuario cargado para este DNI.'
+          flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
           flash[:tipo] = 'alert-danger'
         end
 
@@ -153,7 +153,7 @@ Cuba.define do
           flash[:tipo] = 'alert-danger'
         end
       else
-        flash[:mensaje] = 'No hay un usuario cargado para este DNI.'
+        flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
         flash[:tipo] = 'alert-danger'
       end
 
@@ -196,7 +196,7 @@ Cuba.define do
           flash[:tipo] = 'alert-danger'
         end
       else
-        flash[:mensaje] = 'No tiene un sobre a su nombre en el sistema'
+        flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
       end
 
