@@ -72,7 +72,7 @@ Cuba.define do
         usuario = Usuario.where(dni: session.delete(:dni), codigo: codigo).take
 
         if usuario.present?
-          flash[:mensaje] = "Bienvenido #{usuario.nombre}.#{ usuario.admin? ? ' Administrador.' : nil}"
+          flash[:mensaje] = "Le damos la bienvenida #{ usuario.admin? ? 'Administrador ' : nil}#{usuario.nombre}."
           flash[:tipo] = 'alert-info'
 
           siguiente = usuario.admin? ? '/carga' : '/extraccion'
