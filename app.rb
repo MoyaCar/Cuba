@@ -53,6 +53,10 @@ Cuba.define do
         res.redirect '/'
       end
     end
+
+    on 'panel' do
+      render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
+    end
   end
 
   on post do

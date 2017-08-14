@@ -1,0 +1,23 @@
+<p>&nbsp;</p>
+
+<form action='/configurar' method='post' class="row form">
+  <div class="col-sm-offset-4 col-sm-4 form-group">
+    <label for="espera_carga">Tiempo de espera para la carga</label>
+    <input type="text" name="espera_carga" class="form-control input-lg" required autofocus
+      value="<%= config.espera_carga %>" />
+  </div>
+
+  <div class="col-sm-offset-4 col-sm-4 form-group">
+    <label for="espera_extraccion">Tiempo de espera para la extracción</label>
+    <input type="text" name="espera_extraccion" class="form-control input-lg" required
+      value="<%= config.espera_extraccion %>" />
+  </div>
+
+  <div class="col-sm-offset-4 col-sm-4 form-group">
+    <div id="espera_carga" class="teclado" data-target="input[name='espera_carga']"></div>
+  </div>
+
+  <div class="col-sm-offset-4 col-sm-4 form-group">
+    <button type="submit" class="btn btn-lg btn-success">Siguiente</button>
+  </div>
+</form>

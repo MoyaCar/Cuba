@@ -24,6 +24,10 @@
   font-size: 21px;
 }
 
+.jumbotron form label {
+  text-align: left;
+}
+
 .footer {
   padding-top: 19px;
   color: #777;
