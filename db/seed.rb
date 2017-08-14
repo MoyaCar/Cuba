@@ -15,6 +15,12 @@ Usuario.create dni: 20600000, nombre: 'Polsky', codigo: 5678
 
 un_sobre = Sobre.create angulo: 1, nivel: 1, usuario: un_usuario_con_sobre
 
+# Configuración con valores default
+config = Configuracion.create
+
 puts "Usuarios creados: #{Usuario.count}"
 puts "Sobres creados: #{Sobre.count}"
+puts "Configuración cargada:"
+puts "  - espera_carga: #{config.espera_carga}"
+puts "  - espera_extraccion: #{config.espera_extraccion}"
 puts '...carga terminada.'

@@ -70,12 +70,12 @@ class Arduino
   def cargar!
     $log.debug "Inicio de proceso de carga"
 
-    ordenar :carga, 10
+    ordenar :carga, Configuracion.espera_carga
   end
 
   def extraer!
     $log.debug "Inicio de proceso de extracción"
 
-    ordenar :extraccion, 15
+    ordenar :extraccion, Configuracion.espera_extraccion
   end
 end

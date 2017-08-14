@@ -36,6 +36,7 @@ require_relative 'models/motor'
 require_relative 'models/arduino'
 require_relative 'models/usuario'
 require_relative 'models/sobre'
+require_relative 'models/configuracion'
 
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: 'public',
