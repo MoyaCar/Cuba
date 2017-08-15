@@ -152,6 +152,10 @@ Cuba.define do
           # Si no se recibió un sobre
           flash[:mensaje] = 'El sobre no ha sido guardado.'
           flash[:tipo] = 'alert-info'
+
+        when :error_de_bus
+          flash[:mensaje] = 'Falló la conexión.'
+          flash[:tipo] = 'alert-danger'
         else
           flash[:mensaje] = 'Ocurrió un error.'
           flash[:tipo] = 'alert-danger'
