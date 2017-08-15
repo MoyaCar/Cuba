@@ -141,6 +141,8 @@ Cuba.define do
         # Se bloquea esperando la respuesta del arduino
         respuesta = Arduino.new(nivel).cargar!
 
+        $log.info "Respuesta del arduino: #{respuesta}"
+
         case respuesta
         when :carga_ok
           # Si se recibió el sobre
@@ -183,6 +185,8 @@ Cuba.define do
         # Se bloquea esperando la respuesta del arduino
         arduino = Arduino.new(sobre.nivel)
         respuesta = arduino.extraer!
+
+        $log.info "Respuesta del arduino: #{respuesta}"
 
         case respuesta
         # Si se extrajo el sobre
