@@ -72,7 +72,7 @@ class Motor
       ubicaciones = {}
 
       NIVELES.times do |nivel|
-        ubicaciones[nivel] = ANGULOS.to_a - Sobre.where(nivel: nivel).pluck(:angulo)
+        ubicaciones[nivel] = ANGULOS - Sobre.where(nivel: nivel).pluck(:angulo)
       end
 
       @libres = ubicaciones.reject { |_, v| v.empty? }
