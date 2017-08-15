@@ -1,7 +1,7 @@
 class Arduino
   DIRECCIONES = {
-    1 => 0x08,
-    2 => 0x09
+    0 => 0x08,
+    1 => 0x09
   }
 
   COMANDOS = {

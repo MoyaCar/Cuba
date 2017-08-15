@@ -13,7 +13,7 @@ Usuario.create dni: 20400000, nombre: 'Lucas', codigo: 5678
 Usuario.create dni: 20500000, nombre: 'Favalli', codigo: 5678
 Usuario.create dni: 20600000, nombre: 'Polsky', codigo: 5678
 
-un_sobre = Sobre.create angulo: 1, nivel: 1, usuario: un_usuario_con_sobre
+un_sobre = Sobre.create angulo: 0, nivel: 0, usuario: un_usuario_con_sobre
 
 # Configuración con valores default
 config = Configuracion.create
