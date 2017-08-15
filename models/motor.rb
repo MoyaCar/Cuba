@@ -29,7 +29,11 @@ class Motor
     if nivel.nil? && angulo.nil? && ubicaciones_libres.any?
       @nivel = @libres.first.first # key
       @angulo = @libres.first.last.first # values.first
+      $log.info "Posición libre encontrada: [#{@nivel}, #{@angulo}]"
     end
+
+    # Inicializar el controlador del motor si no lo hemos inicializado aún
+    Motor.setup! if @@angulo_actual.nil?
   end
 
   # Configuración de la librería y los pines
@@ -40,26 +44,23 @@ class Motor
     RPi::GPIO.setup SENSOR, as: :input, pull: :up
 
     posicionar_en_cero!
-
   rescue RuntimeError => e
     $log.error e.message
   end
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
-    if @@angulo_actual != 0
-      ANGULOS.times do
-        if sensor_en_cero?
-          # FIXME Pasar a Configuración ?
-          @@angulo_actual = 0
-          break
-        end
-
-        girar!
+    ANGULOS.times do
+      if sensor_en_cero?
+        # FIXME Pasar a Configuración ?
+        @@angulo_actual = 0
+        break
       end
 
-      raise 'no se encontró la posición cero' unless @@angulo_actual.present?
+      girar!
     end
+
+    raise 'no se encontró la posición cero' unless @@angulo_actual.present?
   end
 
   # Genera un mapa de ubicaciones libres en base a los sobres guardados en la

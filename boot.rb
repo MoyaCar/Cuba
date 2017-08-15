@@ -42,8 +42,5 @@ require_relative 'models/configuracion'
 Cuba.use Rack::Static, root: 'public',
   urls: ['/js', '/css', '/fonts', '/img']
 
-# Inicializar el controlador del motor
-Motor.setup!
-
 # En app definimos rutas y controllers
 require_relative 'app'
