@@ -15,6 +15,7 @@ gem 'rake'
 
 # Raspberry
 gem 'i2c-devices'
+gem 'rpi_gpio'
 
 # Server
 gem 'puma'
