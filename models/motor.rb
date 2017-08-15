@@ -17,6 +17,8 @@ class Motor
 
   attr_reader :nivel, :angulo
 
+  @@angulo_actual = nil
+
   # Inicializar una instancia de motor sin posición busca una de las libres
   def initialize(nivel = nil, angulo = nil)
     @nivel = nivel
