@@ -106,12 +106,12 @@ class Motor
         # angulo_actual = 2
         # angulo = 3
         # gira 1 casillero en sentido antihorario
-        girar! pasos, :antihorario
+        Motor.girar! pasos, :antihorario
       else
         # angulo_actual = 1
         # angulo = 4 (se pasa de la media vuelta)
         # gira 2 casilleros en sentido horario
-        girar! ANGULOS - pasos, :horario
+        Motor.girar! ANGULOS - pasos, :horario
       end
     elsif pasos.negative?
       pasos = pasos.abs
@@ -120,12 +120,12 @@ class Motor
         # angulo_actual = 2
         # angulo = 1
         # gira 1 casillero en sentido horario
-        girar! pasos, :horario
+        Motor.girar! pasos, :horario
       else
         # angulo_actual = 3
         # angulo = 0 (se pasa de la media vuelta)
         # gira 2 casilleros en sentido antihorario
-        girar! ANGULOS - pasos, :antihorario
+        Motor.girar! ANGULOS - pasos, :antihorario
       end
     end
 
@@ -139,7 +139,7 @@ class Motor
     RPi::GPIO.low? SENSOR
   end
 
-  def girar!(pasos = 1, sentido = :antihorario)
+  def self.girar!(pasos = 1, sentido = :antihorario)
     case sentido
     when :antihorario
       RPi::GPIO.set_low  SIGN
