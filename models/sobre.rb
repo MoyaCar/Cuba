@@ -9,8 +9,8 @@ class Sobre < ActiveRecord::Base
   validates :angulo,
     # El ángulo no se repite en un mismo nivel
     uniqueness: { scope: :nivel },
-    inclusion: { in: Motor::ANGULOS }
+    numericality: { less_than: Motor::ANGULOS }
 
   validates :nivel,
-    inclusion: { in: Motor::NIVELES }
+    numericality: { less_than: Motor::NIVELES }
 end

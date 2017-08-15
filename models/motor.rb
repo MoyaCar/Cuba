@@ -1,5 +1,9 @@
 # Maneja el motor de rodete de sobres y encoder
-require 'rpi_gpio'
+begin
+  require 'rpi_gpio'
+rescue RuntimeError => e
+  $log.error e.message
+end
 
 class Motor
   # Posiciones en cada nivel
@@ -34,6 +38,9 @@ class Motor
     RPi::GPIO.setup SENSOR, as: :input, pull: :up
 
     posicionar_en_cero!
+
+  rescue RuntimeError => e
+    $log.error e.message
   end
 
   # Gira hasta encontrar el sensor de posición inicial
