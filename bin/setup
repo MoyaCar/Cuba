@@ -1,6 +1,10 @@
 #!/bin/bash
 # Configura la base de datos inicial para la app
 
+# Para usar rbenv
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
 # Ir al directorio del repo
 pushd "$( cd "$( dirname `dirname "${BASH_SOURCE[0]}"` )" && pwd )"
 
