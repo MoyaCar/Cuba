@@ -47,17 +47,19 @@ class Motor
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
-    ANGULOS.times do
-      if sensor_en_cero?
-        # FIXME Pasar a Configuración ?
-        @@angulo_actual = 0
-        break
+    if @@angulo_actual != 0
+      ANGULOS.times do
+        if sensor_en_cero?
+          # FIXME Pasar a Configuración ?
+          @@angulo_actual = 0
+          break
+        end
+
+        girar!
       end
 
-      girar!
+      raise 'no se encontró la posición cero' unless @@angulo_actual.present?
     end
-
-    raise 'no se encontró la posición cero' unless @@angulo_actual.present?
   end
 
   # Genera un mapa de ubicaciones libres en base a los sobres guardados en la
@@ -92,7 +94,7 @@ class Motor
     $log.info "Ubicando motor en posición #{posicion}"
 
     raise 'posición excedida' unless angulo < ANGULOS
-    raise 'posición no puede ser negativa' if angulo <= 0
+    raise 'posición no puede ser negativa' if angulo < 0
 
     media_vuelta = ANGULOS / 2
 
