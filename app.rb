@@ -207,5 +207,22 @@ Cuba.define do
       # Siempre volvemos al inicio
       res.redirect '/'
     end
+
+    # Recibe el DNI cargado desde el lector de código de barras por el Usuario
+    # administrador
+    on 'configurar' do
+      on param('espera_carga'), param('espera_extraccion') do |espera_carga, espera_extraccion|
+        Configuracion.config.update_attributes(
+          espera_carga: espera_carga,
+          espera_extraccion: espera_extraccion
+        )
+
+        flash[:mensaje] = 'Configuración actualizada.'
+        flash[:tipo] = 'alert-info'
+
+        # Siempre volvemos al inicio del administrador
+        res.redirect '/panel'
+      end
+    end
   end
 end
