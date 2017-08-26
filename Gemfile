@@ -22,3 +22,4 @@ gem 'puma'
 
 # Development
 gem 'pry', require: false
+gem 'faker', require: false

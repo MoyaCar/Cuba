@@ -1,24 +1,39 @@
 require_relative '../boot'
+require 'faker'
 
 puts 'Cargando datos de prueba...'
 
-un_admin = Usuario.create dni: 20000000, nombre: 'Juan Salvo', codigo: 1234, admin: true
-
-un_usuario_con_sobre = Usuario.create dni: 20100000, nombre: 'Elena', codigo: 5678
-un_usuario_sin_sobre = Usuario.create dni: 20200000, nombre: 'Martita', codigo: 5678
-
-# Más usuarios para llenarlos de sobres y fallar por el espacio
-Usuario.create dni: 20300000, nombre: 'Germán', codigo: 5678
-Usuario.create dni: 20400000, nombre: 'Lucas', codigo: 5678
-Usuario.create dni: 20500000, nombre: 'Favalli', codigo: 5678
-Usuario.create dni: 20600000, nombre: 'Polsky', codigo: 5678
-
-un_sobre = Sobre.create angulo: 0, nivel: 0, usuario: un_usuario_con_sobre
+# Generar nombres latinos
+I18n.locale = :es
+# Generar siempre los mismos datos
+Faker::Config.random = Random.new(42)
 
 # Configuración con valores default
 config = Configuracion.create
 
-puts "Usuarios creados: #{Usuario.count}"
+5.times do
+  Usuario.create admin: true,
+    dni: Faker::Number.unique.between(20000000, 35000000),
+    nombre: Faker::Name.unique.name,
+    codigo: 1234
+end
+
+100.times do
+  Usuario.create admin: false,
+    dni: Faker::Number.unique.between(20000000, 35000000),
+    nombre: Faker::Name.unique.name,
+    codigo: 1234
+end
+
+Usuario.normal.limit(10).each do |usuario|
+  motor = Motor.new
+  Sobre.create usuario: usuario,
+    nivel: motor.posicion.first,
+    angulo: motor.posicion.last
+end
+
+puts "Usuarios creados: #{Usuario.normal.count}"
+puts "Admins creados: #{Usuario.admin.count}"
 puts "Sobres creados: #{Sobre.count}"
 puts "Configuración cargada:"
 puts "  - espera_carga: #{config.espera_carga}"

@@ -4,6 +4,7 @@ class Usuario < ActiveRecord::Base
 
   # Para la carga de sobres no buscamos admins
   scope :normal, ->{ where admin: false }
+  scope :admin, ->{ where admin: true }
 
   validates :dni,
     numericality: { only_integer: true },
