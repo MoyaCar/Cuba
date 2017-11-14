@@ -1,7 +1,7 @@
 # Maneja el motor de rodete de sobres y encoder
 begin
   require 'rpi_gpio'
-rescue RuntimeError => e
+rescue LoadError, RuntimeError => e
   $log.error e.message
 end
 
@@ -46,6 +46,9 @@ class Motor
     posicionar_en_cero!
   rescue RuntimeError => e
     $log.error e.message
+
+    # Forzamos un 0 en development
+    @@angulo_actual = 0
   end
 
   # Gira hasta encontrar el sensor de posición inicial
@@ -142,6 +145,11 @@ class Motor
 
   def self.sensor_en_cero?
     RPi::GPIO.low? SENSOR
+  rescue RuntimeError => e
+    $log.error e.message
+
+    # Devolver siempre 0 en development
+    true
   end
 
   def self.girar!(pasos = 1, sentido = :antihorario)
@@ -161,5 +169,7 @@ class Motor
 
       RPi::GPIO.set_low PULSE
     end
+  rescue RuntimeError => e
+    $log.error e.message
   end
 end
