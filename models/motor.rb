@@ -107,7 +107,7 @@ class Motor
     # casilleros = 5
     # media_vuelta = 2 pasos
     # ángulos = [0, 1, 2, 3, 4]
-    pasos = angulo - @@angulo_actual
+    pasos = angulo - (@@angulo_actual || 0)
 
     if pasos.positive?
       if pasos <= media_vuelta
