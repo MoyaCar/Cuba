@@ -44,3 +44,7 @@
   /* Hacer que el dropdown aparezca bien a la izquierda */
   left: -90%;
 }
+
+.teclado {
+  text-align: left;
+}
