@@ -1,14 +1,19 @@
 # La definición de rutas y acciones
 #
-# GET  /                  - Bienvenida a la terminal
-# GET  /dni               - Ingreso del DNI del Usuario
-# POST /dni               - Verifica el DNI y redirige a /codigo
-# GET  /codigo            - Ingreso del Código de acceso del Usuario
-# POST /codigo            - Verifica el Código y redirige según tipo de Usuario
-# GET  /carga             - Inicio del proceso de carga de un Sobre leyendo un DNI
-# POST /carga             - Completa el proceso de carga de un Sobre validando los datos
-# GET  /extraccion        - Inicio del proceso de extracción de sobres
-# POST /extraccion        - Completa el proceso de extracción de un Sobre
+# GET     /                 - Bienvenida a la terminal
+# GET     /dni              - Ingreso del DNI del Usuario
+# POST    /dni              - Verifica el DNI y redirige a /codigo
+# GET     /codigo           - Ingreso del Código de acceso del Usuario
+# POST    /codigo           - Verifica el Código y redirige según tipo de Usuario
+# GET     /carga            - Inicio del proceso de carga de un Sobre leyendo un DNI
+# POST    /carga            - Completa el proceso de carga de un Sobre validando los datos
+# GET     /extraccion       - Inicio del proceso de extracción de sobres
+# POST    /extraccion       - Completa el proceso de extracción de un Sobre
+# GET     /usuarios         - ABM de Usuarios administradores
+# GET     /usuarios/nuevo   - ABM de Usuarios administradores
+# PUT     /usuarios         - Cargar un administrador
+# DELETE  /usuarios/:id     - Eliminar un administrador
+# POST    /usuarios/:id     - Modificar un administrador
 
 Cuba.define do
   on get do
@@ -27,19 +32,6 @@ Cuba.define do
       render 'codigo', titulo: 'Ingrese su Código de Acceso', admin: false
     end
 
-    on 'carga' do
-      # Limpiamos la sesión
-      session.delete(:dni)
-
-      render 'carga', titulo: 'Iniciar carga de Sobres', admin: true
-    end
-
-    on 'confirmar' do
-      usuario = Usuario.normal.where(dni: session[:dni]).take
-
-      render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
-    end
-
     # Verificamos que exista un sobre para este usuario o redirigimos
     on 'extraccion' do
       usuario = Usuario.find session[:usuario_actual_id]
@@ -54,8 +46,29 @@ Cuba.define do
       end
     end
 
+    # TODO Chequear que esté logueado un admin
+    on 'carga' do
+      # Limpiamos la sesión
+      session.delete(:dni)
+
+      render 'carga', titulo: 'Iniciar carga de Sobres', admin: true
+    end
+
+    # TODO Chequear que esté logueado un admin
+    on 'confirmar' do
+      usuario = Usuario.normal.where(dni: session[:dni]).take
+
+      render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
+    end
+
+    # TODO Chequear que esté logueado un admin
     on 'panel' do
       render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
+    end
+
+    # TODO Chequear que esté logueado un admin
+    on 'usuarios' do
+      render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
     end
   end
 
@@ -235,6 +248,21 @@ Cuba.define do
         # Siempre volvemos al inicio del administrador
         res.redirect '/panel'
       end
+    end
+
+    # Técnicamente debería ser un DELETE
+    on 'usuarios/:id' do |id|
+      usuario = Usuario.find(id).destroy
+
+      if usuario.destroyed?
+        flash[:mensaje] = "El usuario ha sido eliminado"
+        flash[:tipo] = 'alert-success'
+      else
+        flash[:mensaje] = "No pudo eliminarse el usuario"
+        flash[:tipo] = 'alert-danger'
+      end
+
+      res.redirect '/usuarios'
     end
   end
 end
