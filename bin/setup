@@ -15,5 +15,8 @@ rake migrate
 # Cargar los datos de prueba
 ruby db/seed.rb
 
+# Exportar los datos de prueba en .csv
+ruby db/generar_csv.rb
+
 # Volver a donde estábamos
 popd

@@ -25,11 +25,15 @@ end
     codigo: 1234
 end
 
+# Usuarios con dos sobres
 Usuario.normal.limit(10).each do |usuario|
-  motor = Motor.new
-  Sobre.create usuario: usuario,
-    nivel: motor.posicion.first,
-    angulo: motor.posicion.last
+  2.times do
+    motor = Motor.new
+
+    Sobre.create usuario: usuario,
+      nivel: motor.posicion.first,
+      angulo: motor.posicion.last
+  end
 end
 
 puts "Usuarios creados: #{Usuario.normal.count}"

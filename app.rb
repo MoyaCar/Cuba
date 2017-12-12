@@ -7,7 +7,7 @@
 # POST /codigo            - Verifica el Código y redirige según tipo de Usuario
 # GET  /carga             - Inicio del proceso de carga de un Sobre leyendo un DNI
 # POST /carga             - Completa el proceso de carga de un Sobre validando los datos
-# GET  /extraccion        - Inicio del proceso de extracción de un Sobre
+# GET  /extraccion        - Inicio del proceso de extracción de sobres
 # POST /extraccion        - Completa el proceso de extracción de un Sobre
 
 Cuba.define do
@@ -44,8 +44,8 @@ Cuba.define do
     on 'extraccion' do
       usuario = Usuario.find session[:usuario_actual_id]
 
-      if usuario.sobre.present?
-        render 'extraccion', titulo: 'Retire el sobre', admin: false
+      if usuario.sobres.sin_entregar.any?
+        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: usuario.sobres.sin_entregar.count
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
@@ -104,20 +104,15 @@ Cuba.define do
         siguiente = '/carga'
 
         if usuario.present?
-          if usuario.sobre.present?
-            flash[:mensaje] = 'Ya hay un sobre cargado para este DNI.'
-            flash[:tipo] = 'alert-danger'
-          else
-            if (motor = Motor.new).ubicaciones_libres.any?
-              # Guardamos el DNI para el próximo request
-              session[:dni] = dni
+          if (motor = Motor.new).ubicaciones_libres.any?
+            # Guardamos el DNI para el próximo request
+            session[:dni] = dni
 
-              # Pedimos confirmar la carga
-              siguiente = '/confirmar'
-            else
-              flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
-              flash[:tipo] = 'alert-danger'
-            end
+            # Pedimos confirmar la carga
+            siguiente = '/confirmar'
+          else
+            flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
+            flash[:tipo] = 'alert-danger'
           end
         else
           flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
@@ -174,9 +169,12 @@ Cuba.define do
     # Proceso de extracción de un sobre por parte de un usuario normal
     on 'extraccion' do
       usuario = Usuario.find session[:usuario_actual_id]
-      sobre = usuario.sobre
 
-      if sobre.present?
+      # Después de un error o terminar las extracciones volvemos al inicio
+      siguiente = '/'
+
+      if usuario.sobres.sin_entregar.any?
+        sobre = usuario.sobres.sin_entregar.first
         motor = Motor.new sobre.nivel, sobre.angulo
 
         # Se bloquea esperando la respuesta del motor?
@@ -194,7 +192,14 @@ Cuba.define do
           flash[:mensaje] = 'Gracias por utilizar la terminal.'
           flash[:tipo] = 'alert-success'
 
-          sobre.destroy
+          # En vez de borrar el sobre lo marcamos como entregado
+          sobre.update_attribute :entregado, true
+
+          # Si todavía hay sobres, continuamos la extracción
+          if usuario.sobres.sin_entregar.any?
+            flash[:mensaje] = "Sobres restantes: #{usuario.sobres.sin_entregar.count}."
+            siguiente = '/extraccion'
+          end
         # Si no se extrajo el sobre y el arduino lo guarda automáticamente
         when :extraccion_error
           flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
@@ -212,8 +217,7 @@ Cuba.define do
         flash[:tipo] = 'alert-danger'
       end
 
-      # Siempre volvemos al inicio
-      res.redirect '/'
+      res.redirect siguiente
     end
 
     # Recibe el DNI cargado desde el lector de código de barras por el Usuario
