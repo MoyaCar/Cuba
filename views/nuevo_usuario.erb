@@ -1,0 +1,38 @@
+<p>
+  Presione el campo que desea cargar.
+</p>
+
+<div class="col-md-6">
+  <form action='/usuarios/crear' method='post' class="row form">
+    <div class="col-sm-offset-1 form-group">
+      <label for="nombre">Nombre de usuario</label>
+      <input type="text" name="nombre" class="form-control input-lg enfocable" required autofocus
+        data-target="input[name='nombre']" data-teclado="alfanumerico"
+      />
+    </div>
+
+    <div class="col-sm-offset-1 form-group">
+      <label for="dni">DNI (login)</label>
+      <input type="text" name="dni" class="form-control input-lg enfocable" required
+        data-target="input[name='dni']"
+      />
+    </div>
+
+    <div class="col-sm-offset-1 form-group">
+      <label for="codigo">Código de acceso</label>
+      <input type="text" name="codigo" class="form-control input-lg enfocable" required
+        data-target="input[name='codigo']"
+      />
+    </div>
+
+    <div class="col-sm-offset-1 form-group">
+      <button type="submit" class="btn btn-lg btn-success">Guardar</button>
+    </div>
+  </form>
+</div>
+
+<div class="col-md-6">
+  <label>&nbsp;</label>
+
+  <div class="form-group teclado-contenedor"></div>
+</div>

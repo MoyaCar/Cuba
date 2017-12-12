@@ -19,6 +19,11 @@ $log = Logger.new STDOUT
 $log.info "Configurando Logger.level en #{log_level}"
 $log.level = Object.const_get log_level
 
+# I18n
+I18n.available_locales = [:es]
+I18n.default_locale = :es
+I18n.load_path << 'locales/rails-i18n.es.yml'
+
 require_relative 'plugins/view_helpers'
 
 # Rack Middlewares

@@ -14,17 +14,18 @@
   line-height: 40px;
 }
 
-.jumbotron {
+.principal {
+  margin: auto 8%;
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
 }
 
-.jumbotron .btn {
+.principal .btn {
   padding: 14px 24px;
   font-size: 21px;
 }
 
-.jumbotron form label {
+.principal form label {
   text-align: left;
 }
 

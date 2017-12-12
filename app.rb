@@ -1,19 +1,20 @@
 # La definición de rutas y acciones
 #
-# GET     /                 - Bienvenida a la terminal
-# GET     /dni              - Ingreso del DNI del Usuario
-# POST    /dni              - Verifica el DNI y redirige a /codigo
-# GET     /codigo           - Ingreso del Código de acceso del Usuario
-# POST    /codigo           - Verifica el Código y redirige según tipo de Usuario
-# GET     /carga            - Inicio del proceso de carga de un Sobre leyendo un DNI
-# POST    /carga            - Completa el proceso de carga de un Sobre validando los datos
-# GET     /extraccion       - Inicio del proceso de extracción de sobres
-# POST    /extraccion       - Completa el proceso de extracción de un Sobre
-# GET     /usuarios         - ABM de Usuarios administradores
-# GET     /usuarios/nuevo   - ABM de Usuarios administradores
-# PUT     /usuarios         - Cargar un administrador
-# DELETE  /usuarios/:id     - Eliminar un administrador
-# POST    /usuarios/:id     - Modificar un administrador
+# GET     /                       - Bienvenida a la terminal
+# GET     /dni                    - Ingreso del DNI del Usuario
+# POST    /dni                    - Verifica el DNI y redirige a /codigo
+# GET     /codigo                 - Ingreso del Código de acceso del Usuario
+# POST    /codigo                 - Verifica el Código y redirige según tipo de Usuario
+# GET     /carga                  - Inicio del proceso de carga de un Sobre leyendo un DNI
+# POST    /carga                  - Completa el proceso de carga de un Sobre validando los datos
+# GET     /extraccion             - Inicio del proceso de extracción de sobres
+# POST    /extraccion             - Completa el proceso de extracción de un Sobre
+# GET     /usuarios               - ABM de Usuarios administradores
+# GET     /usuarios/nuevo         - Formulario de carga de administrador
+# POST    /usuarios/nuevo         - Cargar un administrador
+# GET     /usuarios/:id/editar    - Formulario de edición de administrador
+# POST    /usuarios/:id/editar    - Modificar un administrador
+# POST    /usuarios/:id/eliminar  - Eliminar un administrador
 
 Cuba.define do
   on get do
@@ -68,7 +69,13 @@ Cuba.define do
 
     # TODO Chequear que esté logueado un admin
     on 'usuarios' do
-      render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+      on root do
+        render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+      end
+
+      on 'nuevo' do
+        render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true
+      end
     end
   end
 
@@ -157,7 +164,7 @@ Cuba.define do
           flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
           flash[:tipo] = 'alert-success'
 
-          usuario.create_sobre nivel: nivel, angulo: angulo
+          usuario.sobres.create nivel: nivel, angulo: angulo
         when :carga_error
           # Si no se recibió un sobre
           flash[:mensaje] = 'El sobre no ha sido guardado.'
@@ -250,19 +257,55 @@ Cuba.define do
       end
     end
 
-    # Técnicamente debería ser un DELETE
-    on 'usuarios/:id' do |id|
-      usuario = Usuario.find(id).destroy
+    # Procesar nuevo usuario
+    on 'usuarios/crear' do
+      on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
+        usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
 
-      if usuario.destroyed?
-        flash[:mensaje] = "El usuario ha sido eliminado"
-        flash[:tipo] = 'alert-success'
-      else
-        flash[:mensaje] = "No pudo eliminarse el usuario"
-        flash[:tipo] = 'alert-danger'
+        if usuario.persisted?
+          flash[:mensaje] = "El usuario ha sido creado"
+          flash[:tipo] = 'alert-success'
+        else
+          flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
+          flash[:tipo] = 'alert-danger'
+        end
+
+        res.redirect '/usuarios'
+      end
+    end
+
+    on 'usuarios/:id' do |id|
+      usuario = Usuario.find(id)
+
+      # Técnicamente debería ser un DELETE
+      on 'eliminar' do
+        usuario.destroy
+
+        if usuario.destroyed?
+          flash[:mensaje] = "El usuario ha sido eliminado"
+          flash[:tipo] = 'alert-success'
+        else
+          flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+          flash[:tipo] = 'alert-danger'
+        end
+
+        res.redirect '/usuarios'
       end
 
-      res.redirect '/usuarios'
+      # Procesar el formulario de edit
+      on 'editar' do
+        on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
+          if usuario.update nombre: nombre, dni: dni, codigo: codigo
+            flash[:mensaje] = "El usuario ha sido modificado"
+            flash[:tipo] = 'alert-success'
+          else
+            flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+            flash[:tipo] = 'alert-danger'
+          end
+
+          res.redirect '/usuarios'
+        end
+      end
     end
   end
 end

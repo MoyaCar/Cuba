@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid principal">
       <%# Mensajes de información al usuario sobre las acciones realizadas %>
       <% if (mensaje = flash[:mensaje]).present? %>
         <div class="alert <%= flash[:tipo] %>" role="alert">
@@ -65,7 +65,7 @@
       <% end %>
 
       <%# Bloque de contenido %>
-      <div class="jumbotron">
+      <div class="row">
         <h1><%= titulo %></h1>
 
         <%# `content` es la vista pasada al layout por `render 'vista'` %>
