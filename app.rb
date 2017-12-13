@@ -5,8 +5,8 @@
 # POST    /dni                    - Verifica el DNI y redirige a /codigo
 # GET     /codigo                 - Ingreso del Código de acceso del Usuario
 # POST    /codigo                 - Verifica el Código y redirige según tipo de Usuario
-# GET     /carga                  - Inicio del proceso de carga de un Sobre leyendo un DNI
-# POST    /carga                  - Completa el proceso de carga de un Sobre validando los datos
+# GET     /sobres                 - Inicio del proceso de carga de un Sobre leyendo un DNI
+# POST    /sobres                 - Completa el proceso de carga de un Sobre validando los datos
 # GET     /extraccion             - Inicio del proceso de extracción de sobres
 # POST    /extraccion             - Completa el proceso de extracción de un Sobre
 # GET     /usuarios               - ABM de Usuarios administradores
@@ -48,11 +48,11 @@ Cuba.define do
     end
 
     # TODO Chequear que esté logueado un admin
-    on 'carga' do
+    on 'sobres' do
       # Limpiamos la sesión
       session.delete(:dni)
 
-      render 'carga', titulo: 'Iniciar carga de Sobres', admin: true
+      render 'sobres', titulo: 'Iniciar carga de Sobres', admin: true
     end
 
     # TODO Chequear que esté logueado un admin
@@ -99,7 +99,7 @@ Cuba.define do
           flash[:mensaje] = "Le damos la bienvenida #{ usuario.admin? ? 'Administrador ' : nil}#{usuario.nombre}."
           flash[:tipo] = 'alert-info'
 
-          siguiente = usuario.admin? ? '/carga' : '/extraccion'
+          siguiente = usuario.admin? ? '/sobres' : '/extraccion'
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
@@ -116,12 +116,12 @@ Cuba.define do
 
     # Recibe el DNI cargado desde el lector de código de barras por el Usuario
     # administrador
-    on 'carga' do
+    on 'sobres' do
       on param('dni') do |dni|
         usuario = Usuario.normal.where(dni: dni).take
 
         # Cuando hubo algún error volvemos al inicio del administrador
-        siguiente = '/carga'
+        siguiente = '/sobres'
 
         if usuario.present?
           if (motor = Motor.new).ubicaciones_libres.any?
@@ -183,7 +183,7 @@ Cuba.define do
       end
 
       # Siempre volvemos al inicio del administrador
-      res.redirect '/carga'
+      res.redirect '/sobres'
     end
 
     # Proceso de extracción de un sobre por parte de un usuario normal
