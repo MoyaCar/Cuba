@@ -38,12 +38,12 @@
                     case 'string' :
                         switch(button) {
                             case 'capslock' :
-                                character = '<span>caps</span>';
+                                character = '<span>Bloq Mayús</span>';
                                 type = 'capslock';
                                 break;
 
                             case 'shift' :
-                                character = '<span>shift</span>';
+                                character = '<span>Shift</span>';
                                 type = 'shift';
                                 break;
 
