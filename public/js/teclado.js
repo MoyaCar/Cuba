@@ -32,6 +32,7 @@ var elemento = '<div class="teclado"></div>'
 var teclado = null
 
 $(document).on('focus', 'input.enfocable', function() {
+  // FIXME Ver de ocultar en vez de remover para que funcione shift y capslock
   $(teclado).remove()
 
   $('.teclado-contenedor').append(elemento)
