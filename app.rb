@@ -1,15 +1,15 @@
 # Rutas y acciones comunes:
 #
-# GET     /                       - Bienvenida a la terminal
-# GET     /dni                    - Ingreso del DNI del Usuario
-# POST    /dni                    - Verifica el DNI y redirige a /codigo
-# GET     /codigo                 - Ingreso del Código de acceso del Usuario
-# POST    /codigo                 - Verifica el Código y redirige según tipo de Usuario
+# GET     /                             - Bienvenida a la terminal
+# GET     /dni                          - Ingreso del DNI del Usuario
+# POST    /dni                          - Verifica el DNI y redirige a /codigo
+# GET     /codigo                       - Ingreso del Código de acceso del Usuario
+# POST    /codigo                       - Verifica el Código y redirige según tipo de Usuario
 #
 # Rutas y acciones de clientes:
 #
-# GET     /extraccion             - Inicio del proceso de extracción de sobres
-# POST    /extraccion             - Completa el proceso de extracción de un Sobre
+# GET     /extraccion                   - Inicio del proceso de extracción de sobres
+# POST    /extraccion                   - Completa el proceso de extracción de un Sobre
 #
 # Rutas y acciones de administradores:
 #
@@ -17,10 +17,14 @@
 # POST    /admin/sobres                 - Completa el proceso de carga de un Sobre validando los datos
 # GET     /admin/usuarios               - ABM de Usuarios administradores
 # GET     /admin/usuarios/nuevo         - Formulario de carga de administrador
-# POST    /admin/usuarios/nuevo         - Cargar un administrador
+# POST    /admin/usuarios/crear         - Cargar un administrador
 # GET     /admin/usuarios/:id/editar    - Formulario de edición de administrador
 # POST    /admin/usuarios/:id/editar    - Modificar un administrador
 # POST    /admin/usuarios/:id/eliminar  - Eliminar un administrador
+# GET     /admin/clientes               - ABM de clientes administradores
+# GET     /admin/clientes/cargar        - Inicio del proceso de carga de clientes por USB
+# POST    /admin/clientes/cargar        - Carga la lista de clientes desde el USB
+# POST    /admin/clientes/:id/sobres    - Carga un sobre nuevo para este usuario
 
 Cuba.define do
   on get do
@@ -97,10 +101,10 @@ Cuba.define do
       # Inicio de carga de clientes
       on 'clientes' do
         on root do
-          render 'index_clientes', titulo: 'Clientes cargados', admin: true, usuarios: Usuario.normal
+          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, usuarios: Usuario.normal
         end
 
-        on 'carga' do
+        on 'cargar' do
           render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true
         end
       end
@@ -289,61 +293,68 @@ Cuba.define do
         end
       end
 
-      # Procesar nuevo usuario
-      on 'usuarios/crear' do
-        on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-          usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
-
-          if usuario.persisted?
-            flash[:mensaje] = "El usuario ha sido creado"
-            flash[:tipo] = 'alert-success'
-          else
-            flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
-            flash[:tipo] = 'alert-danger'
-          end
-
-          res.redirect '/admin/usuarios'
-        end
-      end
-
-      on 'usuarios/:id' do |id|
-        usuario = Usuario.find(id)
-
-        # Técnicamente debería ser un DELETE
-        on 'eliminar' do
-          usuario.destroy
-
-          if usuario.destroyed?
-            flash[:mensaje] = "El usuario ha sido eliminado"
-            flash[:tipo] = 'alert-success'
-          else
-            flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
-            flash[:tipo] = 'alert-danger'
-          end
-
-          res.redirect '/admin/usuarios'
-        end
-
-        # Procesar el formulario de edit
-        on 'editar' do
+      on 'usuarios' do
+        # Procesar nuevo usuario
+        on 'crear' do
           on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-            if usuario.update nombre: nombre, dni: dni, codigo: codigo
-              flash[:mensaje] = "El usuario ha sido modificado"
+            usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
+
+            if usuario.persisted?
+              flash[:mensaje] = "El usuario ha sido creado"
               flash[:tipo] = 'alert-success'
             else
-              flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
               flash[:tipo] = 'alert-danger'
             end
 
             res.redirect '/admin/usuarios'
           end
         end
+
+        on ':id' do |id|
+          usuario = Usuario.find(id)
+
+          # Técnicamente debería ser un DELETE
+          on 'eliminar' do
+            usuario.destroy
+
+            if usuario.destroyed?
+              flash[:mensaje] = "El usuario ha sido eliminado"
+              flash[:tipo] = 'alert-success'
+            else
+              flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              flash[:tipo] = 'alert-danger'
+            end
+
+            res.redirect '/admin/usuarios'
+          end
+
+          # Procesar el formulario de edit
+          on 'editar' do
+            on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
+              if usuario.update nombre: nombre, dni: dni, codigo: codigo
+                flash[:mensaje] = "El usuario ha sido modificado"
+                flash[:tipo] = 'alert-success'
+              else
+                flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+                flash[:tipo] = 'alert-danger'
+              end
+
+              res.redirect '/admin/usuarios'
+            end
+          end
+        end
       end
 
       on 'clientes' do
-        on 'carga' do
+        # Carga la lista de clientes desde el USB
+        on 'cargar' do
           # cargar datos del csv
           res.redirect '/admin/clientes'
+        end
+
+        # Carga un sobre nuevo para este usuario
+        on ':id/sobres' do |id|
         end
       end
     end
