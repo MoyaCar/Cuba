@@ -80,11 +80,17 @@ Cuba.define do
       # Inicio de carga de usuarios administradores
       on 'usuarios' do
         on root do
-          render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+          render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
         end
 
         on 'nuevo' do
           render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true
+        end
+
+        on ':id/editar' do |id|
+          usuario = Usuario.find(id)
+
+          render 'editar_usuario', titulo: "Editar usuario #{usuario.nombre}", usuario: usuario, admin: true
         end
       end
 
