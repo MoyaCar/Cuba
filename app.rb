@@ -1,20 +1,26 @@
-# La definición de rutas y acciones
+# Rutas y acciones comunes:
 #
 # GET     /                       - Bienvenida a la terminal
 # GET     /dni                    - Ingreso del DNI del Usuario
 # POST    /dni                    - Verifica el DNI y redirige a /codigo
 # GET     /codigo                 - Ingreso del Código de acceso del Usuario
 # POST    /codigo                 - Verifica el Código y redirige según tipo de Usuario
-# GET     /sobres                 - Inicio del proceso de carga de un Sobre leyendo un DNI
-# POST    /sobres                 - Completa el proceso de carga de un Sobre validando los datos
+#
+# Rutas y acciones de clientes:
+#
 # GET     /extraccion             - Inicio del proceso de extracción de sobres
 # POST    /extraccion             - Completa el proceso de extracción de un Sobre
-# GET     /usuarios               - ABM de Usuarios administradores
-# GET     /usuarios/nuevo         - Formulario de carga de administrador
-# POST    /usuarios/nuevo         - Cargar un administrador
-# GET     /usuarios/:id/editar    - Formulario de edición de administrador
-# POST    /usuarios/:id/editar    - Modificar un administrador
-# POST    /usuarios/:id/eliminar  - Eliminar un administrador
+#
+# Rutas y acciones de administradores:
+#
+# GET     /admin/sobres                 - Inicio del proceso de carga de un Sobre leyendo un DNI
+# POST    /admin/sobres                 - Completa el proceso de carga de un Sobre validando los datos
+# GET     /admin/usuarios               - ABM de Usuarios administradores
+# GET     /admin/usuarios/nuevo         - Formulario de carga de administrador
+# POST    /admin/usuarios/nuevo         - Cargar un administrador
+# GET     /admin/usuarios/:id/editar    - Formulario de edición de administrador
+# POST    /admin/usuarios/:id/editar    - Modificar un administrador
+# POST    /admin/usuarios/:id/eliminar  - Eliminar un administrador
 
 Cuba.define do
   on get do
@@ -47,34 +53,50 @@ Cuba.define do
       end
     end
 
-    # TODO Chequear que esté logueado un admin
-    on 'sobres' do
-      # Limpiamos la sesión
-      session.delete(:dni)
+    # Control de acceso de administradores para el bloque completo
+    on 'admin' do
+      garantizar_admin!
 
-      render 'sobres', titulo: 'Iniciar carga de Sobres', admin: true
-    end
+      # Inicio de carga de sobres
+      on 'sobres' do
+        # Limpiamos los datos temporales de la sesión
+        session.delete(:dni)
 
-    # TODO Chequear que esté logueado un admin
-    on 'confirmar' do
-      usuario = Usuario.normal.where(dni: session[:dni]).take
-
-      render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
-    end
-
-    # TODO Chequear que esté logueado un admin
-    on 'panel' do
-      render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
-    end
-
-    # TODO Chequear que esté logueado un admin
-    on 'usuarios' do
-      on root do
-        render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+        render 'sobres', titulo: 'Iniciar carga de Sobres', admin: true
       end
 
-      on 'nuevo' do
-        render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true
+      # Confirmación de carga de sobres
+      on 'confirmar' do
+        usuario = Usuario.normal.where(dni: session[:dni]).take
+
+        render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
+      end
+
+      # Panel de configuración
+      on 'panel' do
+        render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
+      end
+
+      # Inicio de carga de usuarios administradores
+      on 'usuarios' do
+        on root do
+          render 'usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+        end
+
+        on 'nuevo' do
+          render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true
+        end
+      end
+
+      # Inicio de carga de clientes
+      on 'clientes' do
+        on root do
+          render 'index_clientes', titulo: 'Clientes cargados', admin: true, usuarios: Usuario.normal
+        end
+
+        on 'carga' do
+          render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true
+        end
       end
     end
   end
@@ -99,7 +121,7 @@ Cuba.define do
           flash[:mensaje] = "Le damos la bienvenida #{ usuario.admin? ? 'Administrador ' : nil}#{usuario.nombre}."
           flash[:tipo] = 'alert-info'
 
-          siguiente = usuario.admin? ? '/sobres' : '/extraccion'
+          siguiente = usuario.admin? ? '/admin/sobres' : '/extraccion'
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
@@ -112,78 +134,6 @@ Cuba.define do
           res.redirect '/'
         end
       end
-    end
-
-    # Recibe el DNI cargado desde el lector de código de barras por el Usuario
-    # administrador
-    on 'sobres' do
-      on param('dni') do |dni|
-        usuario = Usuario.normal.where(dni: dni).take
-
-        # Cuando hubo algún error volvemos al inicio del administrador
-        siguiente = '/sobres'
-
-        if usuario.present?
-          if (motor = Motor.new).ubicaciones_libres.any?
-            # Guardamos el DNI para el próximo request
-            session[:dni] = dni
-
-            # Pedimos confirmar la carga
-            siguiente = '/confirmar'
-          else
-            flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
-            flash[:tipo] = 'alert-danger'
-          end
-        else
-          flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
-          flash[:tipo] = 'alert-danger'
-        end
-
-        res.redirect siguiente
-      end
-    end
-
-    on 'confirmar' do
-      usuario = Usuario.normal.where(dni: session[:dni]).take
-
-      if usuario.present?
-        motor = Motor.new
-        nivel, angulo = motor.posicion
-
-        # Se bloquea esperando la respuesta del motor?
-        motor.posicionar!
-
-        # Se bloquea esperando la respuesta del arduino
-        respuesta = Arduino.new(nivel).cargar!
-
-        $log.info "Respuesta del arduino: #{respuesta}"
-
-        case respuesta
-        when :carga_ok
-          # Si se recibió el sobre
-          flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
-          flash[:tipo] = 'alert-success'
-
-          usuario.sobres.create nivel: nivel, angulo: angulo
-        when :carga_error
-          # Si no se recibió un sobre
-          flash[:mensaje] = 'El sobre no ha sido guardado.'
-          flash[:tipo] = 'alert-info'
-
-        when :error_de_bus
-          flash[:mensaje] = 'Falló la conexión.'
-          flash[:tipo] = 'alert-danger'
-        else
-          flash[:mensaje] = 'Ocurrió un error.'
-          flash[:tipo] = 'alert-danger'
-        end
-      else
-        flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
-        flash[:tipo] = 'alert-danger'
-      end
-
-      # Siempre volvemos al inicio del administrador
-      res.redirect '/sobres'
     end
 
     # Proceso de extracción de un sobre por parte de un usuario normal
@@ -240,70 +190,154 @@ Cuba.define do
       res.redirect siguiente
     end
 
-    # Recibe el DNI cargado desde el lector de código de barras por el Usuario
-    # administrador
-    on 'configurar' do
-      on param('espera_carga'), param('espera_extraccion') do |espera_carga, espera_extraccion|
-        Configuracion.config.update_attributes(
-          espera_carga: espera_carga,
-          espera_extraccion: espera_extraccion
-        )
+    # Control de acceso de administradores para el bloque completo
+    on 'admin' do
+      garantizar_admin!
 
-        flash[:mensaje] = 'Configuración actualizada.'
-        flash[:tipo] = 'alert-info'
+      # Recibe el DNI cargado desde el lector de código de barras por el Usuario
+      # administrador
+      on 'sobres' do
+        on param('dni') do |dni|
+          usuario = Usuario.normal.where(dni: dni).take
 
-        # Siempre volvemos al inicio del administrador
-        res.redirect '/panel'
-      end
-    end
+          # Cuando hubo algún error volvemos al inicio del administrador
+          siguiente = '/admin/sobres'
 
-    # Procesar nuevo usuario
-    on 'usuarios/crear' do
-      on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-        usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
+          if usuario.present?
+            if (motor = Motor.new).ubicaciones_libres.any?
+              # Guardamos el DNI para el próximo request
+              session[:dni] = dni
 
-        if usuario.persisted?
-          flash[:mensaje] = "El usuario ha sido creado"
-          flash[:tipo] = 'alert-success'
-        else
-          flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
-          flash[:tipo] = 'alert-danger'
-        end
-
-        res.redirect '/usuarios'
-      end
-    end
-
-    on 'usuarios/:id' do |id|
-      usuario = Usuario.find(id)
-
-      # Técnicamente debería ser un DELETE
-      on 'eliminar' do
-        usuario.destroy
-
-        if usuario.destroyed?
-          flash[:mensaje] = "El usuario ha sido eliminado"
-          flash[:tipo] = 'alert-success'
-        else
-          flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
-          flash[:tipo] = 'alert-danger'
-        end
-
-        res.redirect '/usuarios'
-      end
-
-      # Procesar el formulario de edit
-      on 'editar' do
-        on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-          if usuario.update nombre: nombre, dni: dni, codigo: codigo
-            flash[:mensaje] = "El usuario ha sido modificado"
-            flash[:tipo] = 'alert-success'
+              # Pedimos confirmar la carga
+              siguiente = '/admin/confirmar'
+            else
+              flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
+              flash[:tipo] = 'alert-danger'
+            end
           else
-            flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+            flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
             flash[:tipo] = 'alert-danger'
           end
 
-          res.redirect '/usuarios'
+          res.redirect siguiente
+        end
+      end
+
+      on 'confirmar' do
+        usuario = Usuario.normal.where(dni: session[:dni]).take
+
+        if usuario.present?
+          motor = Motor.new
+          nivel, angulo = motor.posicion
+
+          # Se bloquea esperando la respuesta del motor?
+          motor.posicionar!
+
+          # Se bloquea esperando la respuesta del arduino
+          respuesta = Arduino.new(nivel).cargar!
+
+          $log.info "Respuesta del arduino: #{respuesta}"
+
+          case respuesta
+          when :carga_ok
+            # Si se recibió el sobre
+            flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
+            flash[:tipo] = 'alert-success'
+
+            usuario.sobres.create nivel: nivel, angulo: angulo
+          when :carga_error
+            # Si no se recibió un sobre
+            flash[:mensaje] = 'El sobre no ha sido guardado.'
+            flash[:tipo] = 'alert-info'
+
+          when :error_de_bus
+            flash[:mensaje] = 'Falló la conexión.'
+            flash[:tipo] = 'alert-danger'
+          else
+            flash[:mensaje] = 'Ocurrió un error.'
+            flash[:tipo] = 'alert-danger'
+          end
+        else
+          flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
+          flash[:tipo] = 'alert-danger'
+        end
+
+        # Siempre volvemos al inicio del administrador
+        res.redirect '/admin/sobres'
+      end
+
+      # Recibe el DNI cargado desde el lector de código de barras por el Usuario
+      # administrador
+      on 'configurar' do
+        on param('espera_carga'), param('espera_extraccion') do |espera_carga, espera_extraccion|
+          Configuracion.config.update_attributes(
+            espera_carga: espera_carga,
+            espera_extraccion: espera_extraccion
+          )
+
+          flash[:mensaje] = 'Configuración actualizada.'
+          flash[:tipo] = 'alert-info'
+
+          # Siempre volvemos al inicio del administrador
+          res.redirect '/admin/panel'
+        end
+      end
+
+      # Procesar nuevo usuario
+      on 'usuarios/crear' do
+        on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
+          usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
+
+          if usuario.persisted?
+            flash[:mensaje] = "El usuario ha sido creado"
+            flash[:tipo] = 'alert-success'
+          else
+            flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
+            flash[:tipo] = 'alert-danger'
+          end
+
+          res.redirect '/admin/usuarios'
+        end
+      end
+
+      on 'usuarios/:id' do |id|
+        usuario = Usuario.find(id)
+
+        # Técnicamente debería ser un DELETE
+        on 'eliminar' do
+          usuario.destroy
+
+          if usuario.destroyed?
+            flash[:mensaje] = "El usuario ha sido eliminado"
+            flash[:tipo] = 'alert-success'
+          else
+            flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+            flash[:tipo] = 'alert-danger'
+          end
+
+          res.redirect '/admin/usuarios'
+        end
+
+        # Procesar el formulario de edit
+        on 'editar' do
+          on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
+            if usuario.update nombre: nombre, dni: dni, codigo: codigo
+              flash[:mensaje] = "El usuario ha sido modificado"
+              flash[:tipo] = 'alert-success'
+            else
+              flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              flash[:tipo] = 'alert-danger'
+            end
+
+            res.redirect '/admin/usuarios'
+          end
+        end
+      end
+
+      on 'clientes' do
+        on 'carga' do
+          # cargar datos del csv
+          res.redirect '/admin/clientes'
         end
       end
     end

@@ -8,6 +8,9 @@ require 'yaml'
 require 'i2c'
 require 'i2c/driver/i2c-dev'
 
+require_relative 'plugins/view_helpers'
+require_relative 'plugins/controller_helpers'
+
 # Configuración de la aplicación
 configuration = YAML::load(IO.read('config.yml'))
 
@@ -24,8 +27,6 @@ I18n.available_locales = [:es]
 I18n.default_locale = :es
 I18n.load_path << 'locales/rails-i18n.es.yml'
 
-require_relative 'plugins/view_helpers'
-
 # Rack Middlewares
 # Crear sesión para los flashes informativos
 Cuba.use Rack::Session::Cookie, secret: ENV['SED_SESSION_KEY']
@@ -34,8 +35,7 @@ Cuba.use Cuba::Flash
 # Cuba plugins
 Cuba.plugin Cuba::Render
 Cuba.plugin ViewHelpers
-
-require_relative 'plugins/view_helpers'
+Cuba.plugin ControllerHelpers
 
 require_relative 'models/motor'
 require_relative 'models/arduino'
