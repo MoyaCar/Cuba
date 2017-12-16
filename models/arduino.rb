@@ -29,23 +29,25 @@ class Arduino
     $log.error 'No se pudo cargar I2CDevice'
 
     # Mock de i2c por si no estamos corriendo la aplicación en la Raspberry
-    Struct.new('Mock', :direccion, :respuesta) do
-      def i2cset(comando)
-        $log.info "Comando #{comando} enviado a la dirección #{direccion} del bus"
+    unless Struct::const_defined? 'Mock'
+      Struct.new('Mock', :direccion, :respuesta) do
+        def i2cset(comando)
+          $log.info "Comando #{comando} enviado a la dirección #{direccion} del bus"
 
-        @comando = comando
-      end
+          @comando = comando
+        end
 
-      def i2cget(param, long)
-        $log.info "Pedido de datos al bus"
+        def i2cget(param, long)
+          $log.info "Pedido de datos al bus"
 
-        sleep 5
-        mensaje = respuesta || (@comando == COMANDOS[:carga] ? 0x02 : 0x00)
+          sleep 5
+          mensaje = respuesta || (@comando == COMANDOS[:carga] ? 0x02 : 0x00)
 
-        $log.info "Respuesta: #{RESPUESTAS[mensaje]}"
+          $log.info "Respuesta: #{RESPUESTAS[mensaje]}"
 
-        # Devolvemos el código en string, como I2CDevice
-        mensaje.chr
+          # Devolvemos el código en string, como I2CDevice
+          mensaje.chr
+        end
       end
     end
 
