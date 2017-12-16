@@ -1,0 +1,23 @@
+<div class="col-md-12">
+  <table class="table table-bordered table-striped table-condensed text-left data-table-logs">
+    <thead>
+      <tr>
+        <th class="col-md-2">Fecha</th>
+        <th class="col-md-1">Severidad</th>
+        <th class="col-md-6">Mensaje</th>
+        <th class="col-md-3">Usuario</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% logs.each do |log| %>
+        <tr>
+          <td class="col-md-2"><%= log.created_at %></td>
+          <td class="col-md-1"><%= log.severidad %></td>
+          <td class="col-md-6"><%= log.mensaje %></td>
+          <td class="col-md-3"><%= log.usuario && log.usuario.nombre %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

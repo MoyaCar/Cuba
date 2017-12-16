@@ -25,12 +25,14 @@
 # GET     /admin/clientes/cargar        - Inicio del proceso de carga de clientes por USB
 # POST    /admin/clientes/cargar        - Carga la lista de clientes desde el USB
 # POST    /admin/clientes/:id/sobres    - Carga un sobre nuevo para este usuario
+# GET     /admin/logs                   - Visualización de logs del sistema
 
 Cuba.define do
   on get do
     on root do
       # Limpiamos la sesión
       session.delete(:usuario_actual_id)
+      Log.usuario_actual = nil
 
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
     end
@@ -108,6 +110,10 @@ Cuba.define do
           render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true
         end
       end
+
+      on 'logs' do
+        render 'index_logs', titulo: 'Logs del sistema', admin: true, logs: Log.all
+      end
     end
   end
 
@@ -135,6 +141,8 @@ Cuba.define do
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
+          Log.usuario_actual = usuario.id
+          Log.info "Usuario logueado: #{usuario.nombre}"
 
           res.redirect siguiente
         else
@@ -164,7 +172,7 @@ Cuba.define do
         arduino = Arduino.new(sobre.nivel)
         respuesta = arduino.extraer!
 
-        $log.info "Respuesta del arduino: #{respuesta}"
+        Log.info "Respuesta del arduino: #{respuesta}"
 
         case respuesta
         # Si se extrajo el sobre
@@ -246,7 +254,7 @@ Cuba.define do
           # Se bloquea esperando la respuesta del arduino
           respuesta = Arduino.new(nivel).cargar!
 
-          $log.info "Respuesta del arduino: #{respuesta}"
+          Log.info "Respuesta del arduino: #{respuesta}"
 
           case respuesta
           when :carga_ok

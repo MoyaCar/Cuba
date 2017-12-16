@@ -26,24 +26,24 @@ class Arduino
     driver = I2CDevice::Driver::I2CDev.new('/dev/i2c-1')
     @dispositivo = I2CDevice.new(address: DIRECCIONES[nivel], driver: driver)
   rescue Exception
-    $log.error 'No se pudo cargar I2CDevice'
+    Log.error 'No se pudo cargar I2CDevice'
 
     # Mock de i2c por si no estamos corriendo la aplicación en la Raspberry
     unless Struct::const_defined? 'Mock'
       Struct.new('Mock', :direccion, :respuesta) do
         def i2cset(comando)
-          $log.info "Comando #{comando} enviado a la dirección #{direccion} del bus"
+          Log.info "Comando #{comando} enviado a la dirección #{direccion} del bus"
 
           @comando = comando
         end
 
         def i2cget(param, long)
-          $log.info "Pedido de datos al bus"
+          Log.info "Pedido de datos al bus"
 
           sleep 5
           mensaje = respuesta || (@comando == COMANDOS[:carga] ? 0x02 : 0x00)
 
-          $log.info "Respuesta: #{RESPUESTAS[mensaje]}"
+          Log.info "Respuesta: #{RESPUESTAS[mensaje]}"
 
           # Devolvemos el código en string, como I2CDevice
           mensaje.chr
@@ -66,33 +66,33 @@ class Arduino
 
     RESPUESTAS[estado]
   rescue Errno::EREMOTEIO
-    $log.error 'No se pudieron enviar datos al bus'
+    Log.error 'No se pudieron enviar datos al bus'
 
     :error_de_bus
   end
 
   def cargar!
-    $log.info "Inicio de proceso de carga"
+    Log.info "Inicio de proceso de carga"
 
     ordenar :carga, Configuracion.espera_carga
   end
 
   def extraer!
-    $log.info "Inicio de proceso de extracción"
+    Log.info "Inicio de proceso de extracción"
 
     ordenar :extraccion, Configuracion.espera_extraccion
   end
 
   # FIXME Para qué se usan?
   def cero!
-    $log.info "Llevando presentador a cero"
+    Log.info "Llevando presentador a cero"
 
     ordenar :cero, 0
   end
 
   # FIXME Para qué se usan?
   def test!
-    $log.info "Test!"
+    Log.info "Test!"
 
     ordenar :test, 0
   end

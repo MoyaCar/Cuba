@@ -18,9 +18,9 @@ ActiveRecord::Base.establish_connection(configuration['db'])
 
 # Logger accesible globalmente, nivel de logueo según environment
 log_level = "Logger::#{configuration['log'][ENV['RACK_ENV']] || 'DEBUG'}"
-$log = Logger.new STDOUT
-$log.info "Configurando Logger.level en #{log_level}"
-$log.level = Object.const_get log_level
+
+require_relative 'models/log'
+Log.inicializar(log_level)
 
 # I18n
 I18n.available_locales = [:es]

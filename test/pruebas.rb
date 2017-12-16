@@ -18,13 +18,13 @@ puts "Posicion inicial: cargar sobre"
 
 arduino = Arduino.new(nivel)
 respuesta = arduino.cargar!
-$log.info "Respuesta del arduino: #{respuesta}"
+Log.logger.info "Respuesta del arduino: #{respuesta}"
 
 puts "Posicion inicial: extrar sobre"
 
 arduino = Arduino.new(nivel)
 respuesta = arduino.extraer!
-$log.info "Respuesta del arduino: #{respuesta}"
+Log.logger.info "Respuesta del arduino: #{respuesta}"
 
 pos_ini = pos_ini + 1
 
@@ -36,13 +36,13 @@ puts "Posicion inicial: cargar sobre"
 
 arduino = Arduino.new(nivel)
 respuesta = arduino.cargar!
-$log.info "Respuesta del arduino: #{respuesta}"
+Log.logger.info "Respuesta del arduino: #{respuesta}"
 
 puts "Posicion inicial: extrar sobre"
 
 arduino = Arduino.new(nivel)
 respuesta = arduino.extraer!
-$log.info "Respuesta del arduino: #{respuesta}"
+Log.logger.info "Respuesta del arduino: #{respuesta}"
 
 pos_med = pos_med + 1
 

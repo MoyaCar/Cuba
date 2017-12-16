@@ -2,7 +2,7 @@
 begin
   require 'rpi_gpio'
 rescue LoadError, RuntimeError => e
-  $log.error e.message
+  Log.logger.error e.message
 end
 
 class Motor
@@ -31,14 +31,14 @@ class Motor
     @nivel = nivel
     @angulo = angulo
 
-    $log.info "Inicializando nivel: #{nivel} y angulo: #{angulo}"
+    Log.logger.info "Inicializando nivel: #{nivel} y angulo: #{angulo}"
 
     # Usamos la primer posición disponible
     # FIXME largar error si no hay
     if nivel.nil? && angulo.nil? && ubicaciones_libres.any?
       @nivel = @libres.first.first # key
       @angulo = @libres.first.last.first # values.first
-      $log.info "Posición libre encontrada: [#{@nivel}, #{@angulo}]"
+      Log.info "Posición libre encontrada: [#{@nivel}, #{@angulo}]"
     end
 
     # Inicializar el controlador del motor si no lo hemos inicializado aún
@@ -47,7 +47,7 @@ class Motor
 
   # Configuración de la librería y los pines
   def self.setup!
-    $log.info 'Configurando la librería y los pines'
+    Log.info 'Configurando la librería y los pines'
 
     RPi::GPIO.set_numbering :board
     RPi::GPIO.setup PULSE, as: :output, initialize: :low
@@ -56,7 +56,7 @@ class Motor
 
     posicionar_en_cero!
   rescue RuntimeError => e
-    $log.error e.message
+    Log.error e.message
 
     # Forzamos un 0 en development
     @@angulo_actual = 0
@@ -64,7 +64,7 @@ class Motor
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
-    $log.info "Posicionando en cero"
+    Log.info "Posicionando en cero"
 
     t_min = 0.003
     t_max = 0.030
@@ -74,18 +74,18 @@ class Motor
     estado = 0
 
     if sensor_en_cero? # si esta en posicion lo muevo en sentido contrario
-      $log.info "DEBUG: Sensor Cero activado, moviendo 2 posiciones..."
+      Log.debug "Sensor Cero activado, moviendo 2 posiciones..."
       RPi::GPIO.set_low SIGN
       sleep 0.0001
       girar! 3
     end
 
-    $log.info "DEBUG: Buscando cero..."
+    Log.debug "Buscando cero..."
     RPi::GPIO.set_high SIGN
     sleep 0.0001
 
     for i in 1..PPR * 2
-      $log.info "DEBUG: Estado: #{estado} // Pulso: #{t_pul}"
+      Log.debug "Estado: #{estado} // Pulso: #{t_pul}"
       if sensor_en_cero? && estado == 0 then
         estado = 1
       elsif sensor_en_cero? && estado == 2 then
@@ -141,7 +141,7 @@ class Motor
       @libres = ubicaciones.reject { |_, v| v.empty? }
     end
 
-    $log.debug { "#{@libres.values.flatten.size} ubicaciones libres" }
+    Log.logger.debug { "#{@libres.values.flatten.size} ubicaciones libres" }
 
     @libres
   end
@@ -152,7 +152,7 @@ class Motor
 
   # FIXME Implementar
   def posicionar!
-    $log.info "Ubicando motor en posición #{posicion}"
+    Log.info "Ubicando motor en posición #{posicion}"
 
     raise 'posición excedida' unless angulo < ANGULOS
     raise 'posición no puede ser negativa' if angulo < 0
@@ -203,7 +203,7 @@ class Motor
   def self.sensor_en_cero?
     RPi::GPIO.high? SENSOR
   rescue RuntimeError => e
-    $log.error e.message
+    Log.error e.message
 
     # Devolver siempre 0 en development
     true
@@ -251,6 +251,6 @@ class Motor
       end
     end
   rescue RuntimeError => e
-    $log.error e.message
+    Log.error e.message
   end
 end

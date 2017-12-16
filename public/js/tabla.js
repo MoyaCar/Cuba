@@ -3,7 +3,7 @@ $(document).ready(function(){
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 5,
+    pageLength: 10,
     lengthChange: false,
     columns: [
       null,
@@ -15,6 +15,19 @@ $(document).ready(function(){
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>"
   });
+
+  $('.data-table-logs').DataTable({
+    language: {
+      url: '/js/datatables.es.json'
+    },
+    pageLength: 10,
+    lengthChange: false,
+    dom:
+      "<'row'<'col-sm-6'l><'col-sm-6'>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>"
+  });
+
 });
 
 $(document).on('input', 'input.filtro', function () {
