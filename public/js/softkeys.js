@@ -132,7 +132,8 @@
                             break;
                     }
 
-                    $(settings.target).focus().val(targetValue + character);
+                    // Forzar el trigger del evento para detectar inputs
+                    $(settings.target).focus().val(targetValue + character).trigger('input');
                 });
             },
 

@@ -1,27 +1,29 @@
-<table class="table table-striped table-condensed text-left">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>DNI</th>
-      <th>Código de Acceso</th>
-    </tr>
-  </thead>
+<div class="col-md-12">
+  <table class="table table-striped table-condensed text-left">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>DNI</th>
+        <th>Código de Acceso</th>
+      </tr>
+    </thead>
 
-  <tbody>
-    <tr>
-      <td><%= usuario.nombre %></td>
-      <td><%= usuario.dni %></td>
-      <td><%= usuario.codigo %></td>
-    </tr>
-  </tbody>
-</table>
+    <tbody>
+      <tr>
+        <td><%= usuario.nombre %></td>
+        <td><%= usuario.dni %></td>
+        <td><%= usuario.codigo %></td>
+      </tr>
+    </tbody>
+  </table>
 
-<p class="lead">
-  Presione Confirmar e ingrese el sobre en la ranura iluminada.
-</p>
+  <p class="lead">
+    Presione Confirmar e ingrese el sobre en la ranura iluminada.
+  </p>
 
-<form action='/admin/confirmar' method='post' class="row form">
-  <div class="col-sm-offset-4 col-sm-4 form-group">
-    <button type="submit" class="btn btn-lg btn-success">Confirmar</button>
-  </div>
-</form>
+  <form action='/admin/confirmar' method='post' class="row form">
+    <div class="col-sm-offset-4 col-sm-4 form-group">
+      <button type="submit" class="btn btn-lg btn-success">Confirmar</button>
+    </div>
+  </form>
+</div>

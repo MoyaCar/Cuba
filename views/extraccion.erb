@@ -1,9 +1,11 @@
-<p class="lead">Tiene <%= cantidad_de_sobres x %> en el sistema</p>
+<div class="col-md-12">
+  <p class="lead">Tiene <%= cantidad_de_sobres x %> en el sistema</p>
 
-<p class="lead">Explicación sobre cómo retirar el sobre</p>
+  <p class="lead">Explicación sobre cómo retirar el sobre</p>
 
-<form action='/extraccion' method='post' class="row form">
-  <div class="col-sm-offset-4 col-sm-4 form-group">
-    <button type="submit" class="btn btn-lg btn-success">Iniciar extracción</button>
-  </div>
-</form>
+  <form action='/extraccion' method='post' class="row form">
+    <div class="col-sm-offset-4 col-sm-4 form-group">
+      <button type="submit" class="btn btn-lg btn-success">Iniciar extracción</button>
+    </div>
+  </form>
+</div>

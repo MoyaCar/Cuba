@@ -1,36 +1,42 @@
-<p>
-  <a class="btn btn-success" href="/admin/usuarios/nuevo" role="button">
-    <i class="glyphicon glyphicon-plus"></i>
-    Nuevo Administrador
-  </a>
-</p>
-
-<table class="table table-striped table-condensed text-left data-table">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>DNI</th>
-      <th>Código de Acceso</th>
-      <th>Editar/Eliminar</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% usuarios.each do |usuario| %>
+<div class="col-md-10">
+  <table class="table table-striped table-condensed text-left data-table">
+    <thead>
       <tr>
-        <td><%= usuario.nombre %></td>
-        <td><%= usuario.dni %></td>
-        <td><%= usuario.codigo %></td>
-        <td>
-          <a class="btn btn-primary" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
-            <i class="glyphicon glyphicon-edit"></i>
-          </a>
-
-          <a data-method="delete" class="btn btn-danger" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
-            <i class="glyphicon glyphicon-remove"></i>
-          </a>
-        </td>
+        <th class="col-md-8">Nombre</th>
+        <th class="col-md-2">DNI</th>
+        <th class="col-md-2">Editar/Eliminar</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% usuarios.each do |usuario| %>
+        <tr>
+          <td class="col-md-8"><%= usuario.nombre %></td>
+          <td class="col-md-2"><%= usuario.dni %></td>
+          <td class="col-md-2">
+            <a class="btn btn-primary" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
+              <i class="glyphicon glyphicon-edit"></i>
+            </a>
+
+            <a data-method="delete" class="btn btn-danger" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
+              <i class="glyphicon glyphicon-remove"></i>
+            </a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="col-md-2">
+  <div class="form-group">
+    <input type="text" name="filtro" class="filtro form-control input-lg enfocable" placeholder="Buscar..." autofocus data-target="input[name='filtro']"/>
+  </div>
+
+  <div class="form-group teclado-contenedor"></div>
+
+  <a class="btn btn-success lateral" href="/admin/usuarios/nuevo" role="button">
+    <i class="glyphicon glyphicon-plus"></i>
+    Nuevo Usuario
+  </a>
+</div>

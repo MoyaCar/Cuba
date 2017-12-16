@@ -69,11 +69,12 @@
         </div>
       <% end %>
 
+      <h1><%= titulo %></h1>
+
       <%# Bloque de contenido %>
       <div class="row">
-        <h1><%= titulo %></h1>
-
-        <%# `content` es la vista pasada al layout por `render 'vista'` %>
+        <%# `content` es la vista pasada al layout por `render 'vista'`. %>
+        <%# Los elementos más externos siempre deben ser columnas del grid %>
         <%= content %>
       </div>
     </div>

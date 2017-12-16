@@ -31,3 +31,7 @@
 .teclado {
   text-align: left;
 }
+
+a.btn.lateral {
+  width: 100%;
+}
