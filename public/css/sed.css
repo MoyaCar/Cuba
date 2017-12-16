@@ -35,3 +35,12 @@
 a.btn.lateral {
   width: 100%;
 }
+
+/* Dejar border internos solamente */
+.table-bordered {
+  border-width: 0;
+}
+
+.controles {
+  text-align: right;
+}

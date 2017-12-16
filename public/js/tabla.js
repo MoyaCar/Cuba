@@ -5,7 +5,11 @@ $(document).ready(function(){
     },
     pageLength: 5,
     lengthChange: false,
-    ordering: false,
+    columns: [
+      null,
+      null,
+      { orderable: false }
+    ],
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
       "<'row'<'col-sm-12'tr>>" +
