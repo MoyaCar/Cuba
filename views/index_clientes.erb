@@ -14,12 +14,8 @@
           <td class="col-md-8"><%= usuario.nombre %></td>
           <td class="col-md-2"><%= usuario.dni %></td>
           <td class="controles col-md-2">
-            <a class="btn btn-primary" href="/admin/clientes/<%= usuario.id %>/cargar" role="button">
+            <a data-method="post" class="btn btn-primary" href="/admin/clientes/<%= usuario.id %>/cargar" role="button" rel="nofollow">
               <i class="glyphicon glyphicon-envelope"></i>
-            </a>
-
-            <a data-method="delete" class="btn btn-danger" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
-              <i class="glyphicon glyphicon-remove"></i>
             </a>
           </td>
         </tr>

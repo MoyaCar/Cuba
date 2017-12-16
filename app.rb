@@ -362,7 +362,47 @@ Cuba.define do
         end
 
         # Carga un sobre nuevo para este usuario
-        on ':id/sobres' do |id|
+        on ':id/cargar' do |id|
+          usuario = Usuario.find id
+
+          if usuario.present?
+            motor = Motor.new
+            nivel, angulo = motor.posicion
+
+            # Se bloquea esperando la respuesta del motor?
+            motor.posicionar!
+
+            # Se bloquea esperando la respuesta del arduino
+            respuesta = Arduino.new(nivel).cargar!
+
+            Log.info "Respuesta del arduino: #{respuesta}"
+
+            case respuesta
+            when :carga_ok
+              # Si se recibió el sobre
+              flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
+              flash[:tipo] = 'alert-success'
+
+              usuario.sobres.create nivel: nivel, angulo: angulo
+            when :carga_error
+              # Si no se recibió un sobre
+              flash[:mensaje] = 'El sobre no ha sido guardado.'
+              flash[:tipo] = 'alert-info'
+
+            when :error_de_bus
+              flash[:mensaje] = 'Falló la conexión.'
+              flash[:tipo] = 'alert-danger'
+            else
+              flash[:mensaje] = 'Ocurrió un error.'
+              flash[:tipo] = 'alert-danger'
+            end
+          else
+            flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
+            flash[:tipo] = 'alert-danger'
+          end
+
+          # Volvemos a la lista de clientes
+          res.redirect '/admin/clientes'
         end
       end
     end
