@@ -6,7 +6,9 @@ class Arduino
 
   COMANDOS = {
     carga: 0x00,
-    extraccion: 0x01
+    extraccion: 0x01,
+    cero: 0x02,
+    test: 0x03
   }
 
   RESPUESTAS = {
@@ -68,14 +70,28 @@ class Arduino
   end
 
   def cargar!
-    $log.debug "Inicio de proceso de carga"
+    $log.info "Inicio de proceso de carga"
 
     ordenar :carga, Configuracion.espera_carga
   end
 
   def extraer!
-    $log.debug "Inicio de proceso de extracción"
+    $log.info "Inicio de proceso de extracción"
 
     ordenar :extraccion, Configuracion.espera_extraccion
+  end
+
+  # FIXME Para qué se usan?
+  def cero!
+    $log.info "Llevando presentador a cero"
+
+    ordenar :cero, 0
+  end
+
+  # FIXME Para qué se usan?
+  def test!
+    $log.info "Test!"
+
+    ordenar :test, 0
   end
 end

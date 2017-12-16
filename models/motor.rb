@@ -1,28 +1,37 @@
 # Maneja el motor de rodete de sobres y encoder
 begin
   require 'rpi_gpio'
-rescue RuntimeError => e
+rescue LoadError, RuntimeError => e
   $log.error e.message
 end
 
 class Motor
+  # Pulsos por revolucion del motor
+  PPR = 4000
+
+  # Offset de posicion inicial (pulsos motor)
+  OFFSET = 3
+
   # Posiciones en cada nivel
   ANGULOS = 120
   NIVELES = 2
 
   # Pines de la Raspberry
-  PULSE  = 16
-  SIGN   = 18 # Sentido de giro
-  SENSOR = 12 # Sensor de posición cero
+  PULSE  = 16 # Pin de pulsos
+  SIGN   = 18 # Pin de direccion
+  SENSOR = 12 # Pin de sensor de posición cero
 
   attr_reader :nivel, :angulo
 
+  @@paso_actual = nil
   @@angulo_actual = nil
 
   # Inicializar una instancia de motor sin posición busca una de las libres
   def initialize(nivel = nil, angulo = nil)
     @nivel = nivel
     @angulo = angulo
+
+    $log.info "Inicializando nivel: #{nivel} y angulo: #{angulo}"
 
     # Usamos la primer posición disponible
     # FIXME largar error si no hay
@@ -38,29 +47,80 @@ class Motor
 
   # Configuración de la librería y los pines
   def self.setup!
+    $log.info 'Configurando la librería y los pines'
+
     RPi::GPIO.set_numbering :board
     RPi::GPIO.setup PULSE, as: :output, initialize: :low
     RPi::GPIO.setup SIGN, as: :output, initialize: :low
-    RPi::GPIO.setup SENSOR, as: :input, pull: :up
+    RPi::GPIO.setup SENSOR, as: :input, pull: :down
 
     posicionar_en_cero!
   rescue RuntimeError => e
     $log.error e.message
+
+    # Forzamos un 0 en development
+    @@angulo_actual = 0
   end
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
-    ANGULOS.times do
-      if sensor_en_cero?
-        # FIXME Pasar a Configuración ?
+    $log.info "Posicionando en cero"
+
+    t_min = 0.003
+    t_max = 0.030
+    t_del = 0.0001
+
+    t_pul = t_max
+    estado = 0
+
+    if sensor_en_cero? # si esta en posicion lo muevo en sentido contrario
+      $log.info "DEBUG: Sensor Cero activado, moviendo 2 posiciones..."
+      RPi::GPIO.set_low SIGN
+      sleep 0.0001
+      girar! 3
+    end
+
+    $log.info "DEBUG: Buscando cero..."
+    RPi::GPIO.set_high SIGN
+    sleep 0.0001
+
+    for i in 1..PPR * 2
+      $log.info "DEBUG: Estado: #{estado} // Pulso: #{t_pul}"
+      if sensor_en_cero? && estado == 0 then
+        estado = 1
+      elsif sensor_en_cero? && estado == 2 then
+        OFFSET.times do
+          RPi::GPIO.set_high PULSE
+          sleep 0.0001
+          RPi::GPIO.set_low PULSE
+          sleep t_pul
+        end
         @@angulo_actual = 0
         break
       end
 
-      girar!
+      RPi::GPIO.set_high PULSE
+      sleep 0.0001
+      RPi::GPIO.set_low PULSE
+      sleep t_pul
+
+      if estado == 0 && t_pul > t_min then # acelero
+        t_pul = t_pul - t_del
+      elsif estado == 1 && t_pul < t_max then # freno
+        t_pul = t_pul + t_del
+      elsif estado == 1 && t_pul >= t_max then # vuelvo
+        sleep 0.500
+        estado = 2
+        RPi::GPIO.set_low SIGN
+        sleep 0.0001
+        t_pul = t_pul * 1.5
+      end
     end
 
-    raise 'no se encontró la posición cero' unless @@angulo_actual.present?
+    # FIXME ?
+    # raise 'no se encontró la posición cero' unless @@angulo_actual.present?
+    # asumimos la posición actual como cero
+    @@angulo_actual = 0
   end
 
   # Genera un mapa de ubicaciones libres en base a los sobres guardados en la
@@ -104,7 +164,7 @@ class Motor
     # casilleros = 5
     # media_vuelta = 2 pasos
     # ángulos = [0, 1, 2, 3, 4]
-    pasos = angulo - @@angulo_actual
+    pasos = angulo - (@@angulo_actual || 0)
 
     if pasos.positive?
       if pasos <= media_vuelta
@@ -141,7 +201,12 @@ class Motor
   private
 
   def self.sensor_en_cero?
-    RPi::GPIO.low? SENSOR
+    RPi::GPIO.high? SENSOR
+  rescue RuntimeError => e
+    $log.error e.message
+
+    # Devolver siempre 0 en development
+    true
   end
 
   def self.girar!(pasos = 1, sentido = :antihorario)
@@ -154,12 +219,38 @@ class Motor
       raise 'no tiene sentido'
     end
 
-    pasos.times do
+    pasos = pasos * PPR/ANGULOS
+    tiempo_min = 0.003
+    tiempo_max = 0.020
+    tiempo_del = 0.00005
+    relacion_frenado = 2
+
+    tiempo_pul = tiempo_max
+    aux = (tiempo_max - tiempo_min) / tiempo_del
+    for i in 1..pasos
+      puts "DEBUG: #{i} / #{pasos} / #{aux} / #{tiempo_pul}"
+
       RPi::GPIO.set_high PULSE
-
-      sleep 0.01
-
+      sleep 0.0001
       RPi::GPIO.set_low PULSE
+      sleep tiempo_pul
+
+      if pasos > (1 + relacion_frenado)*aux then
+        if i < aux then
+          tiempo_pul = tiempo_pul - tiempo_del
+        end
+        if i > pasos - aux * relacion_frenado then
+	  tiempo_pul = tiempo_pul + tiempo_del / relacion_frenado
+	end
+      else
+        if i < pasos / (1 + relacion_frenado) then
+          tiempo_pul = tiempo_pul - tiempo_del
+        else
+          tiempo_pul = tiempo_pul + tiempo_del / relacion_frenado
+        end
+      end
     end
+  rescue RuntimeError => e
+    $log.error e.message
   end
 end
