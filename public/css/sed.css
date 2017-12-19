@@ -38,6 +38,11 @@ body {
 
 .teclado {
   text-align: left;
+
+  /* Centrar el teclado dentro de su div */
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 a.btn.lateral {
