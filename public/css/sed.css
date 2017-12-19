@@ -1,3 +1,11 @@
+/* Deshabilitar la selección de texto en la página */
+body {
+  -webkit-user-select: none;
+     -moz-user-select: -moz-none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .header {
   margin-bottom: 20px;
   border-bottom: 1px solid #e5e5e5;
