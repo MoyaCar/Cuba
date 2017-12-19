@@ -167,7 +167,7 @@ class Motor
     unless @libres.present?
       ubicaciones = {}
 
-      NIVELES.times do |nivel|
+      LVL.times do |nivel|
         ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:sob)
       end
 
