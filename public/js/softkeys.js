@@ -48,17 +48,17 @@
                                 break;
 
                             case 'return' :
-                                character = '<span>return</span>';
+                                character = '<span>Enter</span>';
                                 type = 'return';
                                 break;
 
                             case 'tab' :
-                                character = '<span>tab</span>';
+                                character = '<span>Tab</span>';
                                 type = 'tab';
                                 break;
 
                             case 'space' :
-                                character = '<span>space</span>';
+                                character = '<span>Espacio</span>';
                                 type = 'space';
                                 styleClass = 'softkeys__btn--space';
                                 break;

@@ -28,7 +28,7 @@
         <ul class="nav nav-pills pull-right">
           <div class="btn-group">
             <% unless inicio? %>
-              <a onclick="history.back(-1)" class="btn btn-default" data-target='#' href="#">Volver</a>
+              <a onclick="history.back(-1)" class="btn btn-default btn-lg" data-target='#' href="#">Volver</a>
             <% end %>
           </div>
 
@@ -36,7 +36,7 @@
             <a class="<%= clase_para_nav '/' %>" data-target='#' href="/">Inicio</a>
 
             <% if admin %>
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
               </button>

@@ -1,4 +1,4 @@
-<div class="col-md-10">
+<div class="col-md-9">
   <table class="table table-bordered table-striped table-condensed text-left data-table">
     <thead>
       <tr>
@@ -14,11 +14,11 @@
           <td class="col-md-8"><%= usuario.nombre %></td>
           <td class="col-md-2"><%= usuario.dni %></td>
           <td class="controles col-md-2">
-            <a class="btn btn-primary" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
+            <a class="btn btn-primary btn-lg" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
               <i class="glyphicon glyphicon-edit"></i>
             </a>
 
-            <a data-method="delete" class="btn btn-danger" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
+            <a data-method="delete" class="btn btn-danger btn-lg" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
               <i class="glyphicon glyphicon-remove"></i>
             </a>
           </td>
@@ -28,14 +28,14 @@
   </table>
 </div>
 
-<div class="col-md-2">
+<div class="col-md-3">
   <div class="form-group">
     <input type="text" name="filtro" class="filtro form-control input-lg enfocable" placeholder="Buscar..." autofocus data-target="input[name='filtro']"/>
   </div>
 
   <div class="form-group teclado-contenedor"></div>
 
-  <a class="btn btn-success lateral" href="/admin/usuarios/nuevo" role="button">
+  <a class="btn btn-success btn-lg lateral" href="/admin/usuarios/nuevo" role="button">
     <i class="glyphicon glyphicon-plus"></i>
     Nuevo Usuario
   </a>
