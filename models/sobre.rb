@@ -1,4 +1,4 @@
-# Un sobre con su usuario y posición en el dispenser (angulo, nivel)
+# Un sobre con su usuario y posición en el dispenser (sobre, nivel)
 class Sobre < ActiveRecord::Base
   belongs_to :usuario, inverse_of: :sobres
 
@@ -8,8 +8,8 @@ class Sobre < ActiveRecord::Base
   validates :angulo,
     # El ángulo no se repite en un mismo nivel
     uniqueness: { scope: :nivel },
-    numericality: { less_than: Motor::ANGULOS }
+    numericality: { less_than: Motor::SPN }
 
   validates :nivel,
-    numericality: { less_than: Motor::NIVELES }
+    numericality: { less_than: Motor::LVL }
 end

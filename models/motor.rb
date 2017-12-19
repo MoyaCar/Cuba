@@ -1,4 +1,4 @@
-# Maneja el motor de rodete de sobres y encoder
+# Maneja el motor de rodete de sobres
 begin
   require 'rpi_gpio'
 rescue LoadError, RuntimeError => e
@@ -6,43 +6,47 @@ rescue LoadError, RuntimeError => e
 end
 
 class Motor
-  # Pulsos por revolucion del motor
-  PPR = 4000
+  # Variables del conjunto MOTOR+RODETE
+  PPR = 4000    # Pulsos por revolucion del motor
+  SPN = 120     # Sobres por nivel
+  LVL = 2       # Niveles
+  OFF_1 = 2     # Pulsos de offset para el nivel 1 (arriba)
+  OFF_0 = 6     # Pulsos de offset para el nivel 0 (abajo)
+  T_Cero = 60   # Segundos disponibles para buscar Cero
 
-  # Offset de posicion inicial (pulsos motor)
-  OFFSET = 3
-
-  # Posiciones en cada nivel
-  ANGULOS = 120
-  NIVELES = 2
+  # Variables del generador de trayectoria
+  V_max = 250   # velocidad maxima [pulsos/s]
+  V_min = 5     # velocidad minima [pulsos/s]
+  A_max = 150   # aceleracion maxima [pulsos/s^2]
+  RFA = 1.2     # relacion: tiempo_frenado/tiempo_aceleracion
+  DT = 0.001    # paso de tiempo (1ms)
 
   # Pines de la Raspberry
   PULSE  = 16 # Pin de pulsos
   SIGN   = 18 # Pin de direccion
   SENSOR = 12 # Pin de sensor de posición cero
 
-  attr_reader :nivel, :angulo
+  attr_reader :nivel, :sob
 
   @@paso_actual = nil
-  @@angulo_actual = nil
 
   # Inicializar una instancia de motor sin posición busca una de las libres
-  def initialize(nivel = nil, angulo = nil)
+  def initialize(nivel = nil, sob = nil)
     @nivel = nivel
-    @angulo = angulo
+    @sob = sob
 
-    Log.logger.info "Inicializando nivel: #{nivel} y angulo: #{angulo}"
+    Log.logger.info "Inicializando nivel: #{nivel} y sobre: #{sob}"
 
     # Usamos la primer posición disponible
     # FIXME largar error si no hay
-    if nivel.nil? && angulo.nil? && ubicaciones_libres.any?
+    if nivel.nil? && sob.nil? && ubicaciones_libres.any?
       @nivel = @libres.first.first # key
-      @angulo = @libres.first.last.first # values.first
-      Log.info "Posición libre encontrada: [#{@nivel}, #{@angulo}]"
+      @sob = @libres.first.last.first # values.first
+      Log.info "Posición libre encontrada: [#{@nivel}, #{@sob}]"
     end
 
     # Inicializar el controlador del motor si no lo hemos inicializado aún
-    Motor.setup! if @@angulo_actual.nil?
+    Motor.setup! if @@paso_actual.nil?
   end
 
   # Configuración de la librería y los pines
@@ -56,86 +60,115 @@ class Motor
 
     posicionar_en_cero!
   rescue RuntimeError => e
-    Log.error e.message
+    Log.logger.error e.message
 
     # Forzamos un 0 en development
-    @@angulo_actual = 0
+    @@paso_actual = 0
   end
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
     Log.info "Posicionando en cero"
 
-    t_min = 0.003
-    t_max = 0.030
-    t_del = 0.0001
-
-    t_pul = t_max
     estado = 0
 
     if sensor_en_cero? # si esta en posicion lo muevo en sentido contrario
-      Log.debug "Sensor Cero activado, moviendo 2 posiciones..."
-      RPi::GPIO.set_low SIGN
-      sleep 0.0001
-      girar! 3
+      paux = 5
+      Log.debug "Sensor Cero activado, moviendo #{paux} posiciones..."
+      girar! (paux * PPR/SPN).to_i, :h
+      sleep 1.0
     end
 
     Log.debug "Buscando cero..."
-    RPi::GPIO.set_high SIGN
-    sleep 0.0001
 
-    for i in 1..PPR * 2
-      Log.debug "Estado: #{estado} // Pulso: #{t_pul}"
-      if sensor_en_cero? && estado == 0 then
-        estado = 1
-      elsif sensor_en_cero? && estado == 2 then
-        OFFSET.times do
-          RPi::GPIO.set_high PULSE
-          sleep 0.0001
-          RPi::GPIO.set_low PULSE
-          sleep t_pul
-        end
-        @@angulo_actual = 0
-        break
-      end
+    set_sentido! :ah
 
-      RPi::GPIO.set_high PULSE
-      sleep 0.0001
-      RPi::GPIO.set_low PULSE
-      sleep t_pul
+    p1 = (V_max*V_max/2/A_max).to_i
+    p2 = (p1*RFA).to_i
+    p_act = 0
+    v_act = 0
+    p_aux = 0
+    cont = 0
 
-      if estado == 0 && t_pul > t_min then # acelero
-        t_pul = t_pul - t_del
-      elsif estado == 1 && t_pul < t_max then # freno
-        t_pul = t_pul + t_del
-      elsif estado == 1 && t_pul >= t_max then # vuelvo
-        sleep 0.500
+    t_inicial = Time.now
+    while estado != 4 && (Time.now - t_inicial) < T_Cero
+      Log.debug "Estado: #{estado} // Pulso: #{p_act} // Cero: #{sensor_en_cero?} //  #{p2}"
+
+      # ACELERACION:
+      if estado == 0 && p_act < p1 then # acelero
+        a = A_max
+      elsif estado == 0 && p_act >= p1 then # constante
+        a = 0
+      elsif estado == 1 && p_act < p2 then # freno
+        a = -A_max / RFA
+      elsif estado == 1 && (p_act >= p2 || v_act <= V_min) then # vuelvo
+        sleep 1.0
         estado = 2
-        RPi::GPIO.set_low SIGN
-        sleep 0.0001
-        t_pul = t_pul * 1.5
+        a = 0
+	v_act = V_min * 5
+        set_sentido! :h
+      elsif estado == 3
+        a = 0
+	v_act = 2
       end
+
+      # PERFIL:
+      v_act = v_act + a * DT
+      if v_act > V_max then
+        v_act = V_max
+      end
+      if v_act < V_min then
+        v_act = V_min
+      end
+      p_aux = p_aux + v_act * DT
+
+      # DISCRETIZACION A PULSO:
+      if p_aux > p_act
+        p_act = p_act + 1
+        pulso!
+        if estado == 3
+          cont = cont + 1
+        end
+      end
+
+      # DETECCION DEL SENSOR:
+      if sensor_en_cero? && estado == 0 then
+        estado = 1 # comienzo a frenar
+        p_act = 0
+	p_aux = 0
+      elsif sensor_en_cero? && estado == 1 then
+        puts "DEBUG: ERROR buscando el cero"
+      elsif sensor_en_cero? && estado == 2 then
+        estado = 3
+        cont = 0
+      elsif sensor_en_cero? == false && cont > 3 then
+        puts "DEBUG: Cero encontrado correctamente"
+        estado = 4
+	@@paso_actual = 0
+      end
+
+      sleep DT
     end
 
-    # FIXME ?
-    # raise 'no se encontró la posición cero' unless @@angulo_actual.present?
-    # asumimos la posición actual como cero
-    @@angulo_actual = 0
+    if estado != 4 then
+      Log.error "Cero no encontrado"
+      @@paso_actual = 0
+    end
   end
 
   # Genera un mapa de ubicaciones libres en base a los sobres guardados en la
   # siguiente forma:
   #
   # {
-  #   nivel: [angulo, angulo],
-  #   nivel: [angulo]
+  #   nivel: [sobre, sobre],
+  #   nivel: [sobre]
   # }
   def ubicaciones_libres
     unless @libres.present?
       ubicaciones = {}
 
       NIVELES.times do |nivel|
-        ubicaciones[nivel] = (0...ANGULOS).to_a - Sobre.where(nivel: nivel).pluck(:angulo)
+        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:sob)
       end
 
       @libres = ubicaciones.reject { |_, v| v.empty? }
@@ -147,55 +180,41 @@ class Motor
   end
 
   def posicion
-    [nivel, angulo]
+    [nivel, sob]
   end
 
   # FIXME Implementar
   def posicionar!
     Log.info "Ubicando motor en posición #{posicion}"
 
-    raise 'posición excedida' unless angulo < ANGULOS
-    raise 'posición no puede ser negativa' if angulo < 0
+    raise 'posición excedida' unless sob < SPN
+    raise 'posición no puede ser negativa' if sob < 0
 
-    media_vuelta = ANGULOS / 2
+    if nivel == 0
+      pasos = (sob * PPR/SPN + OFF_0).to_i - @@paso_actual
+    elsif nivel == 1
+      pasos = (sob * PPR/SPN + OFF_1).to_i - @@paso_actual
+    end
 
-    # EJEMPLOS
-    #
-    # casilleros = 5
-    # media_vuelta = 2 pasos
-    # ángulos = [0, 1, 2, 3, 4]
-    pasos = angulo - (@@angulo_actual || 0)
+    Log.info "Sobre: #{sob} | Paso actual: #{@@paso_actual} | Pasos: #{pasos}"
 
+    media_vuelta = PPR / 2
     if pasos.positive?
       if pasos <= media_vuelta
-        # angulo_actual = 2
-        # angulo = 3
-        # gira 1 casillero en sentido antihorario
-        Motor.girar! pasos, :antihorario
+        Motor.girar! pasos, :ah
       else
-        # angulo_actual = 1
-        # angulo = 4 (se pasa de la media vuelta)
-        # gira 2 casilleros en sentido horario
-        Motor.girar! ANGULOS - pasos, :horario
+        Motor.girar! PPR - pasos, :h
       end
     elsif pasos.negative?
-      pasos = pasos.abs
-
-      if pasos <= media_vuelta
-        # angulo_actual = 2
-        # angulo = 1
-        # gira 1 casillero en sentido horario
-        Motor.girar! pasos, :horario
+      if pasos.abs <= media_vuelta
+        Motor.girar! pasos.abs, :h
       else
-        # angulo_actual = 3
-        # angulo = 0 (se pasa de la media vuelta)
-        # gira 2 casilleros en sentido antihorario
-        Motor.girar! ANGULOS - pasos, :antihorario
+        Motor.girar! PPR - pasos.abs, :ah
       end
     end
 
     # FIXME Pasar a Configuración ?
-    @@angulo_actual = angulo
+    @@paso_actual = @@paso_actual + pasos
   end
 
   private
@@ -209,46 +228,69 @@ class Motor
     true
   end
 
-  def self.girar!(pasos = 1, sentido = :antihorario)
+  def self.set_sentido!(sentido = :h)
     case sentido
-    when :antihorario
-      RPi::GPIO.set_low  SIGN
-    when :horario
-      RPi::GPIO.set_high SIGN
+      when :h
+          RPi::GPIO.set_low  SIGN
+      else
+          RPi::GPIO.set_high SIGN
+      end
+      sleep 0.00002 # 20us
+  end
+
+  def self.pulso!
+    RPi::GPIO.set_high PULSE
+    sleep 0.00001 # 10us
+    RPi::GPIO.set_low PULSE
+    sleep 0.00001 # 10us
+  end
+
+  def self.girar!(pasos = 1, sentido = :h)
+
+    set_sentido! sentido
+
+    p1 = (V_max*V_max/2/A_max).to_i
+    p2 = (p1 * RFA).to_i
+
+    if pasos < p1+p2
+      p1 = (pasos / (1+RFA)).to_i
+      p2 = pasos - p1 + 1 # frenado a V_min
     else
-      raise 'no tiene sentido'
+      p2 = p2 + 2 # frenado a V_min
     end
 
-    pasos = pasos * PPR/ANGULOS
-    tiempo_min = 0.003
-    tiempo_max = 0.020
-    tiempo_del = 0.00005
-    relacion_frenado = 2
+    p_act = 0
+    v_act = 0
+    p_aux = 0
 
-    tiempo_pul = tiempo_max
-    aux = (tiempo_max - tiempo_min) / tiempo_del
-    for i in 1..pasos
-      puts "DEBUG: #{i} / #{pasos} / #{aux} / #{tiempo_pul}"
-
-      RPi::GPIO.set_high PULSE
-      sleep 0.0001
-      RPi::GPIO.set_low PULSE
-      sleep tiempo_pul
-
-      if pasos > (1 + relacion_frenado)*aux then
-        if i < aux then
-          tiempo_pul = tiempo_pul - tiempo_del
-        end
-        if i > pasos - aux * relacion_frenado then
-	  tiempo_pul = tiempo_pul + tiempo_del / relacion_frenado
-	end
-      else
-        if i < pasos / (1 + relacion_frenado) then
-          tiempo_pul = tiempo_pul - tiempo_del
-        else
-          tiempo_pul = tiempo_pul + tiempo_del / relacion_frenado
-        end
+    while p_act < pasos
+      # ACELERACION:
+      if p_act <= p1 then # acelero
+        a = A_max
+      elsif p_act > p1 && p_act <= pasos - p2 then # constante
+        a = 0
+      else # freno
+        a = -A_max / RFA
       end
+
+      # PERFIL:
+      v_act = v_act + a * DT
+      if v_act > V_max then
+        v_act = V_max
+      end
+      if v_act < V_min then
+        v_act = V_min
+      end
+      p_aux = p_aux + v_act * DT
+
+      # DISCRETIZACION A PULSO:
+      if p_aux > p_act
+        p_act = p_act + 1
+        pulso!
+      end
+
+      puts "DEBUG: pasos: #{pasos} // p_act: #{p_act}"
+      sleep DT
     end
   rescue RuntimeError => e
     Log.error e.message

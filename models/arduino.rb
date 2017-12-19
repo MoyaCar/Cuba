@@ -5,10 +5,11 @@ class Arduino
   }
 
   COMANDOS = {
-    carga: 0x00,
-    extraccion: 0x01,
-    cero: 0x02,
-    test: 0x03
+    carga: 0x01,
+    extraccion: 0x02,
+    cero: 0x03,
+    test_on: 0x04,
+    test_off: 0x05
   }
 
   RESPUESTAS = {
@@ -64,6 +65,17 @@ class Arduino
     # leer
     @estado = dispositivo.i2cget(0, 1).bytes.first
 
+    # ------------------------------------------
+    # POSIBLE CAMBIO:
+    #
+    #   @estado = 0x10
+    #   t_inicial = Time.now
+    #   while estado == 0x10 && (Time.now - t_inicial) < 30
+    #     sleep 1.0
+    #     @estado = dispositivo.i2cget(0, 1).bytes.first
+    #   end
+    # ------------------------------------------
+
     RESPUESTAS[estado]
   rescue Errno::EREMOTEIO
     Log.error 'No se pudieron enviar datos al bus'
@@ -83,17 +95,19 @@ class Arduino
     ordenar :extraccion, Configuracion.espera_extraccion
   end
 
-  # FIXME Para qué se usan?
   def cero!
-    Log.info "Llevando presentador a cero"
+    Log.logger.info "Llevando presentador a cero"
 
     ordenar :cero, 0
   end
 
-  # FIXME Para qué se usan?
-  def test!
-    Log.info "Test!"
+  def test_on!
+    Log.logger.info "Test ON"
+    ordenar :test_on, 0
+  end
 
-    ordenar :test, 0
+  def test_off!
+    Log.logger.info "Test OFF"
+    ordenar :test_off,0
   end
 end
