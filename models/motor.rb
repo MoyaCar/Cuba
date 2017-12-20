@@ -72,13 +72,6 @@ class Motor
 
     estado = 0
 
-    if sensor_en_cero? # si esta en posicion lo muevo en sentido contrario
-      paux = 5
-      Log.debug "Sensor Cero activado, moviendo #{paux} posiciones..."
-      girar! (paux * PPR/SPN).to_i, :h
-      sleep 1.0
-    end
-
     Log.debug "Buscando cero..."
 
     set_sentido! :ah
@@ -92,7 +85,7 @@ class Motor
 
     t_inicial = Time.now
     while estado != 4 && (Time.now - t_inicial) < T_Cero
-      Log.debug "Estado: #{estado} // Pulso: #{p_act} // Cero: #{sensor_en_cero?} //  #{p2}"
+      Log.logger.debug "Estado: #{estado} // Pulso: #{p_act} // Cero: #{sensor_en_cero?} // #{p2}"
 
       # ACELERACION:
       if estado == 0 && p_act < p1 then # acelero
@@ -132,17 +125,17 @@ class Motor
       end
 
       # DETECCION DEL SENSOR:
-      if sensor_en_cero? && estado == 0 then
+      if sensor_en_cero? && estado == 0 && p_act >= p1 then
         estado = 1 # comienzo a frenar
         p_act = 0
 	p_aux = 0
       elsif sensor_en_cero? && estado == 1 then
-        puts "DEBUG: ERROR buscando el cero"
+        Log.logger.debug "ERROR buscando el cero"
       elsif sensor_en_cero? && estado == 2 then
         estado = 3
         cont = 0
-      elsif sensor_en_cero? == false && cont > 3 then
-        puts "DEBUG: Cero encontrado correctamente"
+      elsif sensor_en_cero? == false && cont > 5 then
+        Log.debug 'Cero encontrado correctamente'
         estado = 4
 	@@paso_actual = 0
       end
@@ -151,7 +144,7 @@ class Motor
     end
 
     if estado != 4 then
-      Log.error "Cero no encontrado"
+      Log.error 'Cero no encontrado'
       @@paso_actual = 0
     end
   end
@@ -168,7 +161,7 @@ class Motor
       ubicaciones = {}
 
       LVL.times do |nivel|
-        # En este caso no se usa sob porque 'angulo' sigue siendo el nombre de la columna en la BD
+        # En `pluck` no se usa :sob porque :angulo sigue siendo el nombre de la columna en la BD
         # FIXME Nombrarlos igual
         ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:angulo)
       end
@@ -187,7 +180,7 @@ class Motor
 
   # FIXME Implementar
   def posicionar!
-    Log.info "Ubicando motor en posición #{posicion}"
+    Log.logger.info "Ubicando motor en posición #{posicion}"
 
     raise 'posición excedida' unless sob < SPN
     raise 'posición no puede ser negativa' if sob < 0
@@ -198,7 +191,7 @@ class Motor
       pasos = (sob * PPR/SPN + OFF_1).to_i - @@paso_actual
     end
 
-    Log.info "Sobre: #{sob} | Paso actual: #{@@paso_actual} | Pasos: #{pasos}"
+    Log.logger.info "Sobre: #{sob} | Paso actual: #{@@paso_actual} | Pasos: #{pasos}"
 
     media_vuelta = PPR / 2
     if pasos.positive?
