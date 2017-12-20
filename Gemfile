@@ -12,6 +12,8 @@ gem 'tilt'
 gem 'activerecord'
 gem 'sqlite3'
 gem 'rake'
+# Cierra las conecciones de la bd
+gem 'activerecord-rack'
 
 # Raspberry
 gem 'i2c-devices'

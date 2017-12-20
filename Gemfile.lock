@@ -7,6 +7,9 @@ GEM
       activemodel (= 5.1.1)
       activesupport (= 5.1.1)
       arel (~> 8.0)
+    activerecord-rack (1.0.0)
+      activerecord (~> 5.0)
+      rack
     activesupport (5.1.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
@@ -44,6 +47,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activerecord-rack
   cuba
   cuba-flash
   faker
