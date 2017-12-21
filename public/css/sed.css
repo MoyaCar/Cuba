@@ -22,6 +22,10 @@ body {
   line-height: 40px;
 }
 
+.header .menu-superior {
+  margin-right: 15px;
+}
+
 .principal {
   margin: auto 8%;
   text-align: center;
