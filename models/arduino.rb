@@ -1,3 +1,5 @@
+require_relative 'log'
+
 class Arduino
   DIRECCIONES = {
     0 => 0x08,

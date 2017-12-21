@@ -11,7 +11,7 @@ task :superadmin do
   if ENV['dni'].nil? || ENV['pass'].nil?
     puts
     puts 'Uso: '
-    puts '  rake superadmin dni=12345678 pass=sarasa nombre="Juan Salvo"'
+    puts '  rake superadmin dni=12345678 pass=1234 nombre="Juan Salvo"'
     puts
   else
     Admin.create super: true, nro_documento: ENV['dni'], password: ENV['pass'], nombre: ENV['nombre']

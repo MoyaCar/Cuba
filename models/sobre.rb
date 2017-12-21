@@ -1,3 +1,5 @@
+require_relative 'motor'
+
 class Sobre < ActiveRecord::Base
   belongs_to :cliente, inverse_of: :sobres
 

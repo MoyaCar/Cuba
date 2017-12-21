@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th class="col-md-8">Nombre</th>
-        <th class="col-md-2">DNI</th>
+        <th class="col-md-2">Documento</th>
         <th class="controles col-md-2"></th>
       </tr>
     </thead>
@@ -12,7 +12,7 @@
       <% usuarios.each do |usuario| %>
         <tr>
           <td class="col-md-8"><%= usuario.nombre %></td>
-          <td class="col-md-2"><%= usuario.dni %></td>
+          <td class="col-md-2"><%= usuario.nro_documento %></td>
           <td class="controles col-md-2">
             <a class="btn btn-primary btn-lg" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
               <i class="glyphicon glyphicon-edit"></i>

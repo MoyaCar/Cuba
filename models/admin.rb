@@ -13,4 +13,8 @@ class Admin < ActiveRecord::Base
   # Para la carga de admins sólo permitimos superadmins
   scope :normal, ->{ where super: false }
   scope :super, ->{ where super: true }
+
+  def admin?
+    true
+  end
 end

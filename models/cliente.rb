@@ -1,4 +1,6 @@
 # Un usuario que tiene sobres que retirar
+require_relative 'novedad'
+
 class Cliente < ActiveRecord::Base
   self.table_name = 'clientes'
 
@@ -12,6 +14,7 @@ class Cliente < ActiveRecord::Base
     presence: true,
     uniqueness: true,
     numericality: { only_integer: true }
+
   validates :codigo,
     numericality: { only_integer: true }
 
@@ -26,5 +29,13 @@ class Cliente < ActiveRecord::Base
 
   def codigo_valido?(codigo)
     generar_clave_digital(codigo) == clave_digital
+  end
+
+  def validar!(codigo)
+    codigo_valido? ? self : false
+  end
+
+  def admin?
+    false
   end
 end

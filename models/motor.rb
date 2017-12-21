@@ -1,4 +1,5 @@
 # Maneja el motor de rodete de sobres
+require_relative 'log'
 begin
   require 'rpi_gpio'
 rescue LoadError, RuntimeError => e
