@@ -66,31 +66,45 @@ class Novedad < ActiveRecord::Base
     '01' => 'Cedula identidad Policía Federal'
   }
 
-  validates :tipo_documento, inclusion: { in: DOCUMENTOS.keys }
+  validates :nro_proveedor,
+    presence: true
+  validates :tipo_documento,
+    presence: true
+  validates :nro_documento,
+    presence: true,
+    numericality: { only_integer: true }
+  validates :clave_digital,
+    presence: true
+  validates :nombre,
+    presence: true
 
   # Parsear una fila del csv de novedades creando los objetos derivados (Novedad, Usuario, Sobre)
   def parsear(fila)
     transaction do
       update(
-        proveedor: fila[0].strip,
-        producto: fila[1].strip,
-        tipo_documento: fila[2],
-        nro_documento: fila[3],
-        clave_digital: fila[4],
-        tipo_sid: fila[5],
-        tipo_banco: fila[6],
-        nro_sid: fila[7],
-        nombre: fila[8].strip,
-        fecha: fila[9],
-        hora: Time.strptime(fila[10], '%H%M%S')
+        nro_proveedor: fila[0].strip.encode(Encoding::UTF_8),
+        nro_alternativo: fila[1].strip.encode(Encoding::UTF_8),
+        tipo_documento: fila[2].encode(Encoding::UTF_8),
+        nro_documento: fila[3].encode(Encoding::UTF_8),
+        clave_digital: fila[4].encode(Encoding::UTF_8),
+        tipo_sid: fila[5].encode(Encoding::UTF_8),
+        tipo_banco: fila[6].encode(Encoding::UTF_8),
+        nro_sid: fila[7].encode(Encoding::UTF_8),
+        nombre: fila[8].strip.encode(Encoding::UTF_8),
+        fecha: fila[9].encode(Encoding::UTF_8),
+        hora: Time.strptime(fila[10].encode(Encoding::UTF_8), '%H%M%S')
       )
 
-      cliente = Cliente.create(
-        tipo_documento: self.tipo_documento,
-        nro_documento: self.nro_documento,
-        nombre: self.nombre.titleize,
-        clave_digital: self.clave_digital
-      )
+      cliente = Cliente.find_or_create_by!(
+        tipo_documento: self.tipo_documento, nro_documento: self.nro_documento
+      ) do |c|
+        c.nombre = self.nombre.titleize
+        c.clave_digital = self.clave_digital
+        c.sobres_attributes = [
+          nro_proveedor: self.nro_proveedor,
+          nro_alternativo: self.nro_alternativo
+        ]
+      end
     end
   end
 

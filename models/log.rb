@@ -1,6 +1,6 @@
 class Log < ActiveRecord::Base
   @@logger = nil
-  @@usuario_actual_id = nil
+  @@usuario_actual = nil
 
   # El usuario logueado cuando ocurrió el evento
   belongs_to :usuario, inverse_of: :logs, polymorphic: true

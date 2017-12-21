@@ -8,15 +8,17 @@ class Cliente < ActiveRecord::Base
   has_many :logs, as: :usuario
 
   attr_accessor :codigo
+  accepts_nested_attributes_for :sobres
 
-  validates :tipo_documento, inclusion: { in: Novedad::DOCUMENTOS.keys }
+  validates :tipo_documento,
+    presence: true
   validates :nro_documento,
     presence: true,
-    uniqueness: true,
+    uniqueness: { scope: :tipo_documento },
     numericality: { only_integer: true }
 
   validates :codigo,
-    numericality: { only_integer: true }
+    numericality: { only_integer: true, allow_nil: true }
 
   def generar_clave_digital(codigo)
     input = [
@@ -32,7 +34,7 @@ class Cliente < ActiveRecord::Base
   end
 
   def validar!(codigo)
-    codigo_valido? ? self : false
+    codigo_valido?(codigo) ? self : false
   end
 
   def admin?
