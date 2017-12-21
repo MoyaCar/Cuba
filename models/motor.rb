@@ -161,9 +161,7 @@ class Motor
       ubicaciones = {}
 
       LVL.times do |nivel|
-        # En `pluck` no se usa :sob porque :angulo sigue siendo el nombre de la columna en la BD
-        # FIXME Nombrarlos igual
-        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:angulo)
+        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:posicion)
       end
 
       @libres = ubicaciones.reject { |_, v| v.empty? }

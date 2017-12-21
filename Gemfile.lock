@@ -16,6 +16,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (8.0.0)
+    bcrypt (3.1.11)
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
     cuba (3.8.0)
@@ -46,6 +47,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   activerecord-rack
+  bcrypt (~> 3.1.7)
   cuba
   cuba-flash
   i2c-devices

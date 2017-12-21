@@ -1,11 +1,10 @@
-# Un sobre con su usuario y posición en el dispenser (sobre, nivel)
 class Sobre < ActiveRecord::Base
-  belongs_to :usuario, inverse_of: :sobres
+  belongs_to :cliente, inverse_of: :sobres
 
   scope :entregado, ->{ where entregado: true }
   scope :sin_entregar, ->{ where entregado: false }
 
-  validates :angulo,
+  validates :posicion,
     # El ángulo no se repite en un mismo nivel
     uniqueness: { scope: :nivel },
     numericality: { less_than: Motor::SPN }

@@ -3,7 +3,7 @@ class Log < ActiveRecord::Base
   @@usuario_actual_id = nil
 
   # El usuario logueado cuando ocurrió el evento
-  belongs_to :usuario, inverse_of: :logs
+  belongs_to :usuario, inverse_of: :logs, polymorphic: true
 
   validates :mensaje, presence: true
   validates :severidad, inclusion: { in: %w{DEBUG INFO WARN ERROR FATAL UNKNOWN} }
