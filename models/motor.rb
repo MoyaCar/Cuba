@@ -1,4 +1,5 @@
 # Maneja el motor de rodete de sobres
+require_relative 'log'
 begin
   require 'rpi_gpio'
 rescue LoadError, RuntimeError => e
@@ -51,7 +52,7 @@ class Motor
 
   # Configuración de la librería y los pines
   def self.setup!
-    Log.info 'Configurando la librería y los pines'
+    Log.logger.info 'Configurando la librería y los pines'
 
     RPi::GPIO.set_numbering :board
     RPi::GPIO.setup PULSE, as: :output, initialize: :low
@@ -161,9 +162,7 @@ class Motor
       ubicaciones = {}
 
       LVL.times do |nivel|
-        # En `pluck` no se usa :sob porque :angulo sigue siendo el nombre de la columna en la BD
-        # FIXME Nombrarlos igual
-        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:angulo)
+        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:posicion)
       end
 
       @libres = ubicaciones.reject { |_, v| v.empty? }

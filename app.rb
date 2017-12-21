@@ -13,8 +13,6 @@
 #
 # Rutas y acciones de administradores:
 #
-# GET     /admin/sobres                 - Inicio del proceso de carga de un Sobre leyendo un DNI
-# POST    /admin/sobres                 - Completa el proceso de carga de un Sobre validando los datos
 # GET     /admin/usuarios               - ABM de Usuarios administradores
 # GET     /admin/usuarios/nuevo         - Formulario de carga de administrador
 # POST    /admin/usuarios/crear         - Cargar un administrador
@@ -32,6 +30,7 @@ Cuba.define do
     on root do
       # Limpiamos la sesión
       session.delete(:usuario_actual_id)
+      session.delete(:usuario_actual_tipo)
       Log.usuario_actual = nil
 
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
@@ -45,12 +44,12 @@ Cuba.define do
       render 'codigo', titulo: 'Ingrese su Código de Acceso', admin: false
     end
 
-    # Verificamos que exista un sobre para este usuario o redirigimos
+    # Verificamos que exista un sobre para este cliente o redirigimos
     on 'extraccion' do
-      usuario = Usuario.find session[:usuario_actual_id]
+      cliente = Cliente.find session[:usuario_actual_id] if usuario_actual_cliente?
 
-      if usuario.sobres.sin_entregar.any?
-        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: usuario.sobres.sin_entregar.count
+      if cliente.present? && cliente.sobres.sin_entregar.any?
+        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: cliente.sobres.sin_entregar.count
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
@@ -63,21 +62,6 @@ Cuba.define do
     on 'admin' do
       garantizar_admin!
 
-      # Inicio de carga de sobres
-      on 'sobres' do
-        # Limpiamos los datos temporales de la sesión
-        session.delete(:dni)
-
-        render 'sobres', titulo: 'Iniciar carga de Sobres', admin: true
-      end
-
-      # Confirmación de carga de sobres
-      on 'confirmar' do
-        usuario = Usuario.normal.where(dni: session[:dni]).take
-
-        render 'confirmar', titulo: 'Confirmar los datos para la carga', usuario: usuario, admin: true
-      end
-
       # Panel de configuración
       on 'panel' do
         render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
@@ -86,7 +70,7 @@ Cuba.define do
       # Inicio de carga de usuarios administradores
       on 'usuarios' do
         on root do
-          render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Usuario.admin
+          render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Admin.normal
         end
 
         on 'nuevo' do
@@ -94,7 +78,7 @@ Cuba.define do
         end
 
         on ':id/editar' do |id|
-          usuario = Usuario.find(id)
+          usuario = Admin.normal.find(id)
 
           render 'editar_usuario', titulo: "Editar usuario #{usuario.nombre}", usuario: usuario, admin: true
         end
@@ -103,7 +87,7 @@ Cuba.define do
       # Inicio de carga de clientes
       on 'clientes' do
         on root do
-          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, usuarios: Usuario.normal
+          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, usuarios: Cliente.all
         end
 
         on 'cargar' do
@@ -131,17 +115,25 @@ Cuba.define do
     # Recibe el Código de acceso cargado por el Usuario
     on 'codigo' do
       on param('codigo') do |codigo|
-        usuario = Usuario.where(dni: session.delete(:dni), codigo: codigo).take
+        dni = session.delete(:dni)
 
-        if usuario.present?
+        # El usuario o false
+        usuario = if Cliente.where(nro_documento: dni).any?
+          Cliente.where(nro_documento: dni).take.try(:validar!, codigo)
+        else
+          Admin.where(nro_documento: dni).take.try(:authenticate, codigo)
+        end
+
+        if usuario
           flash[:mensaje] = "Le damos la bienvenida #{ usuario.admin? ? 'Administrador ' : nil}#{usuario.nombre}."
           flash[:tipo] = 'alert-info'
 
-          siguiente = usuario.admin? ? '/admin/sobres' : '/extraccion'
+          siguiente = usuario.admin? ? '/admin/clientes' : '/extraccion'
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
-          Log.usuario_actual = usuario.id
+          session[:usuario_actual_tipo] = usuario.class.to_s
+          Log.usuario_actual = usuario
           Log.info "Usuario logueado: #{usuario.nombre}"
 
           res.redirect siguiente
@@ -154,16 +146,16 @@ Cuba.define do
       end
     end
 
-    # Proceso de extracción de un sobre por parte de un usuario normal
+    # Proceso de extracción de un sobre por parte de un cliente 
     on 'extraccion' do
-      usuario = Usuario.find session[:usuario_actual_id]
+      cliente = Cliente.find session[:usuario_actual_id] if usuario_actual_cliente?
 
       # Después de un error o terminar las extracciones volvemos al inicio
       siguiente = '/'
 
-      if usuario.sobres.sin_entregar.any?
-        sobre = usuario.sobres.sin_entregar.first
-        motor = Motor.new sobre.nivel, sobre.angulo
+      if cliente.present? && cliente.sobres.sin_entregar.any?
+        sobre = cliente.sobres.sin_entregar.first
+        motor = Motor.new sobre.nivel, sobre.posicion
 
         # Se bloquea esperando la respuesta del motor?
         motor.posicionar!
@@ -184,8 +176,8 @@ Cuba.define do
           sobre.update_attribute :entregado, true
 
           # Si todavía hay sobres, continuamos la extracción
-          if usuario.sobres.sin_entregar.any?
-            flash[:mensaje] = "Sobres restantes: #{usuario.sobres.sin_entregar.count}."
+          if cliente.sobres.sin_entregar.any?
+            flash[:mensaje] = "Sobres restantes: #{cliente.sobres.sin_entregar.count}."
             siguiente = '/extraccion'
           end
         # Si no se extrajo el sobre y el arduino lo guarda automáticamente
@@ -212,80 +204,6 @@ Cuba.define do
     on 'admin' do
       garantizar_admin!
 
-      # Recibe el DNI cargado desde el lector de código de barras por el Usuario
-      # administrador
-      on 'sobres' do
-        on param('dni') do |dni|
-          usuario = Usuario.normal.where(dni: dni).take
-
-          # Cuando hubo algún error volvemos al inicio del administrador
-          siguiente = '/admin/sobres'
-
-          if usuario.present?
-            if (motor = Motor.new).ubicaciones_libres.any?
-              # Guardamos el DNI para el próximo request
-              session[:dni] = dni
-
-              # Pedimos confirmar la carga
-              siguiente = '/admin/confirmar'
-            else
-              flash[:mensaje] = 'No hay ubicaciones libres para el sobre.'
-              flash[:tipo] = 'alert-danger'
-            end
-          else
-            flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
-            flash[:tipo] = 'alert-danger'
-          end
-
-          res.redirect siguiente
-        end
-      end
-
-      on 'confirmar' do
-        usuario = Usuario.normal.where(dni: session[:dni]).take
-
-        if usuario.present?
-          motor = Motor.new
-          nivel, angulo = motor.posicion
-
-          # Se bloquea esperando la respuesta del motor?
-          motor.posicionar!
-
-          # Se bloquea esperando la respuesta del arduino
-          respuesta = Arduino.new(nivel).cargar!
-
-          Log.info "Respuesta del arduino: #{respuesta}"
-
-          case respuesta
-          when :carga_ok
-            # Si se recibió el sobre
-            flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
-            flash[:tipo] = 'alert-success'
-
-            usuario.sobres.create nivel: nivel, angulo: angulo
-          when :carga_error
-            # Si no se recibió un sobre
-            flash[:mensaje] = 'El sobre no ha sido guardado.'
-            flash[:tipo] = 'alert-info'
-
-          when :error_de_bus
-            flash[:mensaje] = 'Falló la conexión.'
-            flash[:tipo] = 'alert-danger'
-          else
-            flash[:mensaje] = 'Ocurrió un error.'
-            flash[:tipo] = 'alert-danger'
-          end
-        else
-          flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
-          flash[:tipo] = 'alert-danger'
-        end
-
-        # Siempre volvemos al inicio del administrador
-        res.redirect '/admin/sobres'
-      end
-
-      # Recibe el DNI cargado desde el lector de código de barras por el Usuario
-      # administrador
       on 'configurar' do
         on param('espera_carga'), param('espera_extraccion') do |espera_carga, espera_extraccion|
           Configuracion.config.update_attributes(
@@ -304,11 +222,11 @@ Cuba.define do
       on 'usuarios' do
         # Procesar nuevo usuario
         on 'crear' do
-          on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-            usuario = Usuario.create nombre: nombre, dni: dni, codigo: codigo, admin: true
+          on param('nombre'), param('nro_documento'), param('password') do |nombre, nro_documento, password|
+            usuario = Admin.create nombre: nombre, nro_documento: nro_documento, password: password
 
             if usuario.persisted?
-              flash[:mensaje] = "El usuario ha sido creado"
+              flash[:mensaje] = 'El usuario ha sido creado'
               flash[:tipo] = 'alert-success'
             else
               flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
@@ -320,14 +238,14 @@ Cuba.define do
         end
 
         on ':id' do |id|
-          usuario = Usuario.find(id)
+          usuario = Admin.normal.find(id)
 
           # Técnicamente debería ser un DELETE
           on 'eliminar' do
             usuario.destroy
 
             if usuario.destroyed?
-              flash[:mensaje] = "El usuario ha sido eliminado"
+              flash[:mensaje] = 'El usuario ha sido eliminado'
               flash[:tipo] = 'alert-success'
             else
               flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
@@ -339,9 +257,12 @@ Cuba.define do
 
           # Procesar el formulario de edit
           on 'editar' do
-            on param('nombre'), param('dni'), param('codigo') do |nombre, dni, codigo|
-              if usuario.update nombre: nombre, dni: dni, codigo: codigo
-                flash[:mensaje] = "El usuario ha sido modificado"
+            on param('nombre'), param('nro_documento') do |nombre, nro_documento|
+              # Password es opcional
+              password = req.params['password']
+
+              if usuario.update nombre: nombre, nro_documento: nro_documento, password: password
+                flash[:mensaje] = 'El usuario ha sido modificado'
                 flash[:tipo] = 'alert-success'
               else
                 flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
@@ -357,17 +278,20 @@ Cuba.define do
       on 'clientes' do
         # Carga la lista de clientes desde el USB
         on 'cargar' do
+          Novedad.parsear Configuracion.archivo_de_novedades
+
           # cargar datos del csv
           res.redirect '/admin/clientes'
         end
 
         # Carga un sobre nuevo para este usuario
+        # FIXME la lista debería ser de novedades, directamente, y mostrar un botón por cada sobre
         on ':id/cargar' do |id|
-          usuario = Usuario.find id
+          usuario = Cliente.find id
 
           if usuario.present?
             motor = Motor.new
-            nivel, angulo = motor.posicion
+            nivel, posicion = motor.posicion
 
             # Se bloquea esperando la respuesta del motor?
             motor.posicionar!
@@ -383,7 +307,7 @@ Cuba.define do
               flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
               flash[:tipo] = 'alert-success'
 
-              usuario.sobres.create nivel: nivel, angulo: angulo
+              usuario.sobres.create nivel: nivel, posicion: posicion
             when :carga_error
               # Si no se recibió un sobre
               flash[:mensaje] = 'El sobre no ha sido guardado.'

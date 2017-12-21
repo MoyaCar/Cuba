@@ -8,6 +8,9 @@ gem 'cuba-flash'
 # Template engine
 gem 'tilt'
 
+# Seguridad
+gem 'bcrypt', '~> 3.1.7'
+
 # DB
 gem 'activerecord'
 gem 'sqlite3'
@@ -24,4 +27,3 @@ gem 'puma'
 
 # Development
 gem 'pry', require: false
-gem 'faker', require: false

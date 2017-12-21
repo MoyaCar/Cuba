@@ -1,9 +1,9 @@
 class Log < ActiveRecord::Base
   @@logger = nil
-  @@usuario_actual_id = nil
+  @@usuario_actual = nil
 
   # El usuario logueado cuando ocurrió el evento
-  belongs_to :usuario, inverse_of: :logs
+  belongs_to :usuario, inverse_of: :logs, polymorphic: true
 
   validates :mensaje, presence: true
   validates :severidad, inclusion: { in: %w{DEBUG INFO WARN ERROR FATAL UNKNOWN} }
@@ -16,8 +16,8 @@ class Log < ActiveRecord::Base
   end
 
   # Método genérico de log, usa el usuario actual y loguea en el logger
-  def self.log(severidad, mensaje, usuario = nil)
-    create severidad: severidad, mensaje: mensaje, usuario_id: usuario_actual
+  def self.log(severidad, mensaje)
+    create severidad: severidad, mensaje: mensaje, usuario: usuario_actual
 
     @@logger.add(Logger::Severity.const_get(severidad)) { mensaje }
   end
@@ -42,12 +42,11 @@ class Log < ActiveRecord::Base
   end
 
   def self.usuario_actual
-    @@usuario_actual_id
+    @@usuario_actual
   end
 
-  # Pasamos siempre el id
-  def self.usuario_actual=(id)
-    @@usuario_actual_id = id
+  def self.usuario_actual=(usuario)
+    @@usuario_actual = usuario
   end
 
   # Para loguear desde los tests y no crear registros

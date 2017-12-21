@@ -15,18 +15,17 @@
       </div>
 
       <div class="col-sm-offset-1 form-group">
-        <label for="dni">DNI (login)</label>
-        <input type="text" name="dni" class="form-control input-lg enfocable" required
-          data-target="input[name='dni']"
-          value="<%= usuario.dni %>"
+        <label for="dni">Documento (login)</label>
+        <input type="text" name="nro_documento" class="form-control input-lg enfocable" required
+          data-target="input[name='nro_documento']"
+          value="<%= usuario.nro_documento %>"
         />
       </div>
 
       <div class="col-sm-offset-1 form-group">
         <label for="codigo">Código de acceso</label>
-        <input type="password" name="codigo" class="form-control input-lg enfocable" required
-          data-target="input[name='codigo']"
-          value="<%= usuario.codigo %>"
+        <input type="password" name="password" class="form-control input-lg enfocable"
+          data-target="input[name='password']"
         />
       </div>
 

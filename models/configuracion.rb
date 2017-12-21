@@ -19,4 +19,9 @@ class Configuracion < ActiveRecord::Base
   def self.espera_extraccion
     config.espera_extraccion
   end
+
+  # FIXME Asumir un default pero permitir modificar
+  def self.archivo_de_novedades
+    'test/novedades.csv'
+  end
 end
