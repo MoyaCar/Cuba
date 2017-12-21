@@ -51,7 +51,7 @@ class Motor
 
   # Configuración de la librería y los pines
   def self.setup!
-    Log.info 'Configurando la librería y los pines'
+    Log.logger.info 'Configurando la librería y los pines'
 
     RPi::GPIO.set_numbering :board
     RPi::GPIO.setup PULSE, as: :output, initialize: :low

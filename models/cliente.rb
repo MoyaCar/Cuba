@@ -1,5 +1,7 @@
 # Un usuario que tiene sobres que retirar
 class Cliente < ActiveRecord::Base
+  self.table_name = 'clientes'
+
   has_many :sobres, inverse_of: :cliente
   has_many :logs, as: :usuario
 

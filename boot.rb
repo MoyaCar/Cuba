@@ -39,9 +39,10 @@ Cuba.plugin ControllerHelpers
 
 require_relative 'models/motor'
 require_relative 'models/arduino'
+require_relative 'models/novedad'
 require_relative 'models/admin'
-require_relative 'models/cliente'
 require_relative 'models/sobre'
+require_relative 'models/cliente'
 require_relative 'models/configuracion'
 
 # Inicializar el motor y la posición cero
