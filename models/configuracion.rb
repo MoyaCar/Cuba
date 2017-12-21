@@ -20,8 +20,16 @@ class Configuracion < ActiveRecord::Base
     config.espera_extraccion
   end
 
-  # FIXME Asumir un default pero permitir modificar
-  def self.archivo_de_novedades
-    'test/novedades.csv'
+  def self.nombre_archivo_novedades
+    config.nombre_archivo_novedades
+  end
+
+  # Archivo de configuración de entorno
+  def self.entorno
+    YAML::load(IO.read('config.yml'))
+  end
+
+  def self.path_archivo_novedades
+    File.join entorno['csv']['path'], nombre_archivo_novedades
   end
 end

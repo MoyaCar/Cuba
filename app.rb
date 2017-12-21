@@ -278,7 +278,7 @@ Cuba.define do
       on 'clientes' do
         # Carga la lista de clientes desde el USB
         on 'cargar' do
-          Novedad.parsear Configuracion.archivo_de_novedades
+          Novedad.parsear Configuracion.path_archivo_novedades
 
           # cargar datos del csv
           res.redirect '/admin/clientes'

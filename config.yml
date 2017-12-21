@@ -9,3 +9,6 @@ log:
   # DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
   development: DEBUG
   production: ERROR
+
+csv:
+  path: '/media/sed'
