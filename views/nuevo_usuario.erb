@@ -3,36 +3,36 @@
     Presione el campo que desea cargar.
   </p>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <form action='/admin/usuarios/crear' method='post' class="row form">
-      <div class="col-sm-offset-1 form-group">
+      <div class="form-group">
         <label for="nombre">Nombre de usuario</label>
         <input type="text" name="nombre" class="form-control input-lg enfocable" required autofocus
           data-target="input[name='nombre']" data-teclado="alfanumerico"
         />
       </div>
 
-      <div class="col-sm-offset-1 form-group">
+      <div class="form-group">
         <label for="dni">Documento (login)</label>
         <input type="text" name="nro_documento" class="form-control input-lg enfocable" required
           data-target="input[name='nro_documento']"
         />
       </div>
 
-      <div class="col-sm-offset-1 form-group">
+      <div class="form-group">
         <label for="password">Código de acceso</label>
         <input type="password" name="password" class="form-control input-lg enfocable" required
           data-target="input[name='password']"
         />
       </div>
 
-      <div class="col-sm-offset-1 form-group">
+      <div class="form-group">
         <button type="submit" class="btn btn-lg btn-success">Guardar</button>
       </div>
     </form>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-8">
     <label>&nbsp;</label>
 
     <div class="form-group teclado-contenedor"></div>

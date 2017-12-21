@@ -146,7 +146,7 @@ Cuba.define do
       end
     end
 
-    # Proceso de extracción de un sobre por parte de un cliente 
+    # Proceso de extracción de un sobre por parte de un cliente
     on 'extraccion' do
       cliente = Cliente.find session[:usuario_actual_id] if usuario_actual_cliente?
 
@@ -205,10 +205,15 @@ Cuba.define do
       garantizar_admin!
 
       on 'configurar' do
-        on param('espera_carga'), param('espera_extraccion') do |espera_carga, espera_extraccion|
+        on(
+          param('espera_carga'),
+          param('espera_extraccion'),
+          param('nombre_archivo_novedades')
+        ) do |espera_carga, espera_extraccion, nombre_archivo_novedades|
           Configuracion.config.update_attributes(
             espera_carga: espera_carga,
-            espera_extraccion: espera_extraccion
+            espera_extraccion: espera_extraccion,
+            nombre_archivo_novedades: nombre_archivo_novedades
           )
 
           flash[:mensaje] = 'Configuración actualizada.'
@@ -278,9 +283,13 @@ Cuba.define do
       on 'clientes' do
         # Carga la lista de clientes desde el USB
         on 'cargar' do
-          Novedad.parsear Configuracion.path_archivo_novedades
+          begin
+            Novedad.parsear Configuracion.path_archivo_novedades
+          rescue Errno::ENOENT
+            flash[:mensaje] = "El archivo #{Configuracion.nombre_archivo_novedades} no existe"
+            flash[:tipo] = 'alert-danger'
+          end
 
-          # cargar datos del csv
           res.redirect '/admin/clientes'
         end
 
