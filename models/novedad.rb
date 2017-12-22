@@ -82,15 +82,15 @@ class Novedad < ActiveRecord::Base
   def parsear(fila)
     transaction do
       update(
-        nro_proveedor: fila[0].strip.encode(Encoding::UTF_8),
-        nro_alternativo: fila[1].strip.encode(Encoding::UTF_8),
+        nro_proveedor: fila[0] && fila[0].strip.encode(Encoding::UTF_8),
+        nro_alternativo: fila[1] && fila[1].strip.encode(Encoding::UTF_8),
         tipo_documento: fila[2].encode(Encoding::UTF_8),
         nro_documento: fila[3].encode(Encoding::UTF_8),
         clave_digital: fila[4].encode(Encoding::UTF_8),
         tipo_sid: fila[5].encode(Encoding::UTF_8),
         tipo_banco: fila[6].encode(Encoding::UTF_8),
         nro_sid: fila[7].encode(Encoding::UTF_8),
-        nombre: fila[8].strip.encode(Encoding::UTF_8),
+        nombre: fila[8] && fila[8].strip.encode(Encoding::UTF_8),
         fecha: fila[9].encode(Encoding::UTF_8),
         hora: Time.strptime(fila[10].encode(Encoding::UTF_8), '%H%M%S')
       )
