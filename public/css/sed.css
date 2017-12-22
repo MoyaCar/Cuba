@@ -1,9 +1,12 @@
-/* Deshabilitar la selección de texto en la página */
 body {
+  /* Deshabilitar la selección de texto en la página */
   -webkit-user-select: none;
      -moz-user-select: -moz-none;
       -ms-user-select: none;
           user-select: none;
+
+  /* Aumentar texto default */
+  font-size: 21px;
 }
 
 .header {
@@ -13,7 +16,7 @@ body {
 }
 
 .header .btn-group {
-  padding-top: 42px;
+  padding-top: 26px;
 }
 
 .header .logo {
@@ -38,6 +41,18 @@ body {
 .dropdown-menu {
   /* Hacer que el dropdown aparezca bien a la izquierda */
   left: -90%;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+.lead {
+  font-size: 1.5em;
+}
+
+.btn-lg {
+  font-size: 1em;
 }
 
 .teclado {
