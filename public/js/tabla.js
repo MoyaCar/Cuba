@@ -3,7 +3,8 @@ $(document).ready(function(){
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 10,
+    pageLength: 8,
+    pagingType: 'numbers',
     lengthChange: false,
     columns: [
       null,
@@ -20,7 +21,8 @@ $(document).ready(function(){
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 10,
+    pageLength: 8,
+    pagingType: 'numbers',
     lengthChange: false,
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
@@ -32,7 +34,8 @@ $(document).ready(function(){
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 10,
+    pageLength: 8,
+    pagingType: 'numbers',
     lengthChange: false,
     columns: [
       null,
