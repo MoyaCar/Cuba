@@ -67,6 +67,10 @@ class Motor
     @@paso_actual = 0
   end
 
+  def self.paso_actual
+    @@paso_actual
+  end
+
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
     Log.logger.info "Posicionando en cero"

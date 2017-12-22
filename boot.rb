@@ -46,9 +46,6 @@ require_relative 'models/cliente'
 require_relative 'models/configuracion'
 require_relative 'decorators/sobre_decorator'
 
-# Inicializar el motor y la posición cero
-Motor.setup!
-
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: 'public',
   urls: ['/js', '/css', '/fonts', '/img']

@@ -33,6 +33,9 @@ Cuba.define do
       session.delete(:usuario_actual_tipo)
       Log.usuario_actual = nil
 
+      # Inicializar el motor y la posición cero
+      Motor.setup! unless Motor.paso_actual.present?
+
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
     end
 
