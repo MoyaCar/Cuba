@@ -82,17 +82,17 @@ class Novedad < ActiveRecord::Base
   def parsear(fila)
     transaction do
       update(
-        nro_proveedor: fila[0] && fila[0].strip.encode(Encoding::UTF_8),
-        nro_alternativo: fila[1] && fila[1].strip.encode(Encoding::UTF_8),
-        tipo_documento: fila[2].encode(Encoding::UTF_8),
-        nro_documento: fila[3].encode(Encoding::UTF_8),
-        clave_digital: fila[4].encode(Encoding::UTF_8),
-        tipo_sid: fila[5].encode(Encoding::UTF_8),
-        tipo_banco: fila[6].encode(Encoding::UTF_8),
-        nro_sid: fila[7].encode(Encoding::UTF_8),
-        nombre: fila[8] && fila[8].strip.encode(Encoding::UTF_8),
-        fecha: fila[9].encode(Encoding::UTF_8),
-        hora: Time.strptime(fila[10].encode(Encoding::UTF_8), '%H%M%S')
+        nro_proveedor: fila[0].to_s.strip.encode(Encoding::UTF_8),
+        nro_alternativo: fila[1].to_s.strip.encode(Encoding::UTF_8),
+        tipo_documento: fila[2].to_s.encode(Encoding::UTF_8),
+        nro_documento: fila[3].to_s.encode(Encoding::UTF_8),
+        clave_digital: fila[4].to_s.encode(Encoding::UTF_8),
+        tipo_sid: fila[5].to_s.encode(Encoding::UTF_8),
+        tipo_banco: fila[6].to_s.encode(Encoding::UTF_8),
+        nro_sid: fila[7].to_s.encode(Encoding::UTF_8),
+        nombre: fila[8].to_s.strip.encode(Encoding::UTF_8),
+        fecha: fila[9].to_s.encode(Encoding::UTF_8),
+        hora: Time.strptime(fila[10].to_s.encode(Encoding::UTF_8), '%H%M%S')
       )
 
       cliente = Cliente.find_or_create_by!(
