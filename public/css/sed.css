@@ -41,6 +41,7 @@ body {
 .dropdown-menu {
   /* Hacer que el dropdown aparezca bien a la izquierda */
   left: -90%;
+  font-size: 1em;
 }
 
 h1 {
@@ -52,6 +53,10 @@ h1 {
 }
 
 .btn-lg {
+  font-size: 1em;
+}
+
+.input-lg {
   font-size: 1em;
 }
 

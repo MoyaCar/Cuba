@@ -48,8 +48,8 @@ Cuba.define do
     on 'extraccion' do
       cliente = Cliente.find session[:usuario_actual_id] if usuario_actual_cliente?
 
-      if cliente.present? && cliente.sobres.sin_entregar.any?
-        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: cliente.sobres.sin_entregar.count
+      if cliente.present? && cliente.sobres.montados.any?
+        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: cliente.sobres.montados.count
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
@@ -87,7 +87,7 @@ Cuba.define do
       # Inicio de carga de clientes
       on 'clientes' do
         on root do
-          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, usuarios: Cliente.all
+          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, sobres: Sobre.all
         end
 
         on 'cargar' do
@@ -153,16 +153,15 @@ Cuba.define do
       # Después de un error o terminar las extracciones volvemos al inicio
       siguiente = '/'
 
-      if cliente.present? && cliente.sobres.sin_entregar.any?
-        sobre = cliente.sobres.sin_entregar.first
+      if cliente.present? && cliente.sobres.montados.any?
+        sobre = cliente.sobres.montados.first
         motor = Motor.new sobre.nivel, sobre.posicion
 
         # Se bloquea esperando la respuesta del motor?
         motor.posicionar!
 
         # Se bloquea esperando la respuesta del arduino
-        arduino = Arduino.new(sobre.nivel)
-        respuesta = arduino.extraer!
+        respuesta = Arduino.new(sobre.nivel).extraer!
 
         Log.info "Respuesta del arduino: #{respuesta}"
 
@@ -173,11 +172,11 @@ Cuba.define do
           flash[:tipo] = 'alert-success'
 
           # En vez de borrar el sobre lo marcamos como entregado
-          sobre.update_attribute :entregado, true
+          sobre.update_attribute :estado, 'entregado'
 
           # Si todavía hay sobres, continuamos la extracción
-          if cliente.sobres.sin_entregar.any?
-            flash[:mensaje] = "Sobres restantes: #{cliente.sobres.sin_entregar.count}."
+          if cliente.sobres.montados.any?
+            flash[:mensaje] = "Sobres restantes: #{cliente.sobres.montados.count}."
             siguiente = '/extraccion'
           end
         # Si no se extrajo el sobre y el arduino lo guarda automáticamente
@@ -293,12 +292,11 @@ Cuba.define do
           res.redirect '/admin/clientes'
         end
 
-        # Carga un sobre nuevo para este usuario
-        # FIXME la lista debería ser de novedades, directamente, y mostrar un botón por cada sobre
+        # Carga el sobre correspondiente
         on ':id/cargar' do |id|
-          usuario = Cliente.find id
+          sobre = Sobre.find id
 
-          if usuario.present?
+          if sobre.present?
             motor = Motor.new
             nivel, posicion = motor.posicion
 
@@ -316,7 +314,7 @@ Cuba.define do
               flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
               flash[:tipo] = 'alert-success'
 
-              usuario.sobres.create nivel: nivel, posicion: posicion
+              sobre.update nivel: nivel, posicion: posicion, estado: 'montado'
             when :carga_error
               # Si no se recibió un sobre
               flash[:mensaje] = 'El sobre no ha sido guardado.'
@@ -330,7 +328,49 @@ Cuba.define do
               flash[:tipo] = 'alert-danger'
             end
           else
-            flash[:mensaje] = 'El identificador no pertenece a un cliente válido.'
+            flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
+            flash[:tipo] = 'alert-danger'
+          end
+
+          # Volvemos a la lista de clientes
+          res.redirect '/admin/clientes'
+        end
+        on ':id/extraer' do |id|
+          sobre = Sobre.find id
+
+          if sobre.present?
+            motor = Motor.new sobre.nivel, sobre.posicion
+
+            # Se bloquea esperando la respuesta del motor?
+            motor.posicionar!
+
+            # Se bloquea esperando la respuesta del arduino
+            respuesta = Arduino.new(sobre.nivel).extraer!
+
+            Log.info "Respuesta del arduino: #{respuesta}"
+
+            case respuesta
+            # Si se extrajo el sobre
+            when :extraccion_ok
+              flash[:mensaje] = 'El sobre ha sido descargado.'
+              flash[:tipo] = 'alert-success'
+
+              # En vez de borrar el sobre lo marcamos como entregado
+              sobre.update_attribute :estado, 'descargado'
+            # Si no se extrajo el sobre y el arduino lo guarda automáticamente
+            when :extraccion_error
+              flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
+              flash[:tipo] = 'alert-info'
+            # Si el arduino no encontró el sobre
+            when :no_hay_carta
+              flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
+              flash[:tipo] = 'alert-danger'
+            else
+              flash[:mensaje] = 'Ocurrió un error.'
+              flash[:tipo] = 'alert-danger'
+            end
+          else
+            flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
             flash[:tipo] = 'alert-danger'
           end
 

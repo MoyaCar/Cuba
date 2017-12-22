@@ -44,6 +44,7 @@ require_relative 'models/admin'
 require_relative 'models/sobre'
 require_relative 'models/cliente'
 require_relative 'models/configuracion'
+require_relative 'decorators/sobre_decorator'
 
 # Inicializar el motor y la posición cero
 Motor.setup!

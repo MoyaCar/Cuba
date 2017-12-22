@@ -28,8 +28,27 @@ $(document).ready(function(){
       "<'row'<'col-sm-5'i><'col-sm-7'p>>"
   });
 
+  $('.data-table-clientes').DataTable({
+    language: {
+      url: '/js/datatables.es.json'
+    },
+    pageLength: 10,
+    lengthChange: false,
+    columns: [
+      null,
+      null,
+      null,
+      null,
+      null,
+      { orderable: false }
+    ],
+    dom:
+      "<'row'<'col-sm-6'l><'col-sm-6'>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>"
+  });
 });
 
 $(document).on('input', 'input.filtro', function () {
-  $('.data-table').DataTable().search(this.value).draw();
+  $('.data-table, .data-table-clientes').DataTable().search(this.value).draw();
 });

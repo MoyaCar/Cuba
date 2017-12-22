@@ -1,22 +1,35 @@
 <div class="col-md-9">
-  <table class="table table-bordered table-striped table-condensed text-left data-table">
+  <table class="table table-bordered table-striped table-condensed text-left data-table-clientes">
     <thead>
       <tr>
-        <th class="col-md-8">Nombre</th>
-        <th class="col-md-2">Documento</th>
-        <th class="controles col-md-2"></th>
+        <th class="col-md-2">Proveedor</th>
+        <th class="col-md-2">Alt.</th>
+        <th class="col-md-3">Nombre</th>
+        <th class="col-md-2">Tipo</th>
+        <th class="col-md-2">Doc.</th>
+        <th class="controles col-md-1"></th>
       </tr>
     </thead>
 
     <tbody>
-      <% usuarios.each do |usuario| %>
+      <% sobres.each do |s| %>
+        <% sobre = SobreDecorator.new(s) %>
         <tr>
-          <td class="col-md-8"><%= usuario.nombre %></td>
-          <td class="col-md-2"><%= usuario.nro_documento %></td>
-          <td class="controles col-md-2">
-            <a data-method="post" class="btn btn-primary btn-lg" href="/admin/clientes/<%= usuario.id %>/cargar" role="button" rel="nofollow">
-              <i class="glyphicon glyphicon-envelope"></i>
-            </a>
+          <td class="col-md-2"><%= sobre.nro_proveedor %></td>
+          <td class="col-md-2"><%= sobre.nro_alternativo %></td>
+          <td class="col-md-3"><%= sobre.nombre %></td>
+          <td class="col-md-2"><%= sobre.tipo_documento %></td>
+          <td class="col-md-2"><%= sobre.nro_documento %></td>
+          <td class="controles col-md-1">
+            <% if sobre.presente? %>
+              <a data-method="post" class="btn btn-danger btn-lg" href="/admin/clientes/<%= sobre.id %>/extraer" role="button" rel="nofollow">
+                <i class="glyphicon glyphicon-download-alt"></i>
+              </a>
+            <% else %>
+              <a data-method="post" class="btn btn-primary btn-lg" href="/admin/clientes/<%= sobre.id %>/cargar" role="button" rel="nofollow">
+                <i class="glyphicon glyphicon-envelope"></i>
+              </a>
+            <% end %>
           </td>
         </tr>
       <% end %>

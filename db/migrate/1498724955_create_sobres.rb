@@ -6,7 +6,7 @@ class CreateSobres < ActiveRecord::Migration[5.1]
       t.integer :nivel
       t.string :nro_proveedor
       t.string :nro_alternativo
-      t.boolean :entregado, default: false, null: false
+      t.string :estado, default: 'no_montado', null: false
     end
   end
 end
