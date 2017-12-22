@@ -20,7 +20,11 @@ class Arduino
     0x02 => :carga_ok,
     0x03 => :carga_error,
     0x04 => :no_hay_carta,
-    0x05 => :atascamiento # FIXME necesario?
+    0x05 => :atascamiento,
+    0x06 => :test_on,
+    0x07 => :test_off,
+    0x10 => :trabajando,
+    0x0f => :calibrado
   }
 
   attr_reader :dispositivo, :estado
@@ -57,26 +61,16 @@ class Arduino
     @dispositivo = Struct::Mock.new(DIRECCIONES[nivel], opciones_mock[:respuesta])
   end
 
-  def ordenar(comando, espera)
+  def ordenar(comando)
     # escribir
     dispositivo.i2cset(COMANDOS[comando])
 
-    # esperar que termine el proceso de hardware
-    sleep espera
-
-    # leer
-    @estado = dispositivo.i2cget(0, 1).bytes.first
-
-    # ------------------------------------------
-    # POSIBLE CAMBIO:
-    #
-    #   @estado = 0x10
-    #   t_inicial = Time.now
-    #   while estado == 0x10 && (Time.now - t_inicial) < 30
-    #     sleep 1.0
-    #     @estado = dispositivo.i2cget(0, 1).bytes.first
-    #   end
-    # ------------------------------------------
+    @estado = 0x10
+    t_inicial = Time.now
+    while estado == 0x10 && (Time.now - t_inicial) < 30
+      sleep 1.0
+      @estado = dispositivo.i2cget(0, 1).bytes.first
+    end
 
     RESPUESTAS[estado]
   rescue Errno::EREMOTEIO
@@ -88,28 +82,28 @@ class Arduino
   def cargar!
     Log.info "Inicio de proceso de carga"
 
-    ordenar :carga, Configuracion.espera_carga
+    ordenar :carga
   end
 
   def extraer!
     Log.info "Inicio de proceso de extracción"
 
-    ordenar :extraccion, Configuracion.espera_extraccion
+    ordenar :extraccion
   end
 
   def cero!
     Log.logger.info "Llevando presentador a cero"
 
-    ordenar :cero, 0
+    ordenar :cero
   end
 
   def test_on!
     Log.logger.info "Test ON"
-    ordenar :test_on, 0
+    ordenar :test_on
   end
 
   def test_off!
     Log.logger.info "Test OFF"
-    ordenar :test_off,0
+    ordenar :test_off
   end
 end

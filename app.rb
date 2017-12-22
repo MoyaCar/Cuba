@@ -157,10 +157,8 @@ Cuba.define do
         sobre = cliente.sobres.montados.first
         motor = Motor.new sobre.nivel, sobre.posicion
 
-        # Se bloquea esperando la respuesta del motor?
         motor.posicionar!
 
-        # Se bloquea esperando la respuesta del arduino
         respuesta = Arduino.new(sobre.nivel).extraer!
 
         Log.info "Respuesta del arduino: #{respuesta}"
@@ -204,14 +202,8 @@ Cuba.define do
       garantizar_admin!
 
       on 'configurar' do
-        on(
-          param('espera_carga'),
-          param('espera_extraccion'),
-          param('nombre_archivo_novedades')
-        ) do |espera_carga, espera_extraccion, nombre_archivo_novedades|
+        on param('nombre_archivo_novedades') do |nombre_archivo_novedades|
           Configuracion.config.update_attributes(
-            espera_carga: espera_carga,
-            espera_extraccion: espera_extraccion,
             nombre_archivo_novedades: nombre_archivo_novedades
           )
 
@@ -300,10 +292,8 @@ Cuba.define do
             motor = Motor.new
             nivel, posicion = motor.posicion
 
-            # Se bloquea esperando la respuesta del motor?
             motor.posicionar!
 
-            # Se bloquea esperando la respuesta del arduino
             respuesta = Arduino.new(nivel).cargar!
 
             Log.info "Respuesta del arduino: #{respuesta}"
@@ -341,10 +331,8 @@ Cuba.define do
           if sobre.present?
             motor = Motor.new sobre.nivel, sobre.posicion
 
-            # Se bloquea esperando la respuesta del motor?
             motor.posicionar!
 
-            # Se bloquea esperando la respuesta del arduino
             respuesta = Arduino.new(sobre.nivel).extraer!
 
             Log.info "Respuesta del arduino: #{respuesta}"

@@ -4,22 +4,6 @@
 
     <form action='/admin/configurar' method='post' class="row form">
       <div class="form-group">
-        <label for="espera_carga">Tiempo de espera para la carga</label>
-        <input type="text" name="espera_carga" class="form-control input-lg enfocable" required autofocus
-          value="<%= config.espera_carga %>"
-          data-target="input[name='espera_carga']"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="espera_extraccion">Tiempo de espera para la extracción</label>
-        <input type="text" name="espera_extraccion" class="form-control input-lg enfocable" required
-          value="<%= config.espera_extraccion %>"
-          data-target="input[name='espera_extraccion']"
-        />
-      </div>
-
-      <div class="form-group">
         <label for="nombre_archivo_novedades">Nombre de archivo de novedades</label>
         <input type="text" name="nombre_archivo_novedades" class="form-control input-lg enfocable"
           required autofocus
