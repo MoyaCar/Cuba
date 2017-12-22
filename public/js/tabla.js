@@ -3,8 +3,7 @@ $(document).ready(function(){
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 8,
-    pagingType: 'numbers',
+    pageLength: 7,
     lengthChange: false,
     columns: [
       null,
@@ -14,28 +13,28 @@ $(document).ready(function(){
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
       "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-5'i><'col-sm-7'p>>"
+      "<'row'<'col-sm-12'p>>" +
+      "<'row'<'col-sm-12'i>>"
   });
 
   $('.data-table-logs').DataTable({
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 8,
-    pagingType: 'numbers',
+    pageLength: 7,
     lengthChange: false,
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
       "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-5'i><'col-sm-7'p>>"
+      "<'row'<'col-sm-12'p>>" +
+      "<'row'<'col-sm-12'i>>"
   });
 
   $('.data-table-clientes').DataTable({
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 8,
-    pagingType: 'numbers',
+    pageLength: 7,
     lengthChange: false,
     columns: [
       null,
@@ -48,7 +47,8 @@ $(document).ready(function(){
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
       "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-5'i><'col-sm-7'p>>"
+      "<'row'<'col-sm-12'p>>" +
+      "<'row'<'col-sm-12'i>>"
   });
 });
 
