@@ -7,6 +7,12 @@ rescue LoadError, RuntimeError => e
 end
 
 class Motor
+  class CeroNoEncontrado < RuntimeError
+    def codigo
+      '0x00'
+    end
+  end
+
   # Variables del conjunto MOTOR+RODETE
   PPR = 4000    # Pulsos por revolucion del motor
   SPN = 120     # Sobres por nivel
@@ -60,11 +66,21 @@ class Motor
     RPi::GPIO.setup SENSOR, as: :input, pull: :down
 
     posicionar_en_cero!
+  # Capturamos nuestro error
+  rescue CeroNoEncontrado => e
+    Log.logger.error e.message
+
+    # Relanzar
+    raise
+  # Todos los errores de RPi son RuntimeError
   rescue RuntimeError => e
     Log.logger.error e.message
 
     # Forzamos un 0 en development
-    @@paso_actual = 0
+    @@paso_actual = 0 if ENV['RACK_ENV'] == 'development'
+
+    # Relanzamos un mensaje de cero si estamos testeando
+    raise CeroNoEncontrado if ENV['SED_CERO'] == 'false'
   end
 
   def self.paso_actual
@@ -171,9 +187,14 @@ class Motor
     end
 
     if estado !=6  then
-      Log.logger.error "Cero no encontrado en #{T_Cero} segundos"
+      mensaje = "Cero no encontrado en #{T_Cero} segundos"
+
+      Log.logger.error mensaje
       Log.logger.info "Estado final: #{estado}"
+
       @@paso_actual = 0
+
+      raise CeroNoEncontrado, mensaje
     end
   end
 

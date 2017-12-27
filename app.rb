@@ -33,8 +33,18 @@ Cuba.define do
       session.delete(:usuario_actual_tipo)
       Log.usuario_actual = nil
 
-      # Inicializar el motor y la posición cero
-      Motor.setup! unless Motor.paso_actual.present?
+      begin
+        # Inicializar el motor y la posición cero
+        Motor.setup! unless Motor.paso_actual.present?
+      rescue Motor::CeroNoEncontrado => e
+        render 'error',
+          admin: false,
+          titulo: e.message,
+          error: "Se ha producido un error, por favor reinicie el equipo. Código #{e.codigo}."
+
+        # Cortar la renderización explícitamente
+        break
+      end
 
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
     end
