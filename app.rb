@@ -39,6 +39,8 @@ Cuba.define do
         # Inicializar el motor y la posición cero
         Motor.setup! unless Motor.paso_actual.present?
       rescue Motor::CeroNoEncontrado => e
+        Log.error "Cero no encontrado. Código de error #{e.codigo}."
+
         render 'error',
           admin: false,
           titulo: "Error código #{e.codigo}",
@@ -218,6 +220,8 @@ Cuba.define do
           flash[:tipo] = 'alert-danger'
         end
       rescue Arduino::Atascamiento => e
+        Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
+
         render 'error',
           admin: false,
           titulo: "Error código #{e.codigo}",
@@ -326,78 +330,113 @@ Cuba.define do
         on ':id/cargar' do |id|
           sobre = Sobre.find id
 
-          if sobre.present?
-            motor = Motor.new
-            nivel, posicion = motor.posicion
+          begin
+            if sobre.present?
+              motor = Motor.new
+              nivel, posicion = motor.posicion
 
-            motor.posicionar!
+              motor.posicionar!
 
-            respuesta = Arduino.new(nivel).cargar!
+              respuesta = Arduino.new(nivel).cargar!
 
-            Log.info "Respuesta del arduino: #{respuesta}"
+              Log.info "Respuesta del arduino: #{respuesta}"
 
-            case respuesta
-            when :carga_ok
-              # Si se recibió el sobre
-              flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
-              flash[:tipo] = 'alert-success'
+              case respuesta
+              when :carga_ok
+                # Si se recibió el sobre
+                flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
+                flash[:tipo] = 'alert-success'
 
-              sobre.update nivel: nivel, posicion: posicion, estado: 'montado'
-            when :carga_error
-              # Si no se recibió un sobre
-              flash[:mensaje] = 'El sobre no ha sido guardado.'
-              flash[:tipo] = 'alert-info'
+                sobre.update nivel: nivel, posicion: posicion, estado: 'montado'
+              when :carga_error
+                # Si no se recibió un sobre
+                flash[:mensaje] = 'El sobre no ha sido guardado.'
+                flash[:tipo] = 'alert-info'
 
-            when :error_de_bus
-              flash[:mensaje] = 'Falló la conexión.'
-              flash[:tipo] = 'alert-danger'
+              when :error_de_bus
+                flash[:mensaje] = 'Falló la conexión.'
+                flash[:tipo] = 'alert-danger'
+              when :atascamiento
+                raise Arduino::Atascamiento
+              else
+                flash[:mensaje] = 'Ocurrió un error.'
+                flash[:tipo] = 'alert-danger'
+              end
             else
-              flash[:mensaje] = 'Ocurrió un error.'
+              flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
               flash[:tipo] = 'alert-danger'
             end
-          else
-            flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
-            flash[:tipo] = 'alert-danger'
+          rescue Arduino::Atascamiento => e
+            Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
+
+            render 'error',
+              admin: false,
+              titulo: "Error código #{e.codigo}",
+              error: "Se ha producido un error, por favor contacte a un
+              administrador del Banco."
+
+            res.status = 503
+
+            # Cortar la renderización explícitamente
+            halt res.finish
           end
 
           # Volvemos a la lista de clientes
           res.redirect '/admin/clientes'
         end
+
         on ':id/extraer' do |id|
           sobre = Sobre.find id
 
-          if sobre.present?
-            motor = Motor.new sobre.nivel, sobre.posicion
+          begin
+            if sobre.present?
+              motor = Motor.new sobre.nivel, sobre.posicion
 
-            motor.posicionar!
+              motor.posicionar!
 
-            respuesta = Arduino.new(sobre.nivel).extraer!
+              respuesta = Arduino.new(sobre.nivel).extraer!
 
-            Log.info "Respuesta del arduino: #{respuesta}"
+              Log.info "Respuesta del arduino: #{respuesta}"
 
-            case respuesta
-            # Si se extrajo el sobre
-            when :extraccion_ok
-              flash[:mensaje] = 'El sobre ha sido descargado.'
-              flash[:tipo] = 'alert-success'
+              case respuesta
+              # Si se extrajo el sobre
+              when :extraccion_ok
+                flash[:mensaje] = 'El sobre ha sido descargado.'
+                flash[:tipo] = 'alert-success'
 
-              # En vez de borrar el sobre lo marcamos como entregado
-              sobre.update_attribute :estado, 'descargado'
-            # Si no se extrajo el sobre y el arduino lo guarda automáticamente
-            when :extraccion_error
-              flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
-              flash[:tipo] = 'alert-info'
-            # Si el arduino no encontró el sobre
-            when :no_hay_carta
-              flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
-              flash[:tipo] = 'alert-danger'
+                # En vez de borrar el sobre lo marcamos como entregado
+                sobre.update_attribute :estado, 'descargado'
+              # Si no se extrajo el sobre y el arduino lo guarda automáticamente
+              when :extraccion_error
+                flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
+                flash[:tipo] = 'alert-info'
+              # Si el arduino no encontró el sobre
+              when :no_hay_carta
+                flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
+                flash[:tipo] = 'alert-danger'
+              when :atascamiento
+                raise Arduino::Atascamiento
+              else
+                flash[:mensaje] = 'Ocurrió un error.'
+                flash[:tipo] = 'alert-danger'
+              end
             else
-              flash[:mensaje] = 'Ocurrió un error.'
+              flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
               flash[:tipo] = 'alert-danger'
             end
-          else
-            flash[:mensaje] = 'El identificador no pertenece a un sobre válido.'
-            flash[:tipo] = 'alert-danger'
+          rescue Arduino::Atascamiento => e
+            Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
+
+            render 'error',
+              admin: false,
+              titulo: "Error código #{e.codigo}",
+              error: "Se ha producido un error, por favor contacte a un
+              administrador del Banco."
+
+            res.status = 503
+
+            # Cortar la renderización explícitamente
+            halt res.finish
           end
 
           # Volvemos a la lista de clientes
