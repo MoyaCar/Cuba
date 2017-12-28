@@ -86,6 +86,8 @@ Cuba.define do
 
       # Inicio de carga de usuarios administradores
       on 'usuarios' do
+        garantizar_superadmin!
+
         on root do
           render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Admin.normal
         end
@@ -250,6 +252,8 @@ Cuba.define do
       end
 
       on 'usuarios' do
+        garantizar_superadmin!
+
         # Procesar nuevo usuario
         on 'crear' do
           on param('nombre'), param('nro_documento'), param('password') do |nombre, nro_documento, password|

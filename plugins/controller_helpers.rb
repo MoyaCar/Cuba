@@ -21,6 +21,11 @@ module ControllerHelpers
   end
 
   def garantizar_superadmin!
+    usuario = Admin.find(session[:usuario_actual_id])
+
+    no_autorizado! unless usuario.super?
+  rescue ActiveRecord::RecordNotFound
+    no_autorizado!
   end
 
   # TODO Ver por qué se limpia el flash al redirigir
@@ -28,7 +33,12 @@ module ControllerHelpers
     flash[:tipo] = 'alert-danger'
     flash[:mensaje] = 'No está autorizado a realizar esta acción.'
 
-    res.redirect '/'
+    render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
+
+    res.status = 401
+
+    # Cortar la renderización explícitamente
+    halt res.finish
   end
 
   # Chequear que no se intente acceder al sistema sin reiniciar
