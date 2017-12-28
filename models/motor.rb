@@ -81,7 +81,7 @@ class Motor
     @@paso_actual = 0 if ENV['RACK_ENV'] == 'development'
 
     # Relanzamos un mensaje de cero si estamos testeando
-    fallar! if ENV['SED_CERO'] == 'false'
+    self.class.fallar! if ENV['SED_CERO'] == 'false'
   end
 
   def self.paso_actual
