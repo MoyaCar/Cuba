@@ -71,7 +71,7 @@ class Arduino
 
   def ordenar(comando)
     # Relanzamos un mensaje de atascamiento si estamos testeando
-    self.class.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
+    Arduino.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
 
     # escribir
     dispositivo.i2cset(COMANDOS[comando])
