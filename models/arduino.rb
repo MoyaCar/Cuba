@@ -1,6 +1,12 @@
 require_relative 'log'
 
 class Arduino
+  class Atascamiento < RuntimeError
+    def codigo
+      '2x01'
+    end
+  end
+
   DIRECCIONES = {
     0 => 0x08,
     1 => 0x09
@@ -28,6 +34,8 @@ class Arduino
   }
 
   attr_reader :dispositivo, :estado
+
+  @@error = false
 
   def initialize(nivel, opciones_mock = {})
     driver = I2CDevice::Driver::I2CDev.new('/dev/i2c-1')
@@ -62,6 +70,9 @@ class Arduino
   end
 
   def ordenar(comando)
+    # Relanzamos un mensaje de atascamiento si estamos testeando
+    self.class.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
+
     # escribir
     dispositivo.i2cset(COMANDOS[comando])
 
@@ -80,30 +91,41 @@ class Arduino
   end
 
   def cargar!
-    Log.info "Inicio de proceso de carga"
+    Log.info 'Inicio de proceso de carga'
 
     ordenar :carga
   end
 
   def extraer!
-    Log.info "Inicio de proceso de extracción"
+    Log.info 'Inicio de proceso de extracción'
 
     ordenar :extraccion
   end
 
   def cero!
-    Log.logger.info "Llevando presentador a cero"
+    Log.logger.info 'Llevando presentador a cero'
 
     ordenar :cero
   end
 
   def test_on!
-    Log.logger.info "Test ON"
+    Log.logger.info 'Test ON'
+
     ordenar :test_on
   end
 
   def test_off!
-    Log.logger.info "Test OFF"
+    Log.logger.info 'Test OFF'
+
     ordenar :test_off
+  end
+
+  def self.fallar!(mensaje = nil)
+    @@error = true
+    raise Atascamiento, mensaje
+  end
+
+  def self.error
+    @@error
   end
 end

@@ -27,6 +27,8 @@
 
 Cuba.define do
   on get do
+    checkear_errores!
+
     on root do
       # Limpiamos la sesión
       session.delete(:usuario_actual_id)
@@ -39,11 +41,13 @@ Cuba.define do
       rescue Motor::CeroNoEncontrado => e
         render 'error',
           admin: false,
-          titulo: e.message,
-          error: "Se ha producido un error, por favor reinicie el equipo. Código #{e.codigo}."
+          titulo: "Error código #{e.codigo}",
+          error: "Se ha producido un error, por favor reinicie el equipo."
+
+        res.status = 503
 
         # Cortar la renderización explícitamente
-        break
+        halt res.finish
       end
 
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
@@ -115,6 +119,8 @@ Cuba.define do
   end
 
   on post do
+    checkear_errores!
+
     # Recibe el DNI cargado por el Usuario
     on 'dni' do
       on param('dni') do |dni|
@@ -166,45 +172,60 @@ Cuba.define do
       # Después de un error o terminar las extracciones volvemos al inicio
       siguiente = '/'
 
-      if cliente.present? && cliente.sobres.montados.any?
-        sobre = cliente.sobres.montados.first
-        motor = Motor.new sobre.nivel, sobre.posicion
+      begin
+        if cliente.present? && cliente.sobres.montados.any?
+          sobre = cliente.sobres.montados.first
+          motor = Motor.new sobre.nivel, sobre.posicion
 
-        motor.posicionar!
+          motor.posicionar!
 
-        respuesta = Arduino.new(sobre.nivel).extraer!
+          respuesta = Arduino.new(sobre.nivel).extraer!
 
-        Log.info "Respuesta del arduino: #{respuesta}"
+          Log.info "Respuesta del arduino: #{respuesta}"
 
-        case respuesta
-        # Si se extrajo el sobre
-        when :extraccion_ok
-          flash[:mensaje] = 'Gracias por utilizar la terminal.'
-          flash[:tipo] = 'alert-success'
+          case respuesta
+          # Si se extrajo el sobre
+          when :extraccion_ok
+            flash[:mensaje] = 'Gracias por utilizar la terminal.'
+            flash[:tipo] = 'alert-success'
 
-          # En vez de borrar el sobre lo marcamos como entregado
-          sobre.update_attribute :estado, 'entregado'
+            # En vez de borrar el sobre lo marcamos como entregado
+            sobre.update_attribute :estado, 'entregado'
 
-          # Si todavía hay sobres, continuamos la extracción
-          if cliente.sobres.montados.any?
-            flash[:mensaje] = "Sobres restantes: #{cliente.sobres.montados.count}."
-            siguiente = '/extraccion'
+            # Si todavía hay sobres, continuamos la extracción
+            if cliente.sobres.montados.any?
+              flash[:mensaje] = "Sobres restantes: #{cliente.sobres.montados.count}."
+              siguiente = '/extraccion'
+            end
+          # Si no se extrajo el sobre y el arduino lo guarda automáticamente
+          when :extraccion_error
+            flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
+            flash[:tipo] = 'alert-info'
+          # Si el arduino no encontró el sobre
+          when :no_hay_carta
+            flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
+            flash[:tipo] = 'alert-danger'
+          when :atascamiento
+            raise Arduino::Atascamiento
+          else
+            flash[:mensaje] = 'Ocurrió un error.'
+            flash[:tipo] = 'alert-danger'
           end
-        # Si no se extrajo el sobre y el arduino lo guarda automáticamente
-        when :extraccion_error
-          flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
-          flash[:tipo] = 'alert-info'
-        # Si el arduino no encontró el sobre
-        when :no_hay_carta
-          flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
-          flash[:tipo] = 'alert-danger'
         else
-          flash[:mensaje] = 'Ocurrió un error.'
+          flash[:mensaje] = 'No tiene tarjetas disponibles.'
           flash[:tipo] = 'alert-danger'
         end
-      else
-        flash[:mensaje] = 'No tiene tarjetas disponibles.'
-        flash[:tipo] = 'alert-danger'
+      rescue Arduino::Atascamiento => e
+        render 'error',
+          admin: false,
+          titulo: "Error código #{e.codigo}",
+          error: "Se ha producido un error, por favor contacte a un
+          administrador del Banco."
+
+        res.status = 503
+
+        # Cortar la renderización explícitamente
+        halt res.finish
       end
 
       res.redirect siguiente

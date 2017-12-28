@@ -30,4 +30,18 @@ module ControllerHelpers
 
     res.redirect '/'
   end
+
+  # Chequear que no se intente acceder al sistema sin reiniciar
+  def checkear_errores!
+    if Motor.error || Arduino.error
+      render 'error',
+        admin: false,
+        titulo: "Error código 0x01",
+        error: "Se ha producido un error, por favor reinicie el equipo."
+
+      res.status = 503
+
+      halt res.finish
+    end
+  end
 end

@@ -9,7 +9,7 @@ end
 class Motor
   class CeroNoEncontrado < RuntimeError
     def codigo
-      '0x00'
+      '1x01'
     end
   end
 
@@ -36,6 +36,7 @@ class Motor
   attr_reader :nivel, :sob
 
   @@paso_actual = nil
+  @@error = false
 
   # Inicializar una instancia de motor sin posición busca una de las libres
   def initialize(nivel = nil, sob = nil)
@@ -80,7 +81,7 @@ class Motor
     @@paso_actual = 0 if ENV['RACK_ENV'] == 'development'
 
     # Relanzamos un mensaje de cero si estamos testeando
-    raise CeroNoEncontrado if ENV['SED_CERO'] == 'false'
+    fallar! if ENV['SED_CERO'] == 'false'
   end
 
   def self.paso_actual
@@ -194,7 +195,7 @@ class Motor
 
       @@paso_actual = 0
 
-      raise CeroNoEncontrado, mensaje
+      self.class.fallar! mensaje
     end
   end
 
@@ -335,5 +336,14 @@ class Motor
     end
   rescue RuntimeError => e
     Log.error e.message
+  end
+
+  def self.fallar!(mensaje = nil)
+    @@error = true
+    raise CeroNoEncontrado, mensaje
+  end
+
+  def self.error
+    @@error
   end
 end
