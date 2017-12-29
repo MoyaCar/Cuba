@@ -268,7 +268,7 @@ class Motor
     Log.error e.message
 
     # Devolver siempre 0 en development
-    true
+    ENV['RACK_ENV'] == 'development'
   end
 
   def self.set_sentido!(sentido = :h)
