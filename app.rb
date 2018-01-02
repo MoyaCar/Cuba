@@ -161,6 +161,7 @@ Cuba.define do
 
           res.redirect siguiente
         else
+          Log.error "Error de identificación: #{usuario.nombre}, #{usuario.nro_documento}"
           flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
           flash[:tipo] = 'alert-danger'
 
@@ -193,6 +194,7 @@ Cuba.define do
             flash[:mensaje] = 'Gracias por utilizar la terminal.'
             flash[:tipo] = 'alert-success'
 
+            Log.info "Sobre entregado a cliente #{cliente.nro_documento}"
             # En vez de borrar el sobre lo marcamos como entregado
             sobre.update_attribute :estado, 'entregado'
 
@@ -203,10 +205,14 @@ Cuba.define do
             end
           # Si no se extrajo el sobre y el arduino lo guarda automáticamente
           when :extraccion_error
+            Log.info "Sobre no entregado a cliente #{cliente.nro_documento}"
+
             flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
             flash[:tipo] = 'alert-info'
           # Si el arduino no encontró el sobre
           when :no_hay_carta
+            Log.error "No se encuentra el sobre para cliente #{cliente.nro_documento} en el dispenser"
+
             flash[:mensaje] = 'No se encuentra el sobre en el dispenser.'
             flash[:tipo] = 'alert-danger'
           when :atascamiento
@@ -247,7 +253,9 @@ Cuba.define do
             nombre_archivo_novedades: nombre_archivo_novedades
           )
 
-          flash[:mensaje] = 'Configuración actualizada.'
+          mensaje = 'Configuración actualizada.'
+          Log.info mensaje
+          flash[:mensaje] = mensaje
           flash[:tipo] = 'alert-info'
 
           # Siempre volvemos al inicio del administrador
@@ -264,10 +272,14 @@ Cuba.define do
             usuario = Admin.create nombre: nombre, nro_documento: nro_documento, password: password
 
             if usuario.persisted?
-              flash[:mensaje] = 'El usuario ha sido creado'
+              mensaje = "El usuario #{nombre} ha sido creado"
+              Log.info mensaje
+              flash[:mensaje] = mensaje
               flash[:tipo] = 'alert-success'
             else
-              flash[:mensaje] = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              mensaje = "No pudo crearse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              Log.error mensaje
+              flash[:mensaje] = mensaje
               flash[:tipo] = 'alert-danger'
             end
 
@@ -283,10 +295,14 @@ Cuba.define do
             usuario.destroy
 
             if usuario.destroyed?
-              flash[:mensaje] = 'El usuario ha sido eliminado'
+              mensaje = "El usuario #{nombre} ha sido eliminado"
+              Log.info mensaje
+              flash[:mensaje] = mensaje
               flash[:tipo] = 'alert-success'
             else
-              flash[:mensaje] = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              mensaje = "No pudo eliminarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+              Log.error mensaje
+              flash[:mensaje] = mensaje
               flash[:tipo] = 'alert-danger'
             end
 
@@ -300,10 +316,14 @@ Cuba.define do
               password = req.params['password']
 
               if usuario.update nombre: nombre, nro_documento: nro_documento, password: password
-                flash[:mensaje] = 'El usuario ha sido modificado'
+                mensaje = "El usuario #{nombre} ha sido modificado"
+                Log.info mensaje
+                flash[:mensaje] = mensaje
                 flash[:tipo] = 'alert-success'
               else
-                flash[:mensaje] = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+                mensaje = "No pudo modificarse el usuario. #{usuario.errors.full_messages.to_sentence}"
+                Log.error mensaje
+                flash[:mensaje] = mensaje
                 flash[:tipo] = 'alert-danger'
               end
 
@@ -317,9 +337,12 @@ Cuba.define do
         # Carga la lista de clientes desde el USB
         on 'cargar' do
           begin
+            Log.info "Carga de archivo de novedades: #{Configuracion.path_archivo_novedades}"
             Novedad.parsear Configuracion.path_archivo_novedades
           rescue Errno::ENOENT
-            flash[:mensaje] = "El archivo #{Configuracion.nombre_archivo_novedades} no existe"
+            mensaje = "El archivo #{Configuracion.nombre_archivo_novedades} no existe"
+            Log.error mensaje
+            flash[:mensaje] = mensaje
             flash[:tipo] = 'alert-danger'
           end
 
