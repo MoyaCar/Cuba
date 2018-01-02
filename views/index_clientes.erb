@@ -5,8 +5,8 @@
         <th class="col-md-2">Proveedor</th>
         <th class="col-md-2">Alt.</th>
         <th class="col-md-3">Nombre</th>
-        <th class="col-md-2">Tipo</th>
         <th class="col-md-2">Doc.</th>
+        <th class="col-md-2">Estado</th>
         <th class="controles col-md-1"></th>
       </tr>
     </thead>
@@ -18,8 +18,8 @@
           <td class="col-md-2"><%= sobre.nro_proveedor %></td>
           <td class="col-md-2"><%= sobre.nro_alternativo %></td>
           <td class="col-md-3"><%= sobre.nombre %></td>
-          <td class="col-md-2"><%= sobre.tipo_documento %></td>
           <td class="col-md-2"><%= sobre.nro_documento %></td>
+          <td class="col-md-2"><%= sobre.estado %></td>
           <td class="controles col-md-1">
             <%# Si el sobre está, podemos extraerlo %>
             <% if sobre.presente? %>

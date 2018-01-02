@@ -1,7 +1,7 @@
 class SobreDecorator
   attr_reader :sobre
 
-  delegate :id, :estado, :nro_proveedor, :nro_alternativo, :cliente, to: :sobre
+  delegate :id, :nro_proveedor, :nro_alternativo, :cliente, to: :sobre
   delegate :nombre, :tipo_documento, :nro_documento, to: :cliente
 
   def initialize(sobre)
@@ -9,10 +9,14 @@ class SobreDecorator
   end
 
   def presente?
-    estado == 'montado'
+    sobre.estado == 'montado'
   end
 
   def cargable?
-    estado == 'no_montado' || estado == 'descargado'
+    sobre.estado == 'no_montado' || sobre.estado == 'descargado'
+  end
+
+  def estado
+    sobre.estado.titleize
   end
 end
