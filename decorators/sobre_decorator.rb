@@ -11,4 +11,8 @@ class SobreDecorator
   def presente?
     estado == 'montado'
   end
+
+  def cargable?
+    estado == 'no_montado' || estado == 'descargado'
+  end
 end
