@@ -20,11 +20,9 @@ var layoutAlfanumerico = [
   ], [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'capslock'
   ], [
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'shift'
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'shift', 'delete'
   ], [
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', 'delete'
-  ], [
-    'space'
+    'z', 'x', 'c', 'v', 'b', 'n', 'm', 'space'
   ]
 ]
 

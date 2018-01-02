@@ -86,3 +86,7 @@ a.btn.lateral {
   padding: 0 1.5em;
   line-height: 3.5em;
 }
+
+.softkeys__btn--space {
+  width: 19.25em;
+}
