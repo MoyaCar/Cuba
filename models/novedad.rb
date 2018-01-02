@@ -100,11 +100,12 @@ class Novedad < ActiveRecord::Base
       ) do |c|
         c.nombre = self.nombre.titleize
         c.clave_digital = self.clave_digital
-        c.sobres_attributes = [
-          nro_proveedor: self.nro_proveedor,
-          nro_alternativo: self.nro_alternativo
-        ]
       end
+
+      cliente.sobres.find_or_create_by!(
+        nro_proveedor: self.nro_proveedor,
+        nro_alternativo: self.nro_alternativo
+      )
     end
   end
 
