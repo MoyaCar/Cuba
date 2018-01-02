@@ -234,12 +234,12 @@ class Motor
     raise 'posición no puede ser negativa' if sob < 0
 
     if nivel == 0
-      pasos = (sob * PPR/SPN + OFF_0).to_i - @@paso_actual
+      pasos = (sob * PPR/SPN + OFF_0).to_i - @@paso_actual.to_i
     elsif nivel == 1
-      pasos = (sob * PPR/SPN + OFF_1).to_i - @@paso_actual
+      pasos = (sob * PPR/SPN + OFF_1).to_i - @@paso_actual.to_i
     end
 
-    Log.logger.info "Sobre: #{sob} | Paso actual: #{@@paso_actual} | Pasos: #{pasos}"
+    Log.logger.info "Sobre: #{sob} | Paso actual: #{@@paso_actual.to_i} | Pasos: #{pasos}"
 
     media_vuelta = PPR / 2
     if pasos.positive?
@@ -257,7 +257,7 @@ class Motor
     end
 
     # FIXME Pasar a Configuración ?
-    @@paso_actual = @@paso_actual + pasos
+    @@paso_actual = @@paso_actual.to_i + pasos
   end
 
   private
@@ -268,7 +268,7 @@ class Motor
     Log.error e.message
 
     # Devolver siempre 0 en development
-    ENV['RACK_ENV'] == 'development'
+    true
   end
 
   def self.set_sentido!(sentido = :h)
