@@ -37,7 +37,11 @@ Cuba.define do
 
       begin
         # Inicializar el motor y la posición cero
-        Motor.setup! unless Motor.paso_actual.present?
+        unless Motor.paso_actual.present?
+          Log.info "Configurando motor y buscando posición Cero"
+          Motor.setup!
+          Log.info "Paso actual del motor: #{Motor.paso_actual}"
+        end
       rescue Motor::CeroNoEncontrado => e
         Log.error "Cero no encontrado. Código de error #{e.codigo}."
 
