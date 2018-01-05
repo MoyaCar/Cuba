@@ -5,6 +5,7 @@ class Admin < ActiveRecord::Base
 
   has_secure_password
 
+  # En realidad es un legajo
   validates :nro_documento,
     presence: true,
     uniqueness: true,
