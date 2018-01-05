@@ -70,7 +70,7 @@ class Arduino
   end
 
   def ordenar(comando)
-    # Relanzamos un mensaje de atascamiento si estamos testeando
+    # Lanzamos un mensaje de atascamiento si estamos testeando
     Arduino.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
 
     # escribir
