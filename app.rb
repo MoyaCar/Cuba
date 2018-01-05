@@ -165,7 +165,7 @@ Cuba.define do
 
           res.redirect siguiente
         else
-          Log.error "Error de identificación: #{usuario.nombre}, #{usuario.nro_documento}"
+          Log.error "Error de identificación, intento de ingreso de: #{dni}"
           flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
           flash[:tipo] = 'alert-danger'
 
