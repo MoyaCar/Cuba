@@ -41,6 +41,7 @@ Cuba.define do
           Log.info "Configurando motor y buscando posición Cero"
           Motor.setup!
           Log.info "Paso actual del motor: #{Motor.paso_actual}"
+          Log.info "Cero encontrado correctamente" if Motor.sensor_en_cero?
         end
       rescue Motor::CeroNoEncontrado => e
         Log.error "Cero no encontrado. Código de error #{e.codigo}."
@@ -341,7 +342,7 @@ Cuba.define do
         # Carga la lista de clientes desde el USB
         on 'cargar' do
           begin
-            Log.info "Carga de archivo de novedades: #{Configuracion.path_archivo_novedades}"
+            Log.info "Carga de archivo de novedades: #{Configuracion.nombre_archivo_novedades}"
             Novedad.parsear Configuracion.path_archivo_novedades
           rescue Errno::ENOENT
             mensaje = "El archivo #{Configuracion.nombre_archivo_novedades} no existe"
