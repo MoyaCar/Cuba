@@ -300,7 +300,7 @@ Cuba.define do
             usuario.destroy
 
             if usuario.destroyed?
-              mensaje = "El usuario #{nombre} ha sido eliminado"
+              mensaje = "El usuario #{usuario.nombre} ha sido eliminado"
               Log.info mensaje
               flash[:mensaje] = mensaje
               flash[:tipo] = 'alert-success'
