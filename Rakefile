@@ -25,3 +25,15 @@ task :password_de_prueba do
     c.update_attribute :clave_digital, c.generar_clave_digital('1234')
   end
 end
+
+desc 'Parsea un csv de novedades'
+task :novedades do
+  if ENV['csv'].nil?
+    puts
+    puts 'Uso: '
+    puts '  rake novedades csv=test/novedades.csv'
+    puts
+  else
+    Novedad.parsear ENV['csv']
+  end
+end
