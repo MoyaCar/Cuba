@@ -14,11 +14,11 @@
           <td class="col-md-8"><%= usuario.nombre %></td>
           <td class="col-md-2"><%= usuario.nro_documento %></td>
           <td class="controles col-md-2">
-            <a class="btn btn-primary btn-lg" href="/admin/usuarios/<%= usuario.id %>/editar" role="button">
+            <a class="btn btn-primary btn-lg bloqueador" href="/admin/usuarios/<%= usuario.id %>/editar" role="button" data-disable-with="...">
               <i class="glyphicon glyphicon-edit"></i>
             </a>
 
-            <a data-method="delete" class="btn btn-danger btn-lg" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow">
+            <a data-method="delete" class="btn btn-danger btn-lg bloqueador" href="/admin/usuarios/<%= usuario.id %>/eliminar" role="button" rel="nofollow" data-disable-with="...">
               <i class="glyphicon glyphicon-remove"></i>
             </a>
           </td>
