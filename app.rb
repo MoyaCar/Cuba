@@ -61,7 +61,7 @@ Cuba.define do
     end
 
     on 'dni' do
-      render 'dni', titulo: 'Ingrese su DNI', admin: false
+      render 'dni', titulo: 'Ingrese su documento', admin: false
     end
 
     on 'codigo' do
@@ -132,9 +132,10 @@ Cuba.define do
 
     # Recibe el DNI cargado por el Usuario
     on 'dni' do
-      on param('dni') do |dni|
-        # Guardamos el DNI para el próximo request y le pedimos el código
+      on param('dni'), param('tipo') do |dni, tipo|
+        # Guardamos el documento para el próximo request y le pedimos el código
         session[:dni] = dni
+        session[:tipo] = tipo
 
         res.redirect '/codigo'
       end
@@ -144,12 +145,13 @@ Cuba.define do
     on 'codigo' do
       on param('codigo') do |codigo|
         dni = session.delete(:dni)
+        tipo = session.delete(:tipo)
 
-        # El usuario o false
-        usuario = if Cliente.where(nro_documento: dni).any?
-          Cliente.where(nro_documento: dni).take.try(:validar!, codigo)
-        else
+        # El código 99 es el Legajo de los admins
+        usuario = if tipo == '99'
           Admin.where(nro_documento: dni).take.try(:authenticate, codigo)
+        else
+          Cliente.where(nro_documento: dni).take.try(:validar!, codigo)
         end
 
         if usuario

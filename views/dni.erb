@@ -7,7 +7,20 @@
         data-target="input[name='dni']"
         autocomplete="off"
       />
+
+      <select name="tipo" class="form-control input-lg">
+        <% Novedad::DOCUMENTOS.each do |tipo, nombre| %>
+          <option <%= seleccionado(tipo) %> value="<%= tipo %>">
+            <%= nombre %>
+          </option>
+        <% end %>
+
+        <option value="99">
+          Legajo
+        </option>
+      </select>
     </div>
+
 
     <div class="col-sm-offset-4 col-sm-4 form-group teclado-contenedor"></div>
 

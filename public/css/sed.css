@@ -90,3 +90,8 @@ a.btn.lateral {
 .softkeys__btn--space {
   width: 19.25em;
 }
+
+/* El selector de tipo de documento */
+select[name="tipo"] {
+  margin-top: 0.5em;
+}
