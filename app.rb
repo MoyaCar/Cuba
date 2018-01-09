@@ -151,7 +151,7 @@ Cuba.define do
         usuario = if tipo == '99'
           Admin.where(nro_documento: dni).take.try(:authenticate, codigo)
         else
-          Cliente.where(nro_documento: dni).take.try(:validar!, codigo)
+          Cliente.where(nro_documento: dni, tipo_documento: tipo).take.try(:validar!, codigo)
         end
 
         if usuario
