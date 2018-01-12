@@ -14,7 +14,7 @@
       <% sobres.each do |s| %>
         <% sobre = SobreDecorator.new(s) %>
         <tr>
-          <td class="col-md-3"><%= sobre.nro_proveedor %></td>
+          <td class="col-md-3" data-filter="<%= sobre.codigo_de_barras %>"><%= sobre.nro_proveedor %></td>
           <td class="col-md-4"><%= sobre.nombre %></td>
           <td class="col-md-2"><%= sobre.nro_documento %></td>
           <td class="col-md-2"><%= sobre.estado %></td>

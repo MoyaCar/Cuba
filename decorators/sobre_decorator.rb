@@ -19,4 +19,8 @@ class SobreDecorator
   def estado
     sobre.estado.titleize
   end
+
+  def codigo_de_barras
+    "K#{sobre.nro_proveedor}"
+  end
 end
