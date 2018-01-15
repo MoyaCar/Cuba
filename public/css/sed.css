@@ -73,7 +73,7 @@ a.btn.lateral {
   width: 100%;
 }
 
-/* Dejar border internos solamente */
+/* Dejar bordes internos solamente */
 .table-bordered {
   border-width: 0;
 }
@@ -94,4 +94,11 @@ a.btn.lateral {
 /* El selector de tipo de documento */
 select[name="tipo"] {
   margin-top: 0.5em;
+}
+
+/* Agrandar los botones de paginación (estilos de btn-lg) */
+.pagination > li > a {
+  font-size: 1em;
+  padding: 10px 16px;
+  line-height: 1.3333333;
 }

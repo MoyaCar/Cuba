@@ -4,6 +4,7 @@ $(document).ready(function(){
       url: '/js/datatables.es.json'
     },
     pageLength: 7,
+    pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
       null,
@@ -22,6 +23,7 @@ $(document).ready(function(){
       url: '/js/datatables.es.json'
     },
     pageLength: 7,
+    pagingType: 'full_numbers',
     lengthChange: false,
     dom:
       "<'row'<'col-sm-6'l><'col-sm-6'>>" +
@@ -35,6 +37,7 @@ $(document).ready(function(){
       url: '/js/datatables.es.json'
     },
     pageLength: 7,
+    pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
       null,
