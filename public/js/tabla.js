@@ -1,9 +1,14 @@
 $(document).ready(function(){
+  // Leer y remover la página actual del storage
+  pagina = Number(localStorage.getItem('pagina-actual'))
+  localStorage.removeItem('pagina-actual')
+
   $('.data-table').DataTable({
     language: {
       url: '/js/datatables.es.json'
     },
     pageLength: 7,
+    displayStart: 7 * pagina,
     pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
@@ -37,6 +42,7 @@ $(document).ready(function(){
       url: '/js/datatables.es.json'
     },
     pageLength: 7,
+    displayStart: 7 * pagina,
     pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
@@ -56,4 +62,11 @@ $(document).ready(function(){
 
 $(document).on('input', 'input.filtro', function () {
   $('.data-table, .data-table-clientes').DataTable().search(this.value).draw();
+});
+
+// Guardar la página actual después de cada acción en la tabla
+$(document).on('click', '.capturar-pagina', function() {
+  pagina = $('.table').DataTable().page()
+
+  localStorage.setItem('pagina-actual', pagina)
 });

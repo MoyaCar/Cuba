@@ -21,12 +21,12 @@
           <td class="controles col-md-1">
             <%# Si el sobre está, podemos extraerlo %>
             <% if sobre.presente? %>
-              <a data-method="post" class="btn btn-danger btn-lg bloqueador" href="/admin/clientes/<%= sobre.id %>/extraer" role="button" rel="nofollow" data-disable-with="...">
+              <a data-method="post" class="btn btn-danger btn-lg bloqueador capturar-pagina" href="/admin/clientes/<%= sobre.id %>/extraer" role="button" rel="nofollow" data-disable-with="...">
                 <i class="glyphicon glyphicon-download-alt"></i>
               </a>
             <%# Si no está, podemos cargarlo %>
             <% elsif sobre.cargable? %>
-              <a data-method="post" class="btn btn-primary btn-lg bloqueador" href="/admin/clientes/<%= sobre.id %>/cargar" role="button" rel="nofollow" data-disable-with="...">
+              <a data-method="post" class="btn btn-primary btn-lg bloqueador capturar-pagina" href="/admin/clientes/<%= sobre.id %>/cargar" role="button" rel="nofollow" data-disable-with="...">
                 <i class="glyphicon glyphicon-envelope"></i>
               </a>
             <%# A menos que haya sido entregado a un cliente %>
