@@ -45,12 +45,13 @@
         cursor: pointer;
     }
 
+        /* Saco esta regla para que no se rompa en touchscreens
         .softkeys__btn:hover, .softkeys__btn:focus {
             outline: none;
             background-color: #4b94ce;
             border-color: #4b94ce;
             color: #fff;
-        }
+        } */
 
         .softkeys__btn span {
             display: none;
