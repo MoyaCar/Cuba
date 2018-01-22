@@ -2,20 +2,22 @@
   <table class="table table-bordered table-striped table-condensed text-left data-table-logs">
     <thead>
       <tr>
-        <th class="col-md-2">ID</th>
+        <th class="col-md-2">Fecha</th>
+        <th class="col-md-1">ID</th>
         <th class="col-md-1">Severidad</th>
         <th class="col-md-6">Mensaje</th>
-        <th class="col-md-3">Usuario</th>
+        <th class="col-md-2">Usuario</th>
       </tr>
     </thead>
 
     <tbody>
       <% logs.each do |log| %>
         <tr>
-          <td class="col-md-2"><%= log.id %></td>
+          <td class="col-md-2"><%= log.created_at.to_s(:db) %></td>
+          <td class="col-md-1"><%= log.id %></td>
           <td class="col-md-1"><%= log.severidad %></td>
           <td class="col-md-6"><%= log.mensaje %></td>
-          <td class="col-md-3"><%= log.usuario && log.usuario.nombre %></td>
+          <td class="col-md-2"><%= log.usuario && log.usuario.nombre %></td>
         </tr>
       <% end %>
     </tbody>
