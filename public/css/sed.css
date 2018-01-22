@@ -108,3 +108,18 @@ select[name="tipo"] {
   bottom: 0;
   font-size: smaller;
 }
+
+/* Fixes para los estilos del layout de tablas */
+.dataTables_info {
+  font-size: smaller;
+  text-align: left;
+}
+
+.dataTables_paginate {
+  text-align: left !important;
+}
+
+.fondo {
+  position: fixed;
+  bottom: 0;
+}

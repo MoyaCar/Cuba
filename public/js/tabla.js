@@ -17,10 +17,10 @@ $(document).ready(function(){
       { orderable: false }
     ],
     dom:
-      "<'row'<'col-sm-6'l><'col-sm-6'>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12'p>>" +
-      "<'row'<'col-sm-12'i>>"
+      "<'row'<'col-md-6'l><'col-md-6'>>" +
+      "<'row'<'col-md-12'tr>>" +
+      "<'row fondo'<'col-md-12'p>>" +
+      "<'row'<'col-md-12'i>>"
   });
 
   $('.data-table-logs').DataTable({
@@ -31,10 +31,10 @@ $(document).ready(function(){
     pagingType: 'full_numbers',
     lengthChange: false,
     dom:
-      "<'row'<'col-sm-6'l><'col-sm-6'>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12'p>>" +
-      "<'row'<'col-sm-12'i>>"
+      "<'row'<'col-md-6'l><'col-md-6'>>" +
+      "<'row'<'col-md-12'tr>>" +
+      "<'row fondo'<'col-md-12'p>" +
+      "<'col-md-12'i>>"
   });
 
   $('.data-table-clientes').DataTable({
@@ -53,10 +53,10 @@ $(document).ready(function(){
       { orderable: false }
     ],
     dom:
-      "<'row'<'col-sm-6'l><'col-sm-6'>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12'p>>" +
-      "<'row'<'col-sm-12'i>>"
+      "<'row'<'col-md-6'l><'col-md-6'>>" +
+      "<'row'<'col-md-12'tr>>" +
+      "<'row fondo'<'col-md-12'p>" +
+      "<'col-md-12'i>>"
   });
 });
 
