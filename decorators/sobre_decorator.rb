@@ -21,6 +21,6 @@ class SobreDecorator
   end
 
   def codigo_de_barras
-    "K#{sobre.nro_proveedor}"
+    [Configuracion.prefijo_nro_proveedor, sobre.nro_proveedor].join
   end
 end

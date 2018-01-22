@@ -255,9 +255,10 @@ Cuba.define do
       garantizar_admin!
 
       on 'configurar' do
-        on param('nombre_archivo_novedades') do |nombre_archivo_novedades|
+        on param('nombre_archivo_novedades'), param('prefijo_nro_proveedor') do |nombre_archivo_novedades, prefijo_nro_proveedor|
           Configuracion.config.update_attributes(
-            nombre_archivo_novedades: nombre_archivo_novedades
+            nombre_archivo_novedades: nombre_archivo_novedades,
+            prefijo_nro_proveedor: prefijo_nro_proveedor
           )
 
           mensaje = 'Configuración actualizada.'

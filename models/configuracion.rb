@@ -12,8 +12,13 @@ class Configuracion < ActiveRecord::Base
     Configuracion.order(:created_at).first || Configuracion.new
   end
 
+  # Delegar cada campo por conveniencia
   def self.nombre_archivo_novedades
     config.nombre_archivo_novedades
+  end
+
+  def self.prefijo_nro_proveedor
+    config.prefijo_nro_proveedor
   end
 
   # Archivo de configuración de entorno
