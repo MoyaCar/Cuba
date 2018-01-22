@@ -56,6 +56,11 @@ h1 {
   font-size: 1em;
 }
 
+/* Algunos botones, como los de input groups, necesitan el default */
+.btn-lg-default {
+  font-size: 18px;
+}
+
 .input-lg {
   font-size: 1em;
 }
@@ -122,4 +127,13 @@ select[name="tipo"] {
 .fondo {
   position: fixed;
   bottom: 0;
+}
+
+/* Aumentar el ancho default del modal */
+.modal-lg {
+  width: 90%;
+}
+
+.modal-dialog {
+  margin-top: 25%;
 }

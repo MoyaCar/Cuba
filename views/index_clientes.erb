@@ -44,7 +44,37 @@
 
 <div class="col-md-3">
   <div class="form-group">
-    <input type="text" name="filtro" class="filtro form-control input-lg enfocable" placeholder="Buscar..." autofocus data-target="input[name='filtro']"/>
+    <div class="input-group">
+      <input type="text" name="filtro" class="filtro form-control input-lg enfocable" autofocus
+         placeholder="Buscar..."
+         data-target="input[name='filtro']"/>
+
+      <span class="input-group-btn">
+        <button class="btn btn-default btn-lg btn-lg-default" type="button" data-toggle="modal" data-target=".teclado-modal-container">AN</button>
+      </span>
+    </div>
+  </div>
+
+  <%# Modal con teclado alfanumérico %>
+  <div class="modal fade teclado-modal-container" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close btn-lg" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Búsqueda alfanumérica</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="teclado-modal"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="form-group teclado-contenedor"></div>

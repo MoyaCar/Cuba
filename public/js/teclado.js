@@ -44,3 +44,10 @@ $(document).on('focus', 'input.enfocable', function() {
     layout : layout
   })
 })
+
+$(document).ready(function() {
+  $('.teclado-modal').softkeys({
+    target: "input[name='filtro']",
+    layout: layoutAlfanumerico
+  })
+})

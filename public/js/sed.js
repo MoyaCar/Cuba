@@ -2,14 +2,14 @@
 //
 //  data-disable-with="Enviando..."
 
-// Bloquear toda la página cuando hay varias acciones posibles
 $(document).ready(function() {
+  // Bloquear toda la página cuando hay varias acciones posibles
   $('.bloqueador').click(function() {
-    $.blockUI({ message: null });
-  });
-});
+    $.blockUI({ message: null })
+  })
+})
 
 // Anular el menú contextual
 $(document).on('contextmenu', function(event) {
-  event.preventDefault();
-});
+  event.preventDefault()
+})
