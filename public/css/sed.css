@@ -102,3 +102,9 @@ select[name="tipo"] {
   padding: 10px 16px;
   line-height: 1.3333333;
 }
+
+.codigo-error {
+  position: fixed;
+  bottom: 0;
+  font-size: smaller;
+}

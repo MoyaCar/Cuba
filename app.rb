@@ -46,15 +46,7 @@ Cuba.define do
       rescue Motor::CeroNoEncontrado => e
         Log.error "Cero no encontrado. Código de error #{e.codigo}."
 
-        render 'error',
-          admin: false,
-          titulo: "Error código #{e.codigo}",
-          error: "Se ha producido un error, por favor reinicie el equipo."
-
-        res.status = 503
-
-        # Cortar la renderización explícitamente
-        halt res.finish
+        fallo! codigo: e.codigo
       end
 
       render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
@@ -235,16 +227,7 @@ Cuba.define do
       rescue Arduino::Atascamiento => e
         Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
 
-        render 'error',
-          admin: false,
-          titulo: "Error código #{e.codigo}",
-          error: "Se ha producido un error, por favor contacte a un
-          administrador del Banco."
-
-        res.status = 503
-
-        # Cortar la renderización explícitamente
-        halt res.finish
+        fallo! codigo: e.codigo
       end
 
       res.redirect siguiente
@@ -400,16 +383,7 @@ Cuba.define do
           rescue Arduino::Atascamiento => e
             Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
 
-            render 'error',
-              admin: false,
-              titulo: "Error código #{e.codigo}",
-              error: "Se ha producido un error, por favor contacte a un
-              administrador del Banco."
-
-            res.status = 503
-
-            # Cortar la renderización explícitamente
-            halt res.finish
+            fallo! codigo: e.codigo
           end
 
           # Volvemos a la lista de clientes
@@ -458,16 +432,7 @@ Cuba.define do
           rescue Arduino::Atascamiento => e
             Log.error "Arduino de nivel #{sobre.nivel} atascado. Código de error #{e.codigo}."
 
-            render 'error',
-              admin: false,
-              titulo: "Error código #{e.codigo}",
-              error: "Se ha producido un error, por favor contacte a un
-              administrador del Banco."
-
-            res.status = 503
-
-            # Cortar la renderización explícitamente
-            halt res.finish
+            fallo! codigo: e.codigo
           end
 
           # Volvemos a la lista de clientes

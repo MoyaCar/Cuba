@@ -44,14 +44,21 @@ module ControllerHelpers
   # Chequear que no se intente acceder al sistema sin reiniciar
   def checkear_errores!
     if Motor.error || Arduino.error
-      render 'error',
-        admin: false,
-        titulo: "Error código 0x01",
-        error: "Se ha producido un error, por favor reinicie el equipo."
-
-      res.status = 503
-
-      halt res.finish
+      fallo! codigo: '0x01'
     end
+  end
+
+  def fallo!(codigo:, status: 503)
+    render 'error',
+      admin: false,
+      titulo: 'Equipo fuera de servicio',
+      error: 'Se ha producido un error, por favor contacte a un
+      administrador del Banco.',
+      codigo: "Error código #{codigo}"
+
+    res.status = status
+
+    # Cortar la renderización explícitamente
+    halt res.finish
   end
 end
