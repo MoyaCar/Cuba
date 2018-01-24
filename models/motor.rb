@@ -226,7 +226,6 @@ class Motor
     [nivel, sob]
   end
 
-  # FIXME Implementar
   def posicionar!
     Log.logger.info "Ubicando motor en posición #{posicion}"
 
