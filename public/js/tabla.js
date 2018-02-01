@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(function() {
   // Leer y remover la página actual del storage
   pagina = Number(localStorage.getItem('pagina-actual'))
   localStorage.removeItem('pagina-actual')
@@ -21,7 +21,7 @@ $(document).ready(function(){
       "<'row'<'col-md-12'tr>>" +
       "<'row fondo'<'col-md-12'p>>" +
       "<'row'<'col-md-12'i>>"
-  });
+  })
 
   $('.data-table-logs').DataTable({
     language: {
@@ -35,7 +35,7 @@ $(document).ready(function(){
       "<'row'<'col-md-12'tr>>" +
       "<'row fondo'<'col-md-12'p>" +
       "<'col-md-12'i>>"
-  });
+  })
 
   $('.data-table-clientes').DataTable({
     language: {
@@ -57,16 +57,16 @@ $(document).ready(function(){
       "<'row'<'col-md-12'tr>>" +
       "<'row fondo'<'col-md-12'p>" +
       "<'col-md-12'i>>"
-  });
-});
+  })
+})
 
 $(document).on('input', 'input.filtro', function () {
-  $('.data-table, .data-table-clientes').DataTable().search(this.value).draw();
-});
+  $('.data-table, .data-table-clientes').DataTable().search(this.value).draw()
+})
 
 // Guardar la página actual después de cada acción en la tabla
 $(document).on('click', '.capturar-pagina', function() {
   pagina = $('.table').DataTable().page()
 
   localStorage.setItem('pagina-actual', pagina)
-});
+})
