@@ -5,6 +5,8 @@
 # POST    /dni                          - Verifica el DNI y redirige a /codigo
 # GET     /codigo                       - Ingreso del Código de acceso del Usuario
 # POST    /codigo                       - Verifica el Código y redirige según tipo de Usuario
+# GET     /admin-login                  - Ingreso de Legajo y Código del Admin
+# POST    /admin-login                  - Verifica Legajo y Código del Admin
 #
 # Rutas y acciones de clientes:
 #
@@ -58,6 +60,10 @@ Cuba.define do
 
     on 'codigo' do
       render 'codigo', titulo: 'Ingrese su Código de Acceso', admin: false
+    end
+
+    on 'admin-login' do
+      render 'admin_login', titulo: 'Ingrese su legajo y contraseña', admin: false
     end
 
     # Verificamos que exista un sobre para este cliente o redirigimos
@@ -122,7 +128,7 @@ Cuba.define do
   on post do
     checkear_errores!
 
-    # Recibe el DNI cargado por el Usuario
+    # Recibe el DNI cargado por el Cliente
     on 'dni' do
       on param('dni'), param('tipo') do |dni, tipo|
         # Guardamos el documento para el próximo request y le pedimos el código
@@ -133,24 +139,17 @@ Cuba.define do
       end
     end
 
-    # Recibe el Código de acceso cargado por el Usuario
+    # Recibe el Código de acceso cargado por el Cliente
     on 'codigo' do
       on param('codigo') do |codigo|
         dni = session.delete(:dni)
         tipo = session.delete(:tipo)
 
-        # El código 99 es el Legajo de los admins
-        usuario = if tipo == '99'
-          Admin.where(nro_documento: dni).take.try(:authenticate, codigo)
-        else
-          Cliente.where(nro_documento: dni, tipo_documento: tipo).take.try(:validar!, codigo)
-        end
+        usuario = Cliente.where(nro_documento: dni, tipo_documento: tipo).take.try(:validar!, codigo)
 
         if usuario
-          flash[:mensaje] = "Le damos la bienvenida #{ usuario.admin? ? 'Administrador ' : nil}#{usuario.nombre}."
+          flash[:mensaje] = "Le damos la bienvenida #{usuario.nombre}."
           flash[:tipo] = 'alert-info'
-
-          siguiente = usuario.admin? ? '/admin/clientes' : '/extraccion'
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
@@ -158,9 +157,36 @@ Cuba.define do
           Log.usuario_actual = usuario
           Log.info "Usuario logueado: #{usuario.nombre}"
 
-          res.redirect siguiente
+          res.redirect '/extraccion'
         else
           Log.error "Error de identificación, intento de ingreso de: #{dni}"
+          flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
+          flash[:tipo] = 'alert-danger'
+
+          res.redirect '/'
+        end
+      end
+    end
+
+    # Recibe las credenciales (Legajo y Código) de los usuarios Admin
+    on 'admin-login' do
+      on param('legajo'), param('codigo') do |legajo, codigo|
+
+        usuario = Admin.where(nro_documento: legajo).take.try(:authenticate, codigo)
+
+        if usuario
+          flash[:mensaje] = "Le damos la bienvenida Administrador #{usuario.nombre}."
+          flash[:tipo] = 'alert-info'
+
+          # Guardamos al usuario para la siguiente solicitud
+          session[:usuario_actual_id] = usuario.id
+          session[:usuario_actual_tipo] = usuario.class.to_s
+          Log.usuario_actual = usuario
+          Log.info "Usuario logueado: #{usuario.nombre}"
+
+          res.redirect '/admin/clientes'
+        else
+          Log.error "Error de identificación de admin, intento de ingreso de: #{legajo}"
           flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
           flash[:tipo] = 'alert-danger'
 
