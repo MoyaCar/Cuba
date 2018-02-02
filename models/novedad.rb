@@ -16,23 +16,36 @@
 #
 #   - Tipo de documento (clave 2  novedades)
 #   - Nro documento (clave 2 novedades)
-# 
+#
 # Tipo está codificado según la tabla Novedad::DOCUMENTO. El siguiente,
 # `clave_digital`, es el hash generado con sha256 a partir del documento con
 # padding de ceros a 13 caracteres y la clave en sí. Por ejemplo:
 #
 #   documento: 31065175
 #   clave: 7894
-# 
+#
 #   sha256(00000310651757894) => 89d7d1208500260b83cad9ef68f1bc596d6dc966b7645a4a39cff74dfdb18117
 #
 # Los siguientes campos no se usan en la aplicación pero los guardamos igual por las dudas:
-# 
+#
 #   - Tipo producto SID
 #   - Tipo producto Banco
 #   - Nro producto SID
+#   - Tipo producto SID 2
+#   - Tipo producto Banco  2
+#   - Nro producto SID  2
+#
+# Apellido y nombre "que está en el plástico":
+#
 #   - Apellido y Nombre
-#   - fecha informacion
+#
+# Apellido y nombre del titular de la cuenta (para mensajes al cliente):
+#
+#   - Apellido y Nombre  titular
+#
+# Fecha y hora en formatos aaaa-mm-dd y hhmmss:
+#
+#   - Fecha informacion
 #   - Hora informacion
 #
 # Ejemplos:
@@ -45,6 +58,10 @@
 #   650
 #   109
 #   005165850198189589
+#   < vacío >
+#   < vacío >
+#   < vacío >
+#   LEDESMA,JORGE EDGAR
 #   LEDESMA,JORGE EDGAR
 #   2017-12-07
 #   163000
@@ -84,15 +101,24 @@ class Novedad < ActiveRecord::Base
       update(
         nro_proveedor: fila[0].to_s.strip.encode(Encoding::UTF_8),
         nro_alternativo: fila[1].to_s.strip.encode(Encoding::UTF_8),
+
         tipo_documento: fila[2].to_s.encode(Encoding::UTF_8),
         nro_documento: fila[3].to_s.encode(Encoding::UTF_8),
         clave_digital: fila[4].to_s.encode(Encoding::UTF_8),
+
         tipo_sid: fila[5].to_s.encode(Encoding::UTF_8),
         tipo_banco: fila[6].to_s.encode(Encoding::UTF_8),
         nro_sid: fila[7].to_s.encode(Encoding::UTF_8),
-        nombre: fila[8].to_s.strip.encode(Encoding::UTF_8),
-        fecha: fila[9].to_s.encode(Encoding::UTF_8),
-        hora: Time.strptime(fila[10].to_s.encode(Encoding::UTF_8), '%H%M%S')
+
+        tipo_sid_2: fila[8].to_s.encode(Encoding::UTF_8),
+        tipo_banco_2: fila[9].to_s.encode(Encoding::UTF_8),
+        nro_sid_2: fila[10].to_s.encode(Encoding::UTF_8),
+
+        nombre: fila[11].to_s.strip.encode(Encoding::UTF_8),
+        nombre_titular: fila[12].to_s.strip.encode(Encoding::UTF_8),
+
+        fecha: fila[13].to_s.encode(Encoding::UTF_8),
+        hora: Time.strptime(fila[14].to_s.encode(Encoding::UTF_8), '%H%M%S')
       )
 
       cliente = Cliente.find_or_create_by!(
