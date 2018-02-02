@@ -24,6 +24,8 @@
 # GET     /admin/clientes               - ABM de clientes administradores
 # GET     /admin/clientes/cargar        - Inicio del proceso de carga de clientes por USB
 # POST    /admin/clientes/cargar        - Carga la lista de clientes desde el USB
+# GET     /admin/clientes/exportar      - Inicio del proceso de exportación al USB 
+# POST    /admin/clientes/exportar      - Exporta los datos de movimientos al USB
 # POST    /admin/clientes/:id/sobres    - Carga un sobre nuevo para este usuario
 # GET     /admin/logs                   - Visualización de logs del sistema
 
@@ -116,6 +118,10 @@ Cuba.define do
 
         on 'cargar' do
           render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true
+        end
+
+        on 'exportar' do
+          render 'exportar_movimientos', titulo: 'Exportar movimientos', admin: true
         end
       end
 
@@ -365,6 +371,28 @@ Cuba.define do
 
           res.redirect '/admin/clientes'
         end
+
+        on 'exportar' do
+          begin
+            e = Exportador.new
+
+            e.exportar!
+
+            mensaje = "Se ha generado el archivo #{e.nombre_archivo}."
+            Log.info mensaje
+            flash[:mensaje] = mensaje
+            flash[:tipo] = 'alert-info'
+          rescue SystemCallError => e
+            mensaje = "Ocurrió un error durante la exportación."
+            Log.error mensaje
+            Log.error e.message
+            flash[:mensaje] = mensaje
+            flash[:tipo] = 'alert-danger'
+          end
+
+          res.redirect '/admin/clientes'
+        end
+
 
         # Carga el sobre correspondiente
         on ':id/cargar' do |id|

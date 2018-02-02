@@ -17,13 +17,14 @@
 #   Hora información            AN (06)    hhmmss
 
 class Exportador
-  attr_reader :sobres
+  attr_reader :sobres, :fecha
 
   def initialize(sobres = Sobre.all)
     @sobres = sobres
+    @fecha = Date.today
   end
 
-  def exportar
+  def exportar!
     CSV.open(archivo_csv, 'w', headers: false, force_quotes: true) do |csv|
       sobres.each do |sobre|
         csv << generar_fila(sobre)
@@ -32,7 +33,7 @@ class Exportador
   end
 
   def nombre_archivo
-    "movimientosADM-#{Date.today.strftime('%Y%m%d')}.csv"
+    "movimientosADM-#{fecha.strftime('%Y%m%d')}.csv"
   end
 
   def archivo_csv
