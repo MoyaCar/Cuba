@@ -95,14 +95,15 @@ class Novedad < ActiveRecord::Base
   validates :nombre,
     presence: true
 
-  # Parsear una fila del csv de novedades creando los objetos derivados (Novedad, Usuario, Sobre)
+  # Parsear una fila del csv de novedades creando los objetos derivados (Novedad, Cliente, Sobre, Tarjeta)
   def parsear(fila)
     transaction do
       update(
         nro_proveedor: fila[0].to_s.strip.encode(Encoding::UTF_8),
         nro_alternativo: fila[1].to_s.strip.encode(Encoding::UTF_8),
 
-        tipo_documento: fila[2].to_s.encode(Encoding::UTF_8),
+        # A veces viene 0, a veces 00
+        tipo_documento: fila[2].to_s.encode(Encoding::UTF_8).rjust(2, '0'),
         nro_documento: fila[3].to_s.encode(Encoding::UTF_8),
         clave_digital: fila[4].to_s.encode(Encoding::UTF_8),
 
@@ -121,16 +122,28 @@ class Novedad < ActiveRecord::Base
         hora: Time.strptime(fila[14].to_s.encode(Encoding::UTF_8), '%H%M%S')
       )
 
+      # Un sólo Cliente por sobre, que representa al titular de cuenta y a
+      # quien pertenecen los datos de login (nombre, dni y codigo).
+      # En la práctica se puede pensar que siempre retira el sobre el titular.
       cliente = Cliente.find_or_create_by!(
-        tipo_documento: self.tipo_documento, nro_documento: self.nro_documento
+        tipo_documento: self.tipo_documento,
+        nro_documento: self.nro_documento,
+        nombre: self.nombre_titular
       ) do |c|
-        c.nombre = self.nombre.titleize
         c.clave_digital = self.clave_digital
       end
 
-      cliente.sobres.find_or_create_by!(
+      # El sobre al que identifica este número de proveedor (Clave 1 novedades
+      # según la documentación)
+      sobre = cliente.sobres.find_or_create_by!(
         nro_proveedor: self.nro_proveedor,
         nro_alternativo: self.nro_alternativo
+      )
+
+      # Las tarjetas se usan para control visual de sobres cargados
+      # (cada línea en 'index_clientes')
+      sobre.tarjetas.find_or_create_by!(
+        nombre: self.nombre
       )
     end
   end

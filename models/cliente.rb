@@ -1,6 +1,4 @@
-# Un usuario que tiene sobres que retirar
-require_relative 'novedad'
-
+# Un usuario que tiene sobres que retirar. Siempre es el titular de la cuenta
 class Cliente < ActiveRecord::Base
   self.table_name = 'clientes'
 

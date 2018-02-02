@@ -43,8 +43,9 @@ require_relative 'models/novedad'
 require_relative 'models/admin'
 require_relative 'models/sobre'
 require_relative 'models/cliente'
+require_relative 'models/tarjeta'
 require_relative 'models/configuracion'
-require_relative 'decorators/sobre_decorator'
+require_relative 'decorators/tarjeta_decorator'
 
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: 'public',

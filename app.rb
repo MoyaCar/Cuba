@@ -111,7 +111,7 @@ Cuba.define do
       # Inicio de carga de clientes
       on 'clientes' do
         on root do
-          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, sobres: Sobre.all
+          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, tarjetas: Tarjeta.all
         end
 
         on 'cargar' do
