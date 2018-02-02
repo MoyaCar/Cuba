@@ -27,6 +27,10 @@ class Configuracion < ActiveRecord::Base
   end
 
   def self.path_archivo_novedades
-    File.join entorno['csv']['path'], nombre_archivo_novedades
+    File.join path_base_archivos, nombre_archivo_novedades
+  end
+
+  def self.path_base_archivos
+    entorno['csv']['path']
   end
 end

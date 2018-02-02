@@ -107,10 +107,10 @@ class Novedad < ActiveRecord::Base
         nro_documento: fila[3].to_s.encode(Encoding::UTF_8),
         clave_digital: fila[4].to_s.encode(Encoding::UTF_8),
 
+        # Se exportan y tienen que ver con el sobre
         tipo_sid: fila[5].to_s.encode(Encoding::UTF_8),
         tipo_banco: fila[6].to_s.encode(Encoding::UTF_8),
         nro_sid: fila[7].to_s.encode(Encoding::UTF_8),
-
         tipo_sid_2: fila[8].to_s.encode(Encoding::UTF_8),
         tipo_banco_2: fila[9].to_s.encode(Encoding::UTF_8),
         nro_sid_2: fila[10].to_s.encode(Encoding::UTF_8),
@@ -138,7 +138,14 @@ class Novedad < ActiveRecord::Base
       sobre = cliente.sobres.find_or_create_by!(
         nro_proveedor: self.nro_proveedor,
         nro_alternativo: self.nro_alternativo
-      )
+      ) do |s|
+        s.tipo_sid = self.tipo_sid
+        s.tipo_banco = self.tipo_banco
+        s.nro_sid = self.nro_sid
+        s.tipo_sid_2 = self.tipo_sid_2
+        s.tipo_banco_2 = self.tipo_banco_2
+        s.nro_sid_2 = self.nro_sid_2
+      end
 
       # Las tarjetas se usan para control visual de sobres cargados
       # (cada línea en 'index_clientes')

@@ -7,6 +7,7 @@ class CreateSobres < ActiveRecord::Migration[5.1]
       t.string :nro_proveedor
       t.string :nro_alternativo
       t.string :estado, default: 'no_montado', null: false
+      t.timestamps
     end
   end
 end

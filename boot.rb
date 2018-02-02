@@ -45,6 +45,7 @@ require_relative 'models/sobre'
 require_relative 'models/cliente'
 require_relative 'models/tarjeta'
 require_relative 'models/configuracion'
+require_relative 'models/exportador'
 require_relative 'decorators/tarjeta_decorator'
 
 # Servir archivos estáticos desde este directorio

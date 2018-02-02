@@ -28,4 +28,8 @@ class Sobre < ActiveRecord::Base
 
   validates :nivel,
     numericality: { less_than: Motor::LVL, allow_nil: true }
+
+  def novedad
+    Novedad.where(nro_proveedor: nro_proveedor).take || Novedad.new
+  end
 end
