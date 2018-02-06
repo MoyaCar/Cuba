@@ -1,15 +1,16 @@
 <div class="col-md-12">
-    <div class="row" style="background-color: skyblue; ">
-      <div class="col-md-3" style="margin-top: 15px;">
+    <div class="row bbva" style="background-color: skyblue; ">
+      <div class="col-md-3" style="margin-top: 15px; margin-bottom: 15px;">
           <div class="text-center">
-            <img alt="BBVA Francés" src="/img/logo.png" width="300" height="50"/>
+            <img alt="BBVA Francés" src="/img/a.png" height="140px" width="140px"/>
           </div>
       </div>
-      <div class="col-md-6"><h1 class="text-center"><%= titulo %></h1></div>
+      <div class="col-md-6"><h1 class="text-center white-text" ><%= titulo %></h1></div>
       <div class="col-md-3">
-        <%= partial 'partials/navegador', admin: admin %>
+        <% partial 'partials/navegador', admin: admin %>
       </div>
     </div>
+    <p>&nbsp;</p>
     <div class="row">
           <div class="col-md-3">
           </div>
@@ -20,7 +21,7 @@
               asociamos a las mismas.
             </p>
             <div class="text-center">
-              <p><a class="btn btn-lg btn-info" href="/dni" role="button">Iniciar</a></p>            
+              <p><a class="btn btn-xlarge btn-info" href="/dni" role="button">Iniciar</a></p>            
             </div>
           </div>
           <div class="col-md-3">

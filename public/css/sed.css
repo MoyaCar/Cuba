@@ -9,9 +9,49 @@ body {
   font-size: 21px;
 }
 
+.bbva-banner {
+  background-color: rgb(28, 28, 77);
+}
+
+.banner {
+  margin-top: 10px; 
+  margin-bottom: 10px;
+}
+
+.white-text {
+  color: white;
+  padding-top: 30px;
+}
+
+.white {
+  color: white;
+}
+
+.margin {
+  margin-top: 20px; 
+  margin-bottom: 20px;
+}
+
+.bbva {
+  background-image: url("/img/bg.jpg");
+}
+
+.btn-xlarge {
+  padding: 18px 60px;
+  font-size: 32px;
+  line-height: normal;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+}
+
+.btn-info, .btn-info:hover, .btn-info:active, .btn-info:visited {
+  background-color: rgb(17, 14, 65) !important;
+  border-color: rgb(17, 21, 75) !important;
+}
+
 .header {
   margin-bottom: 20px;
-  border-bottom: 1px solid #e5e5e5;
   padding-right: 15px;
 }
 

@@ -1,5 +1,15 @@
 <div class="col-md-12">
-  <p class="lead">
+    <div class="row bbva">
+      <div class="col-md-3 margin" >
+      </div>
+      <div class="col-md-6"><h1 class="text-center white" ><%= titulo %></h1></div>
+      <div class="col-md-3">
+        <%= partial 'partials/navegador', admin: admin %>
+      </div>
+    </div>
+</div>
+<div class="col-md-12">
+  <p class="lead text-center">
     Puede retirar su código de acceso presentando su DNI en el mostrador
     principal.
   </p>
@@ -14,8 +24,8 @@
 
     <div class="col-sm-offset-4 col-sm-4 form-group teclado-contenedor"></div>
 
-    <div class="col-sm-offset-4 col-sm-4 form-group">
-      <button type="submit" class="btn btn-lg btn-success" data-disable-with="Enviando...">Ingresar</button>
+    <div class="col-sm-offset-4 col-sm-4 form-group pull-right">
+      <button type="submit" class="btn btn-lg btn-info" data-disable-with="Enviando...">Ingresar</button>
     </div>
   </form>
 </div>
