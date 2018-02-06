@@ -27,45 +27,16 @@
   </head>
 
   <body>
-    <div class="header clearfix">
-      <% unless defined?(error) %>
-        <nav class="menu-superior">
-          <ul class="nav nav-pills pull-right">
-            <div class="btn-group">
-              <% unless inicio? %>
-                <a onclick="history.back(-1)" class="btn btn-default btn-lg" data-target='#' href="#">Volver</a>
-              <% end %>
-            </div>
-
-            <div class="btn-group">
-              <a class="<%= clase_para_nav '/' %>" data-target='#' href="/">Inicio</a>
-
-              <% if admin %>
-                <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="caret"></span>
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a data-target='#' href="/admin/clientes">Carga de Clientes</a></li>
-                  <li><a data-target='#' href="/admin/usuarios">Carga de Usuarios</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a data-target='#' href="/admin/logs">Auditoría</a></li>
-                  <li><a data-target='#' href="#">Mantenimiento</a></li>
-                  <li><a data-target='#' href="#">Autoinventario</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a data-target='#' href="/admin/panel">Panel</a></li>
-                </ul>
-              <% end %>
-            </div>
-          </ul>
-        </nav>
-      <% end %>
-
-      <div class="logo">
-        <img alt="BBVA Francés" src="/img/logo.png" />
-      </div>
+    <div class="row" style="background-color: rgb(28, 28, 77);">
+        <div class="mid-logo text-center" style=" margin-top: 10px; margin-bottom: 10px;">
+          <img alt="BBVA Francés" src="/img/home_logo.png" height="53" width="130"/>
+        </div>
     </div>
-
+    
+    <% partial 'partials/navegador', admin: admin %>
+    
+    <%= content %>
+    
     <div class="container-fluid principal">
       <%# Mensajes de información al usuario sobre las acciones realizadas %>
       <% if (mensaje = flash[:mensaje]).present? %>
@@ -74,13 +45,12 @@
         </div>
       <% end %>
 
-      <h1><%= titulo %></h1>
+      <h1><% titulo %></h1>
 
       <%# Bloque de contenido %>
       <div class="row">
         <%# `content` es la vista pasada al layout por `render 'vista'`. %>
         <%# Los elementos más externos siempre deben ser columnas del grid %>
-        <%= content %>
       </div>
     </div>
   </body>

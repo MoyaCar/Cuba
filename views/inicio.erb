@@ -1,9 +1,29 @@
 <div class="col-md-12">
-  <p class="lead">
-    En esta terminal podrás retirar automáticamente tus tarjetas de débito y
-    crédito, simplemente ingresando tu DNI y el código de acceso especial que
-    asociamos a las mismas.
-  </p>
-
-  <p><a class="btn btn-lg btn-success" href="/dni" role="button">Iniciar</a></p>
+    <div class="row" style="background-color: skyblue; ">
+      <div class="col-md-3" style="margin-top: 15px;">
+          <div class="text-center">
+            <img alt="BBVA Francés" src="/img/logo.png" width="300" height="50"/>
+          </div>
+      </div>
+      <div class="col-md-6"><h1 class="text-center"><%= titulo %></h1></div>
+      <div class="col-md-3">
+        <%= partial 'partials/navegador', admin: admin %>
+      </div>
+    </div>
+    <div class="row">
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-6">
+            <p class="lead">
+              En esta terminal podrás retirar automáticamente tus tarjetas de débito y
+              crédito, simplemente ingresando tu DNI y el código de acceso especial que
+              asociamos a las mismas.
+            </p>
+            <div class="text-center">
+              <p><a class="btn btn-lg btn-info" href="/dni" role="button">Iniciar</a></p>            
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+    </div>
 </div>
