@@ -74,7 +74,7 @@ Cuba.define do
       cliente = Cliente.find session[:usuario_actual_id] if usuario_actual_cliente?
 
       if cliente.present? && cliente.sobres.montados.any?
-        render 'extraccion', titulo: 'Retiro de sobres', admin: false, x: cliente.sobres.montados.count
+        render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenes #{cliente.sobres.montados.count} tarjetas para retirar", admin: false, x: cliente.sobres.montados.count
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
         flash[:tipo] = 'alert-danger'
