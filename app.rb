@@ -159,8 +159,8 @@ Cuba.define do
         usuario = Cliente.where(nro_documento: dni, tipo_documento: tipo).take.try(:validar!, codigo)
 
         if usuario
-          flash[:mensaje] = "Le damos la bienvenida #{usuario.nombre}."
-          flash[:tipo] = 'alert-info'
+          #flash[:mensaje] = "Le damos la bienvenida #{usuario.nombre}."
+          #flash[:tipo] = 'alert-info'
 
           # Guardamos al usuario para la siguiente solicitud
           session[:usuario_actual_id] = usuario.id
