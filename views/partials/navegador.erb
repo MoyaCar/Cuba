@@ -1,11 +1,12 @@
 <div class="header clearfix">
     <% unless defined?(error) %>
       <nav class="menu-superior">
+       <% if admin %>
         <ul class="nav  pull-right">
           <div class="btn-group">
-            <% unless inicio? %>
+            
               <a onclick="history.back(-1)" class="btn btn-info btn-lg" data-target='#' href="#">Volver</a>
-            <% end %>
+            
           </div>
 
           <div class="btn-group">
@@ -29,6 +30,7 @@
             <% end %>
           </div>
         </ul>
+        <% end %>
       </nav>
     <% end %>
   </div>

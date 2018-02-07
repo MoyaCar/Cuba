@@ -53,11 +53,11 @@ Cuba.define do
         fallo! codigo: e.codigo
       end
 
-      render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
+      render 'inicio', titulo: 'Retirá tu tarjeta', admin: false
     end
 
     on 'dni' do
-      render 'dni', titulo: 'Ingrese su documento', admin: false
+      render 'dni', titulo: 'Ingresa tu DNI', admin: false
     end
 
     on 'codigo' do

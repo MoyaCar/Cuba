@@ -33,7 +33,7 @@ module ControllerHelpers
     flash[:tipo] = 'alert-danger'
     flash[:mensaje] = 'No está autorizado a realizar esta acción.'
 
-    render 'inicio', titulo: 'Retiro automático de Tarjetas', admin: false
+    render 'inicio', titulo: 'Retirá tu tarjeta', admin: false
 
     res.status = 401
 

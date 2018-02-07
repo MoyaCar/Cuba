@@ -13,6 +13,10 @@ body {
   background-color: rgb(28, 28, 77);
 }
 
+.btn.btn-square {
+  border-radius: 0;
+}
+
 .banner {
   margin-top: 10px; 
   margin-bottom: 10px;
@@ -20,7 +24,7 @@ body {
 
 .white-text {
   color: white;
-  padding-top: 30px;
+  padding-top: 40px;
 }
 
 .white {
@@ -48,6 +52,11 @@ body {
 .btn-info, .btn-info:hover, .btn-info:active, .btn-info:visited {
   background-color: rgb(17, 14, 65) !important;
   border-color: rgb(17, 21, 75) !important;
+}
+
+.btn-success, .btn-success:hover, .btn-success:active, .btn-success:visited {
+  background-color: rgb(72, 141, 129) !important;
+  border-color: rgb(72, 141, 129) !important;
 }
 
 .header {
