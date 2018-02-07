@@ -8,11 +8,18 @@ $(function() {
     $.blockUI({ message: null })
   })
 
-  // Volver al login después de 20 segundos sin interacción del cliente
+  // Mostrar pantalla saliendo después de 15 segundos sin interacción del cliente
   if ($(".volver-al-login").length > 0) {
     window.setTimeout(function() {
-      window.location.replace('/')
+      window.location.replace('/saliendo')
     }, 20000)
+  }
+
+  // Volver al login después de 5 segundos sin interacción del cliente
+  if ($(".saliendo").length > 0) {
+    window.setTimeout(function() {
+      window.location.replace('/')
+    }, 5000)
   }
 })
 

@@ -11,6 +11,7 @@
 # Rutas y acciones de clientes:
 #
 # GET     /extraccion                   - Inicio del proceso de extracción de sobres
+# GET     /saliendo                     - Aviso de salida al cliente
 # POST    /extraccion                   - Completa el proceso de extracción de un Sobre
 #
 # Rutas y acciones de administradores:
@@ -80,6 +81,10 @@ Cuba.define do
 
         res.redirect '/'
       end
+    end
+
+    on 'saliendo' do
+      render 'saliendo', titulo: 'Saliendo', admin: false
     end
 
     # Control de acceso de administradores para el bloque completo
