@@ -1,4 +1,16 @@
+@font-face {
+  font-family: 'BBVAWebFont';
+  src: url('bbvaweb-light.eot'); /* IE9 Compat Modes */
+  src: url('bbvaweb-light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('bbvaweb-light.woff') format('woff'), /* Pretty Modern Browsers */
+       url('bbvaweb-light.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('bbvaweb-light.svg') format('svg'); /* Legacy iOS */
+}
+
 body {
+  /* Fuente Custom */
+  font-family: 'BBVAWebFont', Fallback, sans-serif;
+
   /* Deshabilitar la selección de texto en la página */
   -webkit-user-select: none;
      -moz-user-select: -moz-none;
@@ -7,6 +19,8 @@ body {
 
   /* Aumentar texto default */
   font-size: 21px;
+
+  
 }
 
 .bbva-banner {

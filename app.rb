@@ -58,7 +58,7 @@ Cuba.define do
     end
 
     on 'dni' do
-      render 'dni', titulo: 'Ingresa tu docuemnto', admin: false
+      render 'dni', titulo: 'Ingresa tu documento', admin: false
     end
 
     on 'codigo' do
