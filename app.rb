@@ -62,7 +62,7 @@ Cuba.define do
     end
 
     on 'codigo' do
-      render 'codigo', titulo: 'Ingrese su Código de Acceso', admin: false
+      render 'codigo', titulo: 'Ingresa tu clave de retiro', admin: false
     end
 
     on 'admin-login' do

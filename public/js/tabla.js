@@ -7,8 +7,8 @@ $(function() {
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 7,
-    displayStart: 7 * pagina,
+    pageLength: 6,
+    displayStart: 6 * pagina,
     pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
@@ -27,7 +27,7 @@ $(function() {
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 7,
+    pageLength: 6,
     pagingType: 'full_numbers',
     lengthChange: false,
     dom:
@@ -41,8 +41,8 @@ $(function() {
     language: {
       url: '/js/datatables.es.json'
     },
-    pageLength: 7,
-    displayStart: 7 * pagina,
+    pageLength: 6,
+    displayStart: 6 * pagina,
     pagingType: 'full_numbers',
     lengthChange: false,
     columns: [
