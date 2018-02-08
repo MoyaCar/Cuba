@@ -75,9 +75,9 @@ Cuba.define do
 
       if cliente.present? && cliente.sobres.montados.any?
         if cliente.sobres.montados.count > 1
-          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenes #{cliente.sobres.montados.count} tarjetas para retirar", admin: false, x: cliente.sobres.montados.count
+          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjetas para retirar", admin: false, x: cliente.sobres.montados.count
         else
-          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenes #{cliente.sobres.montados.count} tarjeta para retirar", admin: false, x: cliente.sobres.montados.count
+          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjeta para retirar", admin: false, x: cliente.sobres.montados.count
         end
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
