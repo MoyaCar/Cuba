@@ -53,6 +53,11 @@
             color: #fff;
         } */
 
+        .softkeys__btn:active {
+            background-color: rgb(93, 133, 182);
+            border-color: #02a199;
+        } 
+
         .softkeys__btn span {
             display: none;
         }

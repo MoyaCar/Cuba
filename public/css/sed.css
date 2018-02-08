@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'BBVAWebFont';
-  src: url('bbvaweb-light.eot'); /* IE9 Compat Modes */
-  src: url('bbvaweb-light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('bbvaweb-light.woff') format('woff'), /* Pretty Modern Browsers */
-       url('bbvaweb-light.ttf')  format('truetype'), /* Safari, Android, iOS */
-       url('bbvaweb-light.svg') format('svg'); /* Legacy iOS */
+  src: url('/fonts/bbvaweb-light.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/bbvaweb-light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/bbvaweb-light.woff') format('woff'), /* Pretty Modern Browsers */
+       url('/fonts/bbvaweb-light.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/bbvaweb-light.svg') format('svg'); /* Legacy iOS */
 }
 
 body {
