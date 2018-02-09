@@ -74,6 +74,7 @@ class Arduino
     Arduino.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
 
     # escribir
+    sleep 2
     dispositivo.i2cset(COMANDOS[comando])
 
     @estado = 0x10

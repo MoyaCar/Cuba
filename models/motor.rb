@@ -17,13 +17,13 @@ class Motor
   PPR = 4000    # Pulsos por revolucion del motor
   SPN = 120     # Sobres por nivel
   LVL = 2       # Niveles
-  OFF_1 = 5     # Pulsos de offset para el nivel 1 (arriba)
-  OFF_0 = 4     # Pulsos de offset para el nivel 0 (abajo)
+  OFF_1 = 12    # Pulsos de offset para el nivel 1 (arriba)
+  OFF_0 = 14    # Pulsos de offset para el nivel 0 (abajo)
   T_Cero = 120  # Segundos disponibles para buscar Cero
 
   # Variables del generador de trayectoria
   V_max = 400   # velocidad maxima [pulsos/s]
-  V_min = 5     # velocidad minima [pulsos/s]
+  V_min = 4     # velocidad minima [pulsos/s]
   A_max = 150   # aceleracion maxima [pulsos/s^2]
   RFA = 1       # relacion: tiempo_frenado/tiempo_aceleracion
   DT = 0.001    # paso de tiempo (1ms)
@@ -121,12 +121,12 @@ class Motor
 	v_act = V_min
       elsif estado == 4 then # pulso y espera hasta salir
         pulso!
-        sleep 4
+        sleep 2
       elsif estado == 5 then
-        girar! 20, :ah
+        girar! 6, :ah
         estado = 2
         set_sentido! :h
-        sleep 5
+        sleep 4
       end
 
       # PERFIL:
@@ -150,7 +150,7 @@ class Motor
 
       # DETECCION DEL SENSOR:
       if estado == 0 && sensor_en_cero? && p_act >= p1 then # comienzo a frenar
-        estado = 1 
+        estado = 1
         p_act = 0
 	p_aux = 0
       elsif estado == 1 && (p_act >= p2 || v_act <= V_min) then # comienzo a volver (rampa)
@@ -166,13 +166,13 @@ class Motor
         estado = 3
         cont = 0
       elsif estado == 3 && sensor_en_cero? == false && cont > 5 then # ajuste final
-        sleep 3.0
+        sleep 1.5
         set_sentido! :ah
-        pulso! 
-        sleep 1
+        pulso!
+        sleep 0.5
         pulso!
         set_sentido! :h
-        sleep 3.0
+        sleep 1.5
         if sensor_en_cero? then
           estado = 4 # salgo muy despacio
         else
