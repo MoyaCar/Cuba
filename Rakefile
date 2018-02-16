@@ -9,13 +9,25 @@ end
 
 desc 'Cargar superadmin inicial'
 task :superadmin do
-  if ENV['dni'].nil? || ENV['pass'].nil?
+  if ENV['dni'].nil? || ENV['pass'].nil? || ENV['nombre'].nil?
     puts
     puts 'Uso: '
     puts '  rake superadmin dni=12345678 pass=1234 nombre="Juan Salvo"'
     puts
   else
-    Admin.create super: true, nro_documento: ENV['dni'], password: ENV['pass'], nombre: ENV['nombre']
+    nombre = ENV['nombre']
+    password = ENV['pass']
+    nro_documento = ENV['dni']
+
+    # Crear un superadmin con estos datos si no existe
+    superadmin = Admin.find_or_create_by!(nro_documento: nro_documento) do |admin|
+      admin.super = true
+      admin.password = password
+      admin.nombre = nombre
+    end
+
+    # Y si ya existe cambiarlos
+    superadmin.update password: password, nombre: nombre, super: true
   end
 end
 
