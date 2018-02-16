@@ -19,15 +19,15 @@ task :superadmin do
     password = ENV['pass']
     nro_documento = ENV['dni']
 
+    # Borrar todos los superadmins
+    Admin.where(super: true).destroy_all
+
     # Crear un superadmin con estos datos si no existe
-    superadmin = Admin.find_or_create_by!(nro_documento: nro_documento) do |admin|
+    Admin.find_or_create_by!(nro_documento: nro_documento) do |admin|
       admin.super = true
       admin.password = password
       admin.nombre = nombre
     end
-
-    # Y si ya existe cambiarlos
-    superadmin.update password: password, nombre: nombre, super: true
   end
 end
 
