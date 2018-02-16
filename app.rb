@@ -25,7 +25,7 @@
 # GET     /admin/clientes               - ABM de clientes administradores
 # GET     /admin/clientes/cargar        - Inicio del proceso de carga de clientes por USB
 # POST    /admin/clientes/cargar        - Carga la lista de clientes desde el USB
-# GET     /admin/clientes/exportar      - Inicio del proceso de exportación al USB 
+# GET     /admin/clientes/exportar      - Inicio del proceso de exportación al USB
 # POST    /admin/clientes/exportar      - Exporta los datos de movimientos al USB
 # POST    /admin/clientes/:id/sobres    - Carga un sobre nuevo para este usuario
 # GET     /admin/logs                   - Visualización de logs del sistema
