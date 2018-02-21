@@ -157,12 +157,14 @@ Cuba.define do
     # Recibe el Código de acceso cargado por el Cliente
     on 'codigo' do
       on param('codigo') do |codigo|
-        dni = session.delete(:dni)
-        tipo = session.delete(:tipo)
+        dni = session[:dni]
+        tipo = session[:tipo]
 
-        usuario = Cliente.where(nro_documento: dni, tipo_documento: tipo).take.try(:validar!, codigo)
+        usuario = Cliente.where(nro_documento: dni, tipo_documento: tipo).take
 
-        if usuario
+        if usuario.try(:validar!, codigo)
+          session.delete(:dni)
+          session.delete(:tipo)
           #flash[:mensaje] = "Le damos la bienvenida #{usuario.nombre}."
           #flash[:tipo] = 'alert-info'
 
@@ -174,11 +176,22 @@ Cuba.define do
 
           res.redirect '/extraccion'
         else
-          Log.error "Error de identificación, intento de ingreso de: #{dni}"
-          flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
-          flash[:tipo] = 'alert-danger'
+          if usuario.bloqueado?
+            session.delete(:dni)
+            session.delete(:tipo)
 
-          res.redirect '/'
+            Log.error "Usuario bloqueado, intento de ingreso de: #{dni}"
+            flash[:mensaje] = 'Su usuario ha sido bloqueado.'
+            flash[:tipo] = 'alert-danger'
+  
+            res.redirect '/'
+          else
+            Log.error "Error de identificación, intento de ingreso de: #{dni}"
+            flash[:mensaje] = 'Hubo un error de identificación. Verifique los datos ingresados.'
+            flash[:tipo] = 'alert-danger'
+  
+            res.redirect '/codigo'
+          end
         end
       end
     end

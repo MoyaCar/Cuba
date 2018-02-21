@@ -32,7 +32,17 @@ class Cliente < ActiveRecord::Base
   end
 
   def validar!(codigo)
-    codigo_valido?(codigo) ? self : false
+    if codigo_valido?(codigo) && !bloqueado?
+      self.update intentos_fallidos: 0
+      self
+    else
+      self.update intentos_fallidos: self.intentos_fallidos + 1
+      false
+    end
+  end
+
+  def bloqueado?
+    self.intentos_fallidos >= 3
   end
 
   def admin?
