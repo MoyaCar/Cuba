@@ -29,6 +29,7 @@ class Exportador
       sobres.each do |sobre|
         csv << generar_fila(sobre)
       end
+      csv.fsync()
     end
   end
 

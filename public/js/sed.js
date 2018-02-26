@@ -8,7 +8,7 @@ $(function() {
     $.blockUI({ message: null })
   })
 
-  // Mostrar pantalla saliendo después de 15 segundos sin interacción del cliente
+  // Mostrar pantalla saliendo después de 20 segundos sin interacción del cliente
   if ($(".volver-al-login").length > 0) {
     window.setTimeout(function() {
       window.location.replace('/saliendo')
@@ -20,6 +20,13 @@ $(function() {
     window.setTimeout(function() {
       window.location.replace('/')
     }, 5000)
+  }
+
+  // Volver al login después de 8 segundos luego de entregar el sobre o algun error
+  if ($(".salir").length > 0) {
+    window.setTimeout(function() {
+      window.location.replace('/')
+    }, 8000)
   }
 })
 
