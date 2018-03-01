@@ -12,23 +12,25 @@
           <div class="btn-group">
             <a class="<%= clase_para_nav '/' %> btn-info" data-target='#' href="/">Inicio</a>
 
-            <% if admin %>
-              <button type="button" class="btn btn-info btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a data-target='#' href="/admin/clientes">Carga de Clientes</a></li>
-                <li><a data-target='#' href="/admin/usuarios">Carga de Usuarios</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a data-target='#' href="/admin/logs">Auditoría</a></li>
-                <li><a data-target='#' href="#">Mantenimiento</a></li>
-                <li><a data-target='#' href="#">Autoinventario</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a data-target='#' href="/admin/panel">Panel</a></li>
-              </ul>
-            <% end %>
+            
           </div>
+          <% if admin %>
+          <div class="btn-group">
+            <button type="button" class="btn btn-info btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Opciones
+            </button>
+            <ul class="dropdown-menu">
+              <li><a data-target='#' href="/admin/clientes">Carga de Clientes</a></li>
+              <li><a data-target='#' href="/admin/usuarios">Carga de Usuarios</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a data-target='#' href="/admin/logs">Auditoría</a></li>
+              <li><a data-target='#' href="#">Mantenimiento</a></li>
+              <li><a data-target='#' href="#">Autoinventario</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a data-target='#' href="/admin/panel">Panel</a></li>
+            </ul>
+          </div>
+        <% end %>
         </ul>
         <% end %>
       </nav>

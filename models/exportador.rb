@@ -10,8 +10,8 @@
 #   Nro producto SID 2          AN (18)
 #   Tipo documento              AN (02)
 #   Nro documento               AN (13)
-#   Estado en máquina           AN(20)       (descripción del estado: ej: montado, entregado, etc)
-#   Fecha de estado             AN(10)   aaaa-mm-dd
+#   Estado en máquina           AN (20)       (descripción del estado: ej: montado, entregado, etc)
+#   Fecha de estado             AN (10)   aaaa-mm-dd
 #   Nro producto proveedor      AN (50)
 #   Fecha información           AN (10)     aaaa-mm-dd
 #   Hora información            AN (06)    hhmmss
