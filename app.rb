@@ -176,7 +176,7 @@ Cuba.define do
 
           res.redirect '/extraccion'
         else
-          if usuario.bloqueado?
+          if usuario && usuario.bloqueado?
             session.delete(:dni)
             session.delete(:tipo)
 
