@@ -23,6 +23,10 @@ body {
   
 }
 
+.btn-pull-down {
+  padding-top: 270px;
+}
+
 .bbva-banner {
   background-color: rgb(28, 28, 77);
 }
