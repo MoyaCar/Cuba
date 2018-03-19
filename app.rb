@@ -30,7 +30,7 @@
 # POST    /admin/clientes/:id/sobres    - Carga un sobre nuevo para este usuario
 # GET     /admin/logs                   - Visualización de logs del sistema
 
-Cuba.define do
+Cuba.define do  
   on get do
     checkear_errores!
 
@@ -135,7 +135,7 @@ Cuba.define do
       end
 
       on 'logs' do
-        render 'index_logs', titulo: 'Logs del sistema', admin: true, logs: Log.all
+        render 'index_logs', titulo: 'Logs del sistema', admin: true, logs: Log.order(created_at: :desc)
       end
     end
   end

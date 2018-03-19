@@ -16,6 +16,9 @@ configuration = YAML::load(IO.read('config.yml'))
 
 ActiveRecord::Base.establish_connection(configuration['db'])
 
+ENV["TZ"] = "America/Argentina/Buenos_Aires" 
+#Time.zone = "America/Argentina/Buenos_Aires" 
+
 # Logger accesible globalmente, nivel de logueo según environment
 log_level = "Logger::#{configuration['log'][ENV['RACK_ENV']] || 'DEBUG'}"
 

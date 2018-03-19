@@ -16,4 +16,9 @@ module ViewHelpers
   def seleccionado(tipo)
     tipo == '00' ? 'selected="selected"' : nil
   end
+
+  def with_time_zone(date)
+    Time.zone = "America/Argentina/Buenos_Aires"
+    date.in_time_zone(Time.zone)
+  end
 end

@@ -1,4 +1,3 @@
-
 <div class="col-md-12">
   <table class="table table-bordered table-striped table-condensed text-left data-table-logs">
     <thead>
@@ -14,7 +13,7 @@
     <tbody>
       <% logs.each do |log| %>
         <tr>
-          <td class="col-md-2"><%= log.created_at.to_s(:db) %></td>
+          <td class="col-md-2"><%= with_time_zone(log.created_at).strftime("%d/%m/%Y %H:%M") %></td>
           <td class="col-md-1"><%= log.id %></td>
           <td class="col-md-1"><%= log.severidad %></td>
           <td class="col-md-6"><%= log.mensaje %></td>

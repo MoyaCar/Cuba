@@ -30,6 +30,7 @@ $(function() {
     pageLength: 6,
     pagingType: 'full_numbers',
     lengthChange: false,
+    order: [[ 1, "desc" ]],
     dom:
       "<'row'<'col-md-6'l><'col-md-6'>>" +
       "<'row'<'col-md-12'tr>>" +
