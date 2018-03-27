@@ -51,6 +51,7 @@ $(function() {
       null,
       null,
       null,
+      null,
       { orderable: false }
     ],
     dom:
