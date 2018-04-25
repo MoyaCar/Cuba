@@ -122,10 +122,6 @@ class Novedad < ActiveRecord::Base
         hora: Time.strptime(fila[14].to_s.encode(Encoding::UTF_8), '%H%M%S')
       )
 
-      update(   
-        intentos_fallidos: fila[15].to_s.encode(Encoding::UTF_8)
-      ) if !fila[15].nil?
-
       # Un sólo Cliente por sobre, que representa al titular de cuenta y a
       # quien pertenecen los datos de login (nombre, dni y codigo).
       # En la práctica se puede pensar que siempre retira el sobre el titular.
@@ -136,6 +132,8 @@ class Novedad < ActiveRecord::Base
       ) do |c|
         c.clave_digital = self.clave_digital
       end
+
+      cliente.update intentos_fallidos: 0
 
       # El sobre al que identifica este número de proveedor (Clave 1 novedades
       # según la documentación)

@@ -18,6 +18,8 @@ class Sobre < ActiveRecord::Base
   scope :entregados, ->{ where estado: 'entregado' }
   # Sobres descargados por el banco
   scope :descargados, ->{ where estado: 'descargado' }
+  # Sobres entregados por el banco de forma manual al usuario por algun error en el funcionamiento del cicuito
+  scope :manualmente, ->{ where estado: 'manualmente' }
 
   validates :posicion,
     # El ángulo no se repite en un mismo nivel

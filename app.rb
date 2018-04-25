@@ -466,6 +466,19 @@ Cuba.define do
           res.redirect '/admin/clientes'
         end
 
+        on ':id/manualmente' do |id|
+          sobre = Sobre.find id
+          begin
+
+            if sobre.present?
+              Log.info "Sobre extraido Manualmente"
+              sobre.update_attribute :estado, 'manualmente'
+              
+            end
+          end
+          res.redirect '/admin/clientes'
+        end
+
         on ':id/extraer' do |id|
           sobre = Sobre.find id
 
@@ -481,7 +494,7 @@ Cuba.define do
 
               case respuesta
               # Si se extrajo el sobre
-              when :extraccion_ok
+              when :extraccion_ok 
                 flash[:mensaje] = 'El sobre ha sido descargado.'
                 flash[:tipo] = 'alert-success'
 

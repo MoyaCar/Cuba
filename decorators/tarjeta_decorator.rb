@@ -13,6 +13,10 @@ class TarjetaDecorator
     sobre.estado == 'montado'
   end
 
+  def manualmente?
+    sobre.estado == 'manualmente'
+  end
+
   def cargable?
     sobre.estado == 'no_montado' || sobre.estado == 'descargado'
   end
