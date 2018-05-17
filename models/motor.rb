@@ -211,7 +211,7 @@ class Motor
       ubicaciones = {}
 
       LVL.times do |nivel|
-        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).pluck(:posicion)
+        ubicaciones[nivel] = (0...SPN).to_a - Sobre.where(nivel: nivel).where(estado: 'montado').pluck(:posicion)
       end
 
       @libres = ubicaciones.reject { |_, v| v.empty? }

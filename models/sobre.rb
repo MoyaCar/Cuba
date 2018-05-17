@@ -26,7 +26,7 @@ class Sobre < ActiveRecord::Base
     uniqueness: { scope: :nivel, allow_nil: true },
     numericality: { less_than: Motor::SPN, allow_nil: true }
   validates :estado,
-    inclusion: { in: %w{no_montado montado entregado descargado} }
+    inclusion: { in: %w{no_montado montado entregado descargado manualmente} }
 
   validates :nivel,
     numericality: { less_than: Motor::LVL, allow_nil: true }

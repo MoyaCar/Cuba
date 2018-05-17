@@ -9,7 +9,6 @@
         <th class="col-md-2">Estado</th>
         <th class="col-md-2">Fecha</th>
         <th class="controles col-md-1"></th>
-        <th class="controles col-md-1"></th>
       </tr>
     </thead>
 
@@ -25,18 +24,6 @@
               <%= with_time_zone(tarjeta.sobre.updated_at).strftime("%d/%m/%Y %H:%M") %>
           </td>
           <td class="controles col-md-1">
-            <% if tarjeta.presente? %>
-              <a data-method="post" class="btn btn-primary btn-lg bloqueador capturar-pagina" href="/admin/clientes/<%= tarjeta.sobre_id %>/manualmente" role="button" rel="nofollow" data-disable-with="...">
-                <i class="glyphicon glyphicon-hand-up"></i>
-              </a>
-            <%end%>
-            <% if tarjeta.manualmente? %>
-              <button disabled class="btn btn-success btn-lg" role="button" rel="nofollow">
-                <i class="glyphicon glyphicon-hand-up"></i>
-              </button>
-            <%end%>
-          </td>
-          <td class="controles col-md-1">
             
             <%# Si el sobre está, podemos extraerlo %>
             <% if tarjeta.presente? %>
@@ -50,11 +37,9 @@
               </a>
             <%# A menos que haya sido entregado a un cliente %>
             <% else %>
-              <% unless tarjeta.manualmente? %>
                 <button disabled class="btn btn-success btn-lg" role="button" rel="nofollow">
                   <i class="glyphicon glyphicon-ok"></i>
                 </button>
-              <%end%>
             <% end %>
           </td>
         </tr>

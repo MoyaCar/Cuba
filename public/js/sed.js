@@ -1,3 +1,14 @@
+var noInteraction;
+
+function invocation() {
+  noInteraction = window.setTimeout( 
+  function() {
+      window.location.replace('/')
+  }, 45000);
+}
+
+invocation();
+
 $(function() {
   // Evitar doble submit, con jquery-ujs:
   //
@@ -28,6 +39,16 @@ $(function() {
       window.location.replace('/')
     }, 8000)
   }
+
+  $(document).on('touchstart', function() {
+    clearTimeout( noInteraction )
+    invocation()
+  })
+
+  $(document).on('click', function() {
+    clearTimeout( noInteraction )
+    invocation()
+  })
 })
 
 // Anular el menú contextual
