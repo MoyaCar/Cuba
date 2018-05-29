@@ -437,7 +437,7 @@ Cuba.define do
                 flash[:mensaje] = 'El sobre ha sido guardado correctamente.'
                 flash[:tipo] = 'alert-success'
 
-                sobre.update nivel: nivel, posicion: posicion, estado: 'montado'
+                sobre.update_attributes nivel: nivel, posicion: posicion, estado: 'montado'
               when :carga_error
                 # Si no se recibió un sobre
                 flash[:mensaje] = 'El sobre no ha sido guardado.'
@@ -472,7 +472,7 @@ Cuba.define do
 
             if sobre.present?
               Log.info "Sobre extraido Manualmente"
-              sobre.update_attribute :estado, 'manualmente'
+              sobre.update_attributes estado: 'manualmente', posicion: nil, nivel: nil
               
             end
           end
@@ -499,7 +499,7 @@ Cuba.define do
                 flash[:tipo] = 'alert-success'
 
                 # En vez de borrar el sobre lo marcamos como entregado
-                sobre.update_attribute :estado, 'descargado'
+                sobre.update_attributes estado: 'descargado', posicion: nil, nivel: nil
               # Si no se extrajo el sobre y el arduino lo guarda automáticamente
               when :extraccion_error
                 flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
