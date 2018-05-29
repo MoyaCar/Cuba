@@ -249,7 +249,7 @@ Cuba.define do
 
             Log.info "Sobre entregado a cliente #{cliente.nro_documento}"
             # En vez de borrar el sobre lo marcamos como entregado
-            sobre.update_attributes estado: 'entregado', posicion: 0, nivel: 0
+            sobre.update_attributes estado: 'entregado', posicion: nil, nivel: nil
 
             # Si todavía hay sobres, continuamos la extracción
             if cliente.sobres.montados.any?
