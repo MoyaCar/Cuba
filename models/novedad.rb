@@ -125,35 +125,39 @@ class Novedad < ActiveRecord::Base
       # Un sólo Cliente por sobre, que representa al titular de cuenta y a
       # quien pertenecen los datos de login (nombre, dni y codigo).
       # En la práctica se puede pensar que siempre retira el sobre el titular.
-      cliente = Cliente.find_or_create_by!(
-        tipo_documento: self.tipo_documento,
-        nro_documento: self.nro_documento,
-        nombre: self.nombre_titular
-      ) do |c|
-        c.clave_digital = self.clave_digital
+      begin
+        cliente = Cliente.find_or_create_by!(
+          tipo_documento: self.tipo_documento,
+          nro_documento: self.nro_documento,
+          nombre: self.nombre_titular
+        ) do |c|
+          c.clave_digital = self.clave_digital
+        end
+
+        cliente.update intentos_fallidos: 0
+
+        # El sobre al que identifica este número de proveedor (Clave 1 novedades
+        # según la documentación)
+        sobre = cliente.sobres.find_or_create_by!(
+          nro_proveedor: self.nro_proveedor,
+          nro_alternativo: self.nro_alternativo
+        ) do |s|
+          s.tipo_sid = self.tipo_sid
+          s.tipo_banco = self.tipo_banco
+          s.nro_sid = self.nro_sid
+          s.tipo_sid_2 = self.tipo_sid_2
+          s.tipo_banco_2 = self.tipo_banco_2
+          s.nro_sid_2 = self.nro_sid_2
+        end
+
+        # Las tarjetas se usan para control visual de sobres cargados
+        # (cada línea en 'index_clientes')
+        sobre.tarjetas.find_or_create_by!(
+          nombre: self.nombre
+        )
+      rescue ActiveRecord::RecordInvalid
+        Log.error "Error al cargar #{self.tipo_documento} #{self.nro_documento} #{self.nombre_titular}"
       end
-
-      cliente.update intentos_fallidos: 0
-
-      # El sobre al que identifica este número de proveedor (Clave 1 novedades
-      # según la documentación)
-      sobre = cliente.sobres.find_or_create_by!(
-        nro_proveedor: self.nro_proveedor,
-        nro_alternativo: self.nro_alternativo
-      ) do |s|
-        s.tipo_sid = self.tipo_sid
-        s.tipo_banco = self.tipo_banco
-        s.nro_sid = self.nro_sid
-        s.tipo_sid_2 = self.tipo_sid_2
-        s.tipo_banco_2 = self.tipo_banco_2
-        s.nro_sid_2 = self.nro_sid_2
-      end
-
-      # Las tarjetas se usan para control visual de sobres cargados
-      # (cada línea en 'index_clientes')
-      sobre.tarjetas.find_or_create_by!(
-        nombre: self.nombre
-      )
     end
   end
 
