@@ -121,6 +121,10 @@ class Arduino
     ordenar :test_off
   end
 
+  def get_estado
+    RESPUESTAS[dispositivo.i2cget(0, 1).bytes.first]
+  end
+
   def self.fallar!(mensaje = nil)
     @@error = true
     raise Atascamiento, mensaje
@@ -129,4 +133,5 @@ class Arduino
   def self.error
     @@error
   end
+  
 end

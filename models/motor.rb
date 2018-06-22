@@ -227,6 +227,9 @@ class Motor
   end
 
   def posicionar!
+    estado = Arduino.new(nivel).get_estado
+    raise Arduino::Atascamiento if estado == :atascamiento
+
     Log.logger.info "Ubicando motor en posición #{posicion}"
 
     raise 'posición excedida' unless sob < SPN
