@@ -96,7 +96,7 @@ class Motor
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
     estado_nivel_1 = Arduino.new(0).get_estado
-    estado_nivel_2 = Arduino.new(0).get_estado
+    estado_nivel_2 = Arduino.new(1).get_estado
     raise Arduino::Atascamiento if [estado_nivel_1, estado_nivel_2].include?(:atascamiento)
     
     Log.logger.info "Posicionando en cero"
