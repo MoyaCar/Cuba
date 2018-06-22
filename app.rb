@@ -48,6 +48,10 @@ Cuba.define do
           Log.info "Paso actual del motor: #{Motor.paso_actual}"
           Log.info "Cero encontrado correctamente" if Motor.sensor_en_cero?
         end
+      rescue Arduino::Atascamiento => e
+        Log.error "Arduino atascado. Código de error #{e.codigo}."
+
+        fallo! codigo: e.codigo
       rescue Motor::CeroNoEncontrado => e
         Log.error "Cero no encontrado. Código de error #{e.codigo}."
 
