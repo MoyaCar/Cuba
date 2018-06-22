@@ -125,6 +125,11 @@ class Arduino
     RESPUESTAS[dispositivo.i2cget(0, 1).bytes.first]
   end
 
+  def self.nivel_atascado?
+    estados_por_nivel = DIRECCIONES.each {|k,v| Arduino.new(k).get_estado}
+    estados_por_nivel.include?(:atascamiento)
+  end
+
   def self.fallar!(mensaje = nil)
     @@error = true
     raise Atascamiento, mensaje
