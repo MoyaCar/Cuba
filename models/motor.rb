@@ -67,6 +67,11 @@ class Motor
     RPi::GPIO.setup SENSOR, as: :input, pull: :down
 
     posicionar_en_cero!
+  rescue Arduino::Atascamiento => e
+    Log.logger.error e.message
+
+    # Relanzar
+    raise
   # Capturamos nuestro error
   rescue CeroNoEncontrado => e
     Log.logger.error e.message
