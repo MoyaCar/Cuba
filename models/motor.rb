@@ -95,9 +95,10 @@ class Motor
 
   # Gira hasta encontrar el sensor de posición inicial
   def self.posicionar_en_cero!
+    Log.logger.info "Posicionando en cero"
     raise Arduino::Atascamiento if Arduino.algun_nivel_atascado?
     
-    Log.logger.info "Posicionando en cero"
+    Log.logger.info "Presentadores no atascados, posicionando en cero"
 
     estado = 0
     set_sentido! :ah
@@ -234,9 +235,10 @@ class Motor
   end
 
   def posicionar!
+    Log.logger.info "Posicionando"
     raise Arduino::Atascamiento if Arduino.algun_nivel_atascado?
 
-    Log.logger.info "Ubicando motor en posición #{posicion}"
+    Log.logger.info "Presentador no atascado, ubicando motor en posición #{posicion}"
 
     raise 'posición excedida' unless sob < SPN
     raise 'posición no puede ser negativa' if sob < 0

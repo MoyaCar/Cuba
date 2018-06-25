@@ -243,8 +243,6 @@ Cuba.define do
 
           respuesta = Arduino.new(sobre.nivel).extraer!
 
-          Log.info "Respuesta del arduino: #{respuesta}"
-
           case respuesta
           # Si se extrajo el sobre
           when :extraccion_ok
@@ -434,8 +432,6 @@ Cuba.define do
 
               respuesta = Arduino.new(nivel).cargar!
 
-              Log.info "Respuesta del arduino: #{respuesta}"
-
               case respuesta
               when :carga_ok
                 # Si se recibió el sobre
@@ -494,8 +490,6 @@ Cuba.define do
               motor.posicionar!
 
               respuesta = Arduino.new(sobre.nivel).extraer!
-
-              Log.info "Respuesta del arduino: #{respuesta}"
 
               case respuesta
               # Si se extrajo el sobre
