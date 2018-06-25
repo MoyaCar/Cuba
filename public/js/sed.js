@@ -30,7 +30,7 @@ $(function() {
   if ($(".saliendo").length > 0) {
     window.setTimeout(function() {
       window.location.replace('/')
-    }, 5000)
+    }, 10000)
   }
 
   // Volver al login después de 8 segundos luego de entregar el sobre o algun error

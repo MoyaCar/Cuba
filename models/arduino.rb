@@ -122,6 +122,7 @@ class Arduino
   end
 
   def get_estado
+    dispositivo.i2cset(COMANDOS[:cero])
     RESPUESTAS[dispositivo.i2cget(0, 1).bytes.first]
   end
 

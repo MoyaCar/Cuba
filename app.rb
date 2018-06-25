@@ -266,6 +266,7 @@ Cuba.define do
 
             flash[:mensaje] = 'El sobre ha sido guardado nuevamente.'
             flash[:tipo] = 'alert-info'
+            siguiente = '/saliendo'
           # Si el arduino no encontró el sobre
           when :no_hay_carta
             Log.error "No se encuentra el sobre para cliente #{cliente.nro_documento} en el dispenser"
