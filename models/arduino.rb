@@ -74,7 +74,7 @@ class Arduino
     Arduino.fallar! if ENV['SED_ATASCAMIENTO'] == 'true'
 
     # escribir
-    sleep 2
+    sleep 1
     dispositivo.i2cset(COMANDOS[comando])
 
     @estado = 0x10
@@ -84,7 +84,7 @@ class Arduino
       @estado = dispositivo.i2cget(0, 1).bytes.first
     end
 
-    Log.info "Respuesta de comando #{COMANDOS[comando]}: #{RESPUESTAS[estado]}"
+    Log.info "Respuesta de comando #{COMANDOS.invert[comando]}: #{RESPUESTAS[estado]}"
     RESPUESTAS[estado]
   rescue Errno::EREMOTEIO
     Log.error 'No se pudieron enviar datos al bus'

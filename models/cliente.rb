@@ -36,6 +36,7 @@ class Cliente < ActiveRecord::Base
       self.update intentos_fallidos: 0
       self
     else
+      Log.info "Intento fallido numero #{self.intentos_fallidos + 1} de cliente #{self.nro_documento} con hash #{generar_clave_digital(codigo)}. Hash correcto #{self.clave_digital}"
       self.update intentos_fallidos: self.intentos_fallidos + 1
       false
     end
