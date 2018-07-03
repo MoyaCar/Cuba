@@ -17,7 +17,7 @@ class Motor
   PPR = 4000    # Pulsos por revolucion del motor
   SPN = 120     # Sobres por nivel
   LVL = 2       # Niveles
-  OFF_1 = 12    # Pulsos de offset para el nivel 1 (arriba)
+  OFF_1 = 5    # Pulsos de offset para el nivel 1 (arriba)
   OFF_0 = 14    # Pulsos de offset para el nivel 0 (abajo)
   T_Cero = 120  # Segundos disponibles para buscar Cero
 
