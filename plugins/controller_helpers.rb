@@ -54,7 +54,9 @@ module ControllerHelpers
       titulo: 'Equipo fuera de servicio',
       error: 'Se ha producido un error, por favor contacte a un
       administrador del Banco.',
-      codigo: "Error código #{codigo}"
+      codigo: "Error código #{codigo}",
+      logged: false,
+      refresh: false
 
     res.status = status
 

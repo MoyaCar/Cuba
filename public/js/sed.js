@@ -1,57 +1,48 @@
 var noInteraction;
 
 function invocation() {
-  noInteraction = window.setTimeout( 
-  function() {
-      window.location.replace('/')
-  }, 45000);
+  var timeout = window.admin ? 60000 : (window.logged ? 30000 : 45000);
+  var path = window.logged ? '/saliendo' : '/';
+
+  noInteraction = window.setTimeout(
+    function () {
+      window.location.replace(path)
+    }, timeout);
 }
 
-invocation();
-
-$(function() {
+$(function () {
   // Evitar doble submit, con jquery-ujs:
   //
   //   data-disable-with="Enviando..."
   //
   // Igualmente bloqueamos toda la página cuando hay varias acciones posibles
-  $('.bloqueador').click(function() {
+  $('.bloqueador').click(function () {
     $.blockUI({ message: null })
   })
 
-  // Mostrar pantalla saliendo después de 20 segundos sin interacción del cliente
-  if ($(".volver-al-login").length > 0) {
-    window.setTimeout(function() {
-      window.location.replace('/saliendo')
-    }, 20000)
-  }
-
-  // Volver al login después de 5 segundos sin interacción del cliente
+  // Volver al login después de 10 segundos sin interacción del cliente
   if ($(".saliendo").length > 0) {
-    window.setTimeout(function() {
+    window.setTimeout(function () {
       window.location.replace('/')
     }, 10000)
   }
 
-  // Volver al login después de 8 segundos luego de entregar el sobre o algun error
-  if ($(".salir").length > 0) {
-    window.setTimeout(function() {
-      window.location.replace('/')
-    }, 8000)
-  }
+  if(window.refresh){
+    $(document).on('touchstart', function () {
+      clearTimeout(noInteraction);
+      invocation();
+    });
 
-  $(document).on('touchstart', function() {
-    clearTimeout( noInteraction )
-    invocation()
-  })
+    $(document).on('click', function () {
+      clearTimeout(noInteraction);
+      invocation();
+    });
 
-  $(document).on('click', function() {
-    clearTimeout( noInteraction )
-    invocation()
-  })
+    invocation();
+  } 
 })
 
 // Anular el menú contextual
-$(document).on('contextmenu', function(event) {
-  event.preventDefault()
-})
+$(document).on('contextmenu', function (event) {
+  event.preventDefault();
+});

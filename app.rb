@@ -58,19 +58,19 @@ Cuba.define do
         fallo! codigo: e.codigo
       end
 
-      render 'inicio', titulo: 'Retirá tu tarjeta', admin: false
+      render 'inicio', titulo: 'Retirá tu tarjeta', admin: false, logged: false, refresh: false
     end
 
     on 'dni' do
-      render 'dni', titulo: 'Ingresa tu documento', admin: false
+      render 'dni', titulo: 'Ingresa tu documento', admin: false, logged: false
     end
 
     on 'codigo' do
-      render 'codigo', titulo: 'Ingresa tu clave de retiro', admin: false
+      render 'codigo', titulo: 'Ingresa tu clave de retiro', admin: false, logged: false
     end
 
     on 'admin-login' do
-      render 'admin_login', titulo: 'Ingrese su legajo y contraseña', admin: false
+      render 'admin_login', titulo: 'Ingrese su legajo y contraseña', admin: false, logged: false
     end
 
     # Verificamos que exista un sobre para este cliente o redirigimos
@@ -79,9 +79,9 @@ Cuba.define do
 
       if cliente.present? && cliente.sobres.montados.any?
         if cliente.sobres.montados.count > 1
-          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjetas para retirar", admin: false, x: cliente.sobres.montados.count
+          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjetas para retirar", admin: false, x: cliente.sobres.montados.count, logged: true
         else
-          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjeta para retirar", admin: false, x: cliente.sobres.montados.count
+          render 'extraccion', titulo: "Bienvenido #{cliente.nombre} Tenés #{cliente.sobres.montados.count} tarjeta para retirar", admin: false, x: cliente.sobres.montados.count, logged: true
         end
       else
         flash[:mensaje] = 'No tiene tarjetas disponibles.'
@@ -92,7 +92,7 @@ Cuba.define do
     end
 
     on 'saliendo' do
-      render 'saliendo', titulo: 'Saliendo', admin: false
+      render 'saliendo', titulo: 'Saliendo', admin: false, logged: true, refresh: false
     end
 
     # Control de acceso de administradores para el bloque completo
@@ -101,7 +101,7 @@ Cuba.define do
 
       # Panel de configuración
       on 'panel' do
-        render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config
+        render 'panel', titulo: 'Panel de configuración', admin: true, config: Configuracion.config, logged: true
       end
 
       # Inicio de carga de usuarios administradores
@@ -109,37 +109,37 @@ Cuba.define do
         garantizar_superadmin!
 
         on root do
-          render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Admin.normal
+          render 'index_usuarios', titulo: 'Administración de usuarios', admin: true, usuarios: Admin.normal, logged: true
         end
 
         on 'nuevo' do
-          render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true
+          render 'nuevo_usuario', titulo: 'Carga de usuario administrador', admin: true, logged: true
         end
 
         on ':id/editar' do |id|
           usuario = Admin.normal.find(id)
 
-          render 'editar_usuario', titulo: "Editar usuario #{usuario.nombre}", usuario: usuario, admin: true
+          render 'editar_usuario', titulo: "Editar usuario #{usuario.nombre}", usuario: usuario, admin: true, logged: true
         end
       end
 
       # Inicio de carga de clientes
       on 'clientes' do
         on root do
-          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, tarjetas: Tarjeta.all
+          render 'index_clientes', titulo: 'Administración de clientes y sobres', admin: true, tarjetas: Tarjeta.all, logged: true
         end
 
         on 'cargar' do
-          render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true
+          render 'cargar_clientes', titulo: 'Carga de datos de clientes', admin: true, logged: true
         end
 
         on 'exportar' do
-          render 'exportar_movimientos', titulo: 'Exportar movimientos', admin: true
+          render 'exportar_movimientos', titulo: 'Exportar movimientos', admin: true, logged: true
         end
       end
 
       on 'logs' do
-        render 'index_logs', titulo: 'Logs del sistema', admin: true, logs: Log.order(created_at: :desc)
+        render 'index_logs', titulo: 'Logs del sistema', admin: true, logs: Log.order(created_at: :desc), logged: true
       end
     end
   end
