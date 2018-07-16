@@ -24,8 +24,8 @@
     <script src="/js/tabla.js"></script>
     <script src="/js/gestos.js"></script>
     <script type="text/javascript">
-      window.admin = eval('<%= admin %>')
-      window.logged = eval('<%= logged %>')
+      window.admin = eval('<%= admin rescue false %>')
+      window.logged = eval('<%= logged rescue false %>')
       window.refresh = eval('<%= refresh rescue true %>')
     </script>
     <script src="/js/sed.js"></script>
