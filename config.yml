@@ -11,5 +11,5 @@ log:
   production: ERROR
 
 csv:
-  #path: '/opt/jail/home/updater'
-  path: '/media/sed'
+  path: '/opt/jail/home/updater'
+  #path: '/media/sed'

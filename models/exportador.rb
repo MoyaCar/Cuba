@@ -25,7 +25,7 @@ class Exportador
   end
 
   def exportar!
-    CSV.open(archivo_csv, 'w', headers: false, force_quotes: true) do |csv|
+    CSV.open(archivo_csv, "w", headers: false, force_quotes: true) do |csv|
       sobres.each do |sobre|
         csv << generar_fila(sobre)
       end
@@ -34,31 +34,31 @@ class Exportador
   end
 
   def nombre_archivo
-    "movimientosADM-#{fecha.strftime('%Y%m%d')}.csv"
+    "movimientosADM-#{fecha.strftime("%Y%m%d")}.csv"
   end
 
   def archivo_csv
-    File.join Configuracion.path_base_archivos, nombre_archivo
+    File.join Configuracion.path_base_archivos, "movimientos", nombre_archivo
   end
 
   def generar_fila(sobre)
     [
-      sobre.tipo_sid.to_s.rjust(3, ' '),
-      sobre.tipo_banco.to_s.rjust(3, ' '),
-      sobre.nro_sid.to_s.rjust(18, ' '),
-      sobre.tipo_sid_2.to_s.rjust(3, ' '),
-      sobre.tipo_banco_2.to_s.rjust(3, ' '),
-      sobre.nro_sid_2.to_s.rjust(18, ' '),
+      sobre.tipo_sid.to_s.rjust(3, " "),
+      sobre.tipo_banco.to_s.rjust(3, " "),
+      sobre.nro_sid.to_s.rjust(18, " "),
+      sobre.tipo_sid_2.to_s.rjust(3, " "),
+      sobre.tipo_banco_2.to_s.rjust(3, " "),
+      sobre.nro_sid_2.to_s.rjust(18, " "),
 
       sobre.cliente.tipo_documento,
-      sobre.cliente.nro_documento.rjust(13, '0'),
+      sobre.cliente.nro_documento.rjust(13, "0"),
 
-      sobre.estado.rjust(20, ' '),
-      sobre.updated_at.strftime('%Y-%m-%d'),
+      sobre.estado.rjust(20, " "),
+      sobre.updated_at.strftime("%Y-%m-%d"),
 
-      sobre.nro_proveedor.rjust(50, ' '),
-      sobre.novedad.fecha.strftime('%Y-%m-%d'),
-      sobre.novedad.hora.strftime('%H%M%S')
+      sobre.nro_proveedor.rjust(50, " "),
+      sobre.novedad.fecha.strftime("%Y-%m-%d"),
+      sobre.novedad.hora.strftime("%H%M%S"),
     ]
   end
 end
