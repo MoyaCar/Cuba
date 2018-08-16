@@ -27,7 +27,11 @@ class Configuracion < ActiveRecord::Base
   end
 
   def self.path_archivo_novedades
-    File.join path_base_archivos, "novedades", nombre_archivo_novedades
+    File.join path_base_novedades, nombre_archivo_novedades
+  end
+
+  def self.path_base_novedades
+    File.join path_base_archivos, "novedades"
   end
 
   def self.path_base_archivos

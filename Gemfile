@@ -27,3 +27,6 @@ gem 'puma'
 
 # Development
 gem 'pry', require: false
+
+# Watch Directory Changes
+gem 'listen', '~> 3.0'
