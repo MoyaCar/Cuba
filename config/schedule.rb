@@ -19,6 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every :day, at: "10am" do
+every :day, at: "14:30" do
   command "ruby -C #{Dir.pwd} -e \"load 'boot.rb';Exportador.new.exportar!\""
 end
