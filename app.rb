@@ -27,7 +27,9 @@
 # GET     /admin/logs                   - Visualización de logs del sistema
 
 listener = Listen.to(Configuracion.path_base_novedades) do |modified, added, removed|
-  Novedad.parsear Configuracion.path_archivo_novedades
+  if added.detect { |a| a.split("/").last == Configuracion.nombre_archivo_novedades } or modified.detect { |m| m.split("/").last == Configuracion.nombre_archivo_novedades }
+    Novedad.parsear Configuracion.path_archivo_novedades
+  end
 end
 listener.start
 
