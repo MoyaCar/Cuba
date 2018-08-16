@@ -30,3 +30,6 @@ gem 'pry', require: false
 
 # Watch Directory Changes
 gem 'listen', '~> 3.0'
+
+# Cron jobs
+gem 'whenever', require: false
