@@ -1,7 +1,7 @@
 env :PATH, ENV["PATH"]
-set :output, nil
+#set :output, nil
 
-ENV.each { |k, v| env(k, v) }
+#ENV.each { |k, v| env(k, v) }
 
 # Use this file to easily define all of your cron jobs.
 #
@@ -24,6 +24,8 @@ ENV.each { |k, v| env(k, v) }
 
 # Learn more: http://github.com/javan/whenever
 
-every :day, at: "14:30" do
+set :job_template, nil
+
+every :day, at: "11:50" do
   command "ruby -C #{Dir.pwd} -e \"load 'boot.rb';Exportador.new.exportar!\""
 end
