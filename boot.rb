@@ -8,6 +8,7 @@ require "sqlite3"
 require "yaml"
 require "i2c"
 require "i2c/driver/i2c-dev"
+require "rufus-scheduler"
 
 require_relative "plugins/view_helpers"
 require_relative "plugins/controller_helpers"
@@ -54,7 +55,7 @@ require_relative "decorators/tarjeta_decorator"
 
 # Servir archivos estáticos desde este directorio
 Cuba.use Rack::Static, root: "public",
-                urls: ["/js", "/css", "/fonts", "/img"]
+                       urls: ["/js", "/css", "/fonts", "/img"]
 
 # En app definimos rutas y controllers
 require_relative "app"

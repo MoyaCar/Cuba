@@ -32,4 +32,4 @@ gem 'pry', require: false
 gem 'listen', '~> 3.0'
 
 # Cron jobs
-gem 'whenever', require: false
+gem 'rufus-scheduler'

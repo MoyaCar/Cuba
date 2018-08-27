@@ -37,6 +37,11 @@ listener = Listen.to(Configuracion.path_base_novedades) do |modified, added, rem
 end
 listener.start
 
+scheduler = Rufus::Scheduler.new
+scheduler.cron "30 14 * * *" do
+  Exportador.new.exportar!
+end
+
 Cuba.define do
   on get do
     checkear_errores!
