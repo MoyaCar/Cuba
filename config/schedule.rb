@@ -26,6 +26,6 @@ env :PATH, ENV["PATH"]
 
 set :job_template, nil
 
-every :day, at: "11:50" do
+every :day, at: "14:30" do
   command "ruby -C #{Dir.pwd} -e \"load 'boot.rb';Exportador.new.exportar!\""
 end
