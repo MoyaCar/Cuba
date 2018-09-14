@@ -67,20 +67,20 @@
 #   163000
 #
 
-require 'csv'
+require "csv"
 
 class Novedad < ActiveRecord::Base
-  self.table_name = 'novedades'
+  self.table_name = "novedades"
 
   DOCUMENTOS = {
-    '00' => 'DNI',
-    '27' => 'DNI Masculino < 10MM',
-    '28' => 'DNI Femenino < 10MM',
-    '31' => 'DNI extranjero',
-    '25' => 'Libreta Enrolamiento',
-    '26' => 'Libreta Cívica',
-    '30' => 'Pasaporte',
-    '01' => 'Cedula identidad Policía Federal'
+    "00" => "DNI",
+    "27" => "DNI Masculino < 10MM",
+    "28" => "DNI Femenino < 10MM",
+    "31" => "DNI extranjero",
+    "25" => "Libreta Enrolamiento",
+    "26" => "Libreta Cívica",
+    "30" => "Pasaporte",
+    "01" => "Cedula identidad Policía Federal",
   }
 
   validates :nro_proveedor,
@@ -89,7 +89,7 @@ class Novedad < ActiveRecord::Base
     presence: true
   validates :nro_documento,
     presence: true,
-    numericality: { only_integer: true }
+    numericality: {only_integer: true}
   validates :clave_digital,
     presence: true
   validates :nombre,
@@ -103,7 +103,7 @@ class Novedad < ActiveRecord::Base
         nro_alternativo: fila[1].to_s.strip.encode(Encoding::UTF_8),
 
         # A veces viene 0, a veces 00
-        tipo_documento: fila[2].to_s.encode(Encoding::UTF_8).rjust(2, '0'),
+        tipo_documento: fila[2].to_s.encode(Encoding::UTF_8).rjust(2, "0"),
         nro_documento: fila[3].to_s.encode(Encoding::UTF_8),
         clave_digital: fila[4].to_s.encode(Encoding::UTF_8),
 
@@ -114,12 +114,10 @@ class Novedad < ActiveRecord::Base
         tipo_sid_2: fila[8].to_s.encode(Encoding::UTF_8),
         tipo_banco_2: fila[9].to_s.encode(Encoding::UTF_8),
         nro_sid_2: fila[10].to_s.encode(Encoding::UTF_8),
-
         nombre: fila[11].to_s.strip.encode(Encoding::UTF_8),
         nombre_titular: fila[12].to_s.strip.encode(Encoding::UTF_8),
-
         fecha: fila[13].to_s.encode(Encoding::UTF_8),
-        hora: Time.strptime(fila[14].to_s.encode(Encoding::UTF_8), '%H%M%S')
+        hora: Time.strptime(fila[14].to_s.encode(Encoding::UTF_8), "%H%M%S"),
       )
 
       # Un sólo Cliente por sobre, que representa al titular de cuenta y a
@@ -129,18 +127,21 @@ class Novedad < ActiveRecord::Base
         cliente = Cliente.find_or_create_by!(
           tipo_documento: self.tipo_documento,
           nro_documento: self.nro_documento,
-          nombre: self.nombre_titular
         ) do |c|
+          c.nombre = self.nombre
           c.clave_digital = self.clave_digital
+          c.intentos_fallidos = 0
         end
 
+        cliente.update clave_digital: self.clave_digital
+        cliente.update nombre: self.nombre
         cliente.update intentos_fallidos: 0
 
         # El sobre al que identifica este número de proveedor (Clave 1 novedades
         # según la documentación)
         sobre = cliente.sobres.find_or_create_by!(
           nro_proveedor: self.nro_proveedor,
-          nro_alternativo: self.nro_alternativo
+          nro_alternativo: self.nro_alternativo,
         ) do |s|
           s.tipo_sid = self.tipo_sid
           s.tipo_banco = self.tipo_banco
@@ -153,7 +154,7 @@ class Novedad < ActiveRecord::Base
         # Las tarjetas se usan para control visual de sobres cargados
         # (cada línea en 'index_clientes')
         sobre.tarjetas.find_or_create_by!(
-          nombre: self.nombre
+          nombre: self.nombre,
         )
       rescue ActiveRecord::RecordInvalid
         Log.error "Error al cargar #{self.tipo_documento} #{self.nro_documento} #{self.nombre_titular}"
@@ -163,7 +164,7 @@ class Novedad < ActiveRecord::Base
 
   # Parsear el csv de novedades entero
   def self.parsear(csv)
-    CSV.foreach csv, headers: false, col_sep: ';', encoding: 'ISO-8859-1' do |f|
+    CSV.foreach csv, headers: false, col_sep: ";", encoding: "ISO-8859-1" do |f|
       Novedad.new.parsear f
     end
   end
