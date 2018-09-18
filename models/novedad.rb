@@ -151,6 +151,13 @@ class Novedad < ActiveRecord::Base
           s.nro_sid_2 = self.nro_sid_2
         end
 
+        sobre.update tipo_sid: self.tipo_sid
+        sobre.update tipo_banco: self.tipo_banco
+        sobre.update nro_sid: self.nro_sid
+        sobre.update tipo_sid_2: self.tipo_sid_2
+        sobre.update tipo_banco_2: self.tipo_banco_2
+        sobre.update nro_sid_2: self.nro_sid_2
+
         # Las tarjetas se usan para control visual de sobres cargados
         # (cada línea en 'index_clientes')
         sobre.tarjetas.find_or_create_by!(
