@@ -38,13 +38,6 @@ begin
         File.delete(a) if File.exist?(a)
       end
     end
-
-    if modified.any?
-      modified.each do |m|
-        Novedad.parsear(m)
-        File.delete(m) if File.exist?(m)
-      end
-    end
   end
   listener.start
 rescue Exception => e
