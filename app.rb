@@ -32,8 +32,18 @@
 
 begin
   listener = Listen.to(Configuracion.path_base_novedades) do |modified, added, removed|
-    if added.detect { |a| a.split("/").last == Configuracion.nombre_archivo_novedades } or modified.detect { |m| m.split("/").last == Configuracion.nombre_archivo_novedades }
-      Novedad.parsear Configuracion.path_archivo_novedades
+    if added.any?
+      added.each do |a|
+        Novedad.parsear(a)
+        File.delete(a) if File.exist?(a)
+      end
+    end
+
+    if modified.any?
+      modified.each do |m|
+        Novedad.parsear(m)
+        File.delete(m) if File.exist?(m)
+      end
     end
   end
   listener.start
