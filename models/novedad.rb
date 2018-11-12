@@ -171,6 +171,8 @@ class Novedad < ActiveRecord::Base
 
   # Parsear el csv de novedades entero
   def self.parsear(csv)
+    Log.info "Parseando archivo novedades"
+
     CSV.foreach csv, headers: false, col_sep: ";", encoding: "ISO-8859-1" do |f|
       Novedad.new.parsear f
     end
