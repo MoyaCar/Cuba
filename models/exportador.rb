@@ -21,7 +21,7 @@ class Exportador
 
   def initialize(sobres = Sobre.all)
     @sobres = sobres
-    @fecha = Date.today
+    @fecha = Time.now
   end
 
   def exportar!
