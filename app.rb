@@ -41,7 +41,7 @@ begin
     if modified.any?
       modified.each do |m|
         Novedad.parsear(m)
-        File.delete(a) if File.exist?(m)
+        File.delete(m) if File.exist?(m)
       end
     end
   end
