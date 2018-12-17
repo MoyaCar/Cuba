@@ -34,7 +34,7 @@ class Exportador
   end
 
   def nombre_archivo
-    "movimientosADM-#{fecha.strftime("%Y%m%d%H%M%S")}.csv"
+    "movimientosADM-#{fecha.strftime("%Y%m%d")}.csv"
   end
 
   def archivo_csv
