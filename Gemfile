@@ -33,3 +33,5 @@ gem 'listen', '~> 3.0'
 
 # Cron jobs
 gem 'rufus-scheduler'
+
+gem 'shotgun'
